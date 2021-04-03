@@ -588,10 +588,11 @@ Here we determines cases when items should to get mouse press event at pressing 
         }
         return false;
         break;
-    case QGraphicsWebView::Type:
-        return true;
+// TODO probably for the browser??
+//    case QGraphicsWebView::Type:
+//        return true;
     case QGraphicsProxyWidget::Type:
-        return false;
+        return true;
 
     case UBGraphicsWidgetItem::Type:
         if (currentTool == UBStylusTool::Selector && item->parentItem() && item->parentItem()->isSelected())
@@ -619,8 +620,9 @@ bool UBBoardView::itemShouldReceiveSuspendedMousePressEvent(QGraphicsItem *item)
 
     switch(item->type())
     {
-    case QGraphicsWebView::Type:
-        return false;
+    // TODO probably for the browser??
+    //    case QGraphicsWebView::Type:
+//        return false;
     case UBGraphicsPixmapItem::Type:
     case UBGraphicsSvgItem::Type:
     case UBGraphicsTextItem::Type:
@@ -1096,6 +1098,27 @@ void UBBoardView::mousePressEvent (QMouseEvent *event)
             event->accept ();
         }
     }
+    else if (event->button () == Qt::RightButton && isInteractive())
+    {
+        // forward right-click events to items
+        int currentTool = (UBStylusTool::Enum)UBDrawingController::drawingController ()->stylusTool ();
+
+        switch (currentTool) {
+        case UBStylusTool::Selector :
+        case UBStylusTool::Play :
+            if (bIsDesktop) {
+                event->ignore();
+                return;
+            }
+
+            handleItemMousePress(event);
+            event->accept();
+            break;
+
+        default:
+            break;
+        }
+    }
 }
 
 
@@ -1286,7 +1309,7 @@ void UBBoardView::mouseReleaseEvent (QMouseEvent *event)
                             DelegateButton::Type != getMovingItem()->type() &&
                             UBGraphicsDelegateFrame::Type !=  getMovingItem()->type() &&
                             UBGraphicsCache::Type != getMovingItem()->type() &&
-                            QGraphicsWebView::Type != getMovingItem()->type() && // for W3C widgets as Tools.
+// TODO                            QGraphicsWebView::Type != getMovingItem()->type() && // for W3C widgets as Tools.
                             !(!isMultipleSelectionEnabled() && getMovingItem()->parentItem() && UBGraphicsWidgetItem::Type == getMovingItem()->type() && UBGraphicsGroupContainerItem::Type == getMovingItem()->parentItem()->type()))
                     {
                         bReleaseIsNeed = false;
@@ -1316,6 +1339,7 @@ void UBBoardView::mouseReleaseEvent (QMouseEvent *event)
             else
                 bReleaseIsNeed = true;
 
+        qDebug() << "bReleaseIsNeeded" << bReleaseIsNeed; // XXX remove
         if (bReleaseIsNeed)
         {
             QGraphicsView::mouseReleaseEvent (event);
@@ -1368,7 +1392,7 @@ void UBBoardView::mouseReleaseEvent (QMouseEvent *event)
                         QGraphicsSvgItem::Type !=  getMovingItem()->type() &&
                         UBGraphicsDelegateFrame::Type !=  getMovingItem()->type() &&
                         UBGraphicsCache::Type != getMovingItem()->type() &&
-                        QGraphicsWebView::Type != getMovingItem()->type() && // for W3C widgets as Tools.
+// TODO                        QGraphicsWebView::Type != getMovingItem()->type() && // for W3C widgets as Tools.
                         !(!isMultipleSelectionEnabled() && getMovingItem()->parentItem() && UBGraphicsWidgetItem::Type == getMovingItem()->type() && UBGraphicsGroupContainerItem::Type == getMovingItem()->parentItem()->type()))
                 {
                     bReleaseIsNeed = false;
