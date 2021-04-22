@@ -1654,7 +1654,7 @@ UBGraphicsWidgetItem* UBGraphicsScene::addWidget(const QUrl& pWidgetUrl, const Q
 {
     int widgetType = UBGraphicsWidgetItem::widgetType(pWidgetUrl);
 
-    if(widgetType == UBWidgetType::Apple)
+    if(widgetType == UBWidgetType::Apple) // NOTE @letsfindaway obsolete
     {
         return addAppleWidget(pWidgetUrl, pPos);
     }
@@ -1669,6 +1669,7 @@ UBGraphicsWidgetItem* UBGraphicsScene::addWidget(const QUrl& pWidgetUrl, const Q
     }
 }
 
+// NOTE @letsfindaway obsolete
 UBGraphicsAppleWidgetItem* UBGraphicsScene::addAppleWidget(const QUrl& pWidgetUrl, const QPointF& pPos)
 {
     UBGraphicsAppleWidgetItem *appleWidget = new UBGraphicsAppleWidgetItem(pWidgetUrl);
