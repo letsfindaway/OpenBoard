@@ -364,6 +364,7 @@ void UBSettings::init()
     webBookmarksPage = new UBSetting(this, "Web", "BookmarksPage", "http://www.myuniboard.com");
     webAddBookmarkUrl = new UBSetting(this, "Web", "AddBookmarkURL", "http://www.myuniboard.com/bookmarks/save/?url=");
     webShowAddBookmarkButton = new UBSetting(this, "Web", "ShowAddBookmarkButton", false);
+    webSearchEngineUrl = new UBSetting(this, "Web", "SearchEngineUrl", "https://duckduckgo.com/?q=%1");
 
     pageCacheSize = new UBSetting(this, "App", "PageCacheSize", 20);
 

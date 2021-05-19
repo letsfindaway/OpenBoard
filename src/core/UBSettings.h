@@ -331,6 +331,7 @@ class UBSettings : public QObject
         UBSetting* webBookmarksPage;
         UBSetting* webAddBookmarkUrl;
         UBSetting* webShowAddBookmarkButton;
+        UBSetting* webSearchEngineUrl;
 
         UBSetting* pageCacheSize;
 
