@@ -240,9 +240,9 @@ void UBWebController::webBrowserInstance()
         m_downloadManagerWidget.show();
 }
 
-UBOEmbedParser *UBWebController::embedParser(const QWebEngineView* view) const
+UBEmbedParser *UBWebController::embedParser(const QWebEngineView* view) const
 {
-    return view->findChild<UBOEmbedParser*>("UBOEmbedParser");
+    return view->findChild<UBEmbedParser*>("UBOEmbedParser");
 }
 
 void UBWebController::show()
@@ -258,6 +258,17 @@ QWidget *UBWebController::controlView() const
 QWebEngineProfile *UBWebController::widgetProfile() const
 {
     return mWidgetProfile;
+}
+
+QList<UBEmbedContent> UBWebController::getEmbeddedContent(const QWebEngineView *view)
+{
+    UBEmbedParser* parser = embedParser(view);
+
+    if (parser) {
+        return parser->embeddedContent();
+    }
+
+    return QList<UBEmbedContent>();
 }
 
 void UBWebController::injectScripts(QWebEngineView *view)
@@ -306,14 +317,14 @@ void UBWebController::activePageChanged()
     {
         WebView* view = mCurrentWebBrowser->currentTab();
 
-        if (mTrapFlashController && view->page())
-            mTrapFlashController->updateTrapFlashFromPage(view->page());
+        if (mTrapFlashController)
+            mTrapFlashController->updateTrapFlashFromView(view);
 
         mMainWindow->actionWebTrap->setChecked(false);
 
         QUrl latestUrl = view->url();
 
-        UBOEmbedParser* parser = embedParser(view);
+        UBEmbedParser* parser = embedParser(view);
         UBApplication::mainWindow->actionWebOEmbed->setEnabled(parser ? parser->hasEmbeddedContent() : false);
 
         // And remove this line once the previous one is uncommented
@@ -576,8 +587,8 @@ QUrl UBWebController::guessUrlFromString(const QString &string)
 void UBWebController::tabCreated(WebView *webView)
 {
     // create and attach an UBOEmbedParser to the view
-    UBOEmbedParser* parser = new UBOEmbedParser(webView);
-    connect(parser, &UBOEmbedParser::parseResult, this, &UBWebController::onOEmbedParsed);
+    UBEmbedParser* parser = new UBEmbedParser(webView);
+    connect(parser, &UBEmbedParser::parseResult, this, &UBWebController::onOEmbedParsed);
 }
 
 /**/
@@ -793,6 +804,11 @@ void UBWebController::onOEmbedParsed(QWebEngineView *view, bool hasEmbeddedConte
     {
         // enable/disable embed button
         UBApplication::mainWindow->actionWebOEmbed->setEnabled(hasEmbeddedContent);
+
+        if (mTrapFlashController)
+        {
+            mTrapFlashController->updateTrapFlashFromView(view);
+        }
     }
 }
 
@@ -806,11 +822,11 @@ void UBWebController::createEmbeddedContentWidget()
     if (mCurrentWebBrowser && mCurrentWebBrowser->currentTab())
     {
         WebView* webView = mCurrentWebBrowser->currentTab();
-        UBOEmbedParser* parser = embedParser(webView);
+        UBEmbedParser* parser = embedParser(webView);
 
         // FIXME workaround: just use the first entry in contents
         if (parser && parser->hasEmbeddedContent()) {
-            UBOEmbedContent content = parser->embeddedContent()[0];
+            UBEmbedContent content = parser->embeddedContent()[0];
             qDebug() << "Embedding" << content.title();
             UBGraphicsW3CWidgetItem* widget = UBApplication::boardController->activeScene()->addOEmbed(content);
 
