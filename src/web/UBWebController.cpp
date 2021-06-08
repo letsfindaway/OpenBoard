@@ -264,6 +264,11 @@ QList<UBEmbedContent> UBWebController::getEmbeddedContent(const QWebEngineView *
     return QList<UBEmbedContent>();
 }
 
+BrowserWindow* UBWebController::browserWindow() const
+{
+    return mCurrentWebBrowser;
+}
+
 void UBWebController::injectScripts(QWebEngineView *view)
 {
     // inject the QWebChannel interface and initialization script
