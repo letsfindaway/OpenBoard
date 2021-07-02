@@ -617,9 +617,6 @@ bool UBBoardView::itemShouldReceiveSuspendedMousePressEvent(QGraphicsItem *item)
 
     switch(item->type())
     {
-    // TODO probably for the browser??
-    //    case QGraphicsWebView::Type:
-//        return false;
     case UBGraphicsPixmapItem::Type:
     case UBGraphicsSvgItem::Type:
     case UBGraphicsTextItem::Type:
@@ -1307,7 +1304,6 @@ void UBBoardView::mouseReleaseEvent (QMouseEvent *event)
                             DelegateButton::Type != getMovingItem()->type() &&
                             UBGraphicsDelegateFrame::Type !=  getMovingItem()->type() &&
                             UBGraphicsCache::Type != getMovingItem()->type() &&
-// TODO                            QGraphicsWebView::Type != getMovingItem()->type() && // for W3C widgets as Tools.
                             !(!isMultipleSelectionEnabled() && getMovingItem()->parentItem() && UBGraphicsWidgetItem::Type == getMovingItem()->type() && UBGraphicsGroupContainerItem::Type == getMovingItem()->parentItem()->type()))
                     {
                         bReleaseIsNeed = false;
@@ -1337,7 +1333,6 @@ void UBBoardView::mouseReleaseEvent (QMouseEvent *event)
             else
                 bReleaseIsNeed = true;
 
-        qDebug() << "bReleaseIsNeeded" << bReleaseIsNeed; // NOTE @letsfindaway remove
         if (bReleaseIsNeed)
         {
             QGraphicsView::mouseReleaseEvent (event);
@@ -1390,7 +1385,6 @@ void UBBoardView::mouseReleaseEvent (QMouseEvent *event)
                         QGraphicsSvgItem::Type !=  getMovingItem()->type() &&
                         UBGraphicsDelegateFrame::Type !=  getMovingItem()->type() &&
                         UBGraphicsCache::Type != getMovingItem()->type() &&
-// TODO                        QGraphicsWebView::Type != getMovingItem()->type() && // for W3C widgets as Tools.
                         !(!isMultipleSelectionEnabled() && getMovingItem()->parentItem() && UBGraphicsWidgetItem::Type == getMovingItem()->type() && UBGraphicsGroupContainerItem::Type == getMovingItem()->parentItem()->type()))
                 {
                     bReleaseIsNeed = false;
