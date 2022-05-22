@@ -43,7 +43,7 @@ class UBStringUtils
     public:
         static QStringList sortByLastDigit(const QStringList& source);
 
-        static QString netxDigitizedName(const QString& source);
+        static QString nextDigitizedName(const QString& source);
 
         static QString toCanonicalUuid(const QUuid& uuid);
 
