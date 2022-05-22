@@ -34,7 +34,7 @@
 QStringList UBStringUtils::sortByLastDigit(const QStringList& sourceList)
 {
     // we look for a set of digit after non digits and before a .
-    QRegularExpression rx("\\D(\\d+)\\.");
+    static const QRegularExpression rx("\\D(\\d+)\\.");
 
     QMultiMap<int, QString> elements;
 
@@ -77,7 +77,7 @@ QString UBStringUtils::nextDigitizedName(const QString& source)
 {
 
     // we look for a set of digit after non digits and at the end
-    QRegularExpression rx("\\D(\\d+)");
+    static const QRegularExpression rx("\\D(\\d+)");
 
     int pos = source.lastIndexOf(rx);
 
