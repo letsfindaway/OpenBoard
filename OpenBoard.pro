@@ -33,13 +33,12 @@ VERSION_RC = $$replace(VERSION_RC, "rc", "192" ) # 0xC0
 VERSION_RC = $$replace(VERSION_RC, "r", "240") # 0xF0
 
 QT += svg
+greaterThan(QT_MAJOR_VERSION, 5):QT += svgwidgets
 QT += network
 QT += xml
-QT += xmlpatterns
 QT += uitools
 QT += multimedia
 QT += multimediawidgets
-QT += webengine
 QT += webenginewidgets
 QT += printsupport
 QT += core
@@ -454,11 +453,22 @@ linux-g++* {
     LIBS += -lcrypto
     #LIBS += -lprofiler
     LIBS += -lX11
-    LIBS += -lquazip5
-    INCLUDEPATH += "/usr/include/quazip5"
 
-    LIBS += -lpoppler
-    INCLUDEPATH += "/usr/include/poppler"
+    CONFIG += link_pkgconfig
+    PKGCONFIG += poppler
+
+    # search and configure quazip
+    lessThan(QT_MAJOR_VERSION, 6) {
+        QUAZIP_PKG = quazip1-qt5 libquazip5-1 quazip-qt5 quazip
+    } else {
+        QUAZIP_PKG = quazip1-qt6 libquazip6-1 quazip-qt6 quazip
+    }
+
+    for(pkg, QUAZIP_PKG):isEmpty(QUAZIP_PKG_FOUND):packagesExist($${pkg}): {
+        message("using" $${pkg} "version" $$system(pkg-config --modversion $${pkg}))
+        PKGCONFIG += $${pkg}
+        QUAZIP_PKG_FOUND = true
+    }
 
     QMAKE_CFLAGS += -fopenmp
     QMAKE_CXXFLAGS += -fopenmp
