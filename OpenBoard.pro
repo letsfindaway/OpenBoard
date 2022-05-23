@@ -459,15 +459,25 @@ linux-g++* {
 
     # search and configure quazip
     lessThan(QT_MAJOR_VERSION, 6) {
-        QUAZIP_PKG = quazip1-qt5 libquazip5-1 quazip-qt5 quazip
+        QUAZIP_PKG = quazip1-qt5 libquazip5-1 quazip-qt5 quazip5
     } else {
-        QUAZIP_PKG = quazip1-qt6 libquazip6-1 quazip-qt6 quazip
+        QUAZIP_PKG = quazip1-qt6 libquazip6-1 quazip-qt6 quazip6
     }
 
-    for(pkg, QUAZIP_PKG):isEmpty(QUAZIP_PKG_FOUND):packagesExist($${pkg}): {
-        message("using" $${pkg} "version" $$system(pkg-config --modversion $${pkg}))
-        PKGCONFIG += $${pkg}
-        QUAZIP_PKG_FOUND = true
+    for(pkg, QUAZIP_PKG):isEmpty(QUAZIP_PKG_FOUND) {
+        # using this workaround as packagesExists did not work for me when invoked from qtcreator
+        PKG_EXISTS = $$system(pkg-config --exists $${pkg} && echo exists)
+        count(PKG_EXISTS, 1) {
+            message("using" $${pkg} "version" $$system(pkg-config --modversion $${pkg}))
+            PKGCONFIG += $${pkg}
+            QUAZIP_PKG_FOUND = true
+        }
+    }
+
+    isEmpty(QUAZIP_PKG_FOUND) {
+        message("No quazip package found, falling back to" $$last(QUAZIP_PKG))
+        LIBS += -l$$last(QUAZIP_PKG)
+        INCLUDEPATH += "/usr/include/$$last(QUAZIP_PKG)"
     }
 
     QMAKE_CFLAGS += -fopenmp
