@@ -2558,6 +2558,8 @@ void UBDocumentController::deleteMultipleItems(QModelIndexList indexes, UBDocume
 
             break;
         }
+        default:
+            break;
     }
 }
 
@@ -2654,6 +2656,8 @@ void UBDocumentController::deleteSingleItem(QModelIndex currentIndex, UBDocument
                 }
             break;
         }
+        default:
+            break;
     }
 }
 

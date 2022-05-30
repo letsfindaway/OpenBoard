@@ -685,6 +685,7 @@ bool UBBoardView::itemShouldBeMoved(QGraphicsItem *item)
             return false;
         if(currentTool == UBStylusTool::Play)
             return false;
+        Q_FALLTHROUGH();
 
     case UBGraphicsSvgItem::Type:
     case UBGraphicsPixmapItem::Type:
@@ -692,6 +693,8 @@ bool UBBoardView::itemShouldBeMoved(QGraphicsItem *item)
             return true;
         if (item->isSelected())
             return false;
+        Q_FALLTHROUGH();
+
     case UBGraphicsMediaItem::Type:
     case UBGraphicsVideoItem::Type:
     case UBGraphicsAudioItem::Type:
