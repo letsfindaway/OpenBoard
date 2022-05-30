@@ -74,15 +74,15 @@ void UBExportCFF::persist(UBDocumentProxy* pDocument)
         if (mIsVerbose)
             UBApplication::showMessage(tr("Exporting document..."));
 
-            UBCFFAdaptor toIWBExporter;
-            if (toIWBExporter.convertUBZToIWB(src, filename))
-            {
-                if (mIsVerbose)
-                    UBApplication::showMessage(tr("Export successful."));
-            }
-            else
-                if (mIsVerbose)
-                    UBApplication::showMessage(tr("Export failed."));
+        UBCFFAdaptor toIWBExporter;
+        if (toIWBExporter.convertUBZToIWB(src, filename))
+        {
+            if (mIsVerbose)
+                UBApplication::showMessage(tr("Export successful."));
+        }
+        else
+            if (mIsVerbose)
+                UBApplication::showMessage(tr("Export failed."));
 
         showErrorsList(toIWBExporter.getConversionMessages());
 
