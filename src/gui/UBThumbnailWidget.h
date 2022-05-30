@@ -319,12 +319,6 @@ public:
 class UBThumbnailPixmap : public QGraphicsPixmapItem, public UBThumbnail
 {
     public:
-        UBThumbnailPixmap(const QPixmap& pix, UBDocumentProxy* proxy, int pSceneIndex)
-            : QGraphicsPixmapItem(pix)
-        {
-
-        }
-
         UBThumbnailPixmap(const QPixmap& pix)
             : QGraphicsPixmapItem(pix)
         {

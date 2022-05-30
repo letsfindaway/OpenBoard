@@ -178,7 +178,6 @@ qreal UBGraphicsTextItemDelegate::titleBarWidth()
     // refresh the frame and buttons' positions
     positionHandles();
 
-    qreal titleBarWidth(0);
     qreal frameLeftCoordinate = mFontButton->pos().x();
     qreal frameRightCoordinate = frameLeftCoordinate;
 

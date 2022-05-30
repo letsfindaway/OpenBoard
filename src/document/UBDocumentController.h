@@ -327,7 +327,6 @@ protected:
 
 private:
     bool isAcceptable(const QModelIndex &dragIndex, const QModelIndex &atIndex);
-    Qt::DropAction acceptableAction(const QModelIndex &dragIndex, const QModelIndex &atIndex);
     void updateIndexEnvirons(const QModelIndex &index);
 };
 
@@ -347,6 +346,8 @@ class UBValidator : public QValidator
 
         QValidator::State validate(QString &input, int &pos) const
         {
+            Q_UNUSED(pos)
+
             for (auto node : mExistingNodes)
             {
                 if (node->nodeName() == input && node->nodeType() == mEditedNodeType)
@@ -568,8 +569,6 @@ protected:
 
         void thumbnailViewResized();
         void updateActions();
-
-        void documentSceneChanged(UBDocumentProxy* proxy, int pSceneIndex);
 
         void thumbnailPageDoubleClicked(QGraphicsItem* item, int index);
         void pageClicked(QGraphicsItem* item, int index);

@@ -280,7 +280,6 @@ class UBBoardController : public UBDocumentContainer
     protected slots:
         void selectionChanged();
         void undoRedoStateChange(bool canUndo);
-        void documentSceneChanged(UBDocumentProxy* proxy, int pIndex);
 
     private slots:
         void autosaveTimeout();

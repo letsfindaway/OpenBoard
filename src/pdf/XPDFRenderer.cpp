@@ -328,8 +328,6 @@ void XPDFRenderer::render(QPainter *p, int pageNumber, bool const cacheAllowed, 
             }
 
             QImage pdfImage = createPDFImageCached(pageNumber, m_perPagepdfZoomCache[pageNumber][zoomIndex]);
-            qreal ratioExpected = m_perPagepdfZoomCache[pageNumber][zoomIndex].ratio;
-            qreal ratioObtained = ratioExpected;
             int const initialZoomIndex = zoomIndex;
 
             if (pdfImage == QImage() && m_perPagepdfZoomCache[pageNumber][zoomIndex].hasToBeProcessed)
@@ -344,7 +342,6 @@ void XPDFRenderer::render(QPainter *p, int pageNumber, bool const cacheAllowed, 
                 }
                 while (zoomIndex > 0 && (m_perPagepdfZoomCache[pageNumber][zoomIndex].cachedImage == QImage() || m_perPagepdfZoomCache[pageNumber][zoomIndex].cachedPageNumber != pageNumber))
                     zoomIndex = zoomIndex-1;
-                ratioObtained = m_perPagepdfZoomCache[pageNumber][zoomIndex].ratio;
             }
 
             if (m_perPagepdfZoomCache[pageNumber][zoomIndex].cachedImage == QImage() || m_perPagepdfZoomCache[pageNumber][zoomIndex].cachedPageNumber != pageNumber)

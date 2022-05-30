@@ -1824,16 +1824,6 @@ void UBBoardController::setActiveSceneIndex(int i)
     mActiveSceneIndex = i;
 }
 
-void UBBoardController::documentSceneChanged(UBDocumentProxy* pDocumentProxy, int pIndex)
-{
-    Q_UNUSED(pIndex);
-
-    if(selectedDocument() == pDocumentProxy)
-    {
-        setActiveDocumentScene(mActiveSceneIndex);
-    }
-}
-
 void UBBoardController::autosaveTimeout()
 {
     if (UBApplication::applicationController->displayMode() != UBApplicationController::Board) {

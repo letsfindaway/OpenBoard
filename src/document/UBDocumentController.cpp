@@ -1648,19 +1648,15 @@ void UBDocumentTreeView::rowsAboutToBeRemoved(const QModelIndex &parent, int sta
 
 bool UBDocumentTreeView::isAcceptable(const QModelIndex &dragIndex, const QModelIndex &atIndex)
 {
+    Q_UNUSED(atIndex)
+
     QModelIndex dragIndexSource = mapIndexToSource(dragIndex);
-    QModelIndex atIndexSource = mapIndexToSource(atIndex);
 
     if (!dragIndexSource.isValid()) {
         return false;
     }
 
     return true;
-}
-
-Qt::DropAction UBDocumentTreeView::acceptableAction(const QModelIndex &dragIndex, const QModelIndex &atIndex)
-{    
-    return Qt::MoveAction;
 }
 
 void UBDocumentTreeView::updateIndexEnvirons(const QModelIndex &index)
@@ -3261,19 +3257,6 @@ void UBDocumentController::pageSelectionChanged()
         itemSelectionChanged(None);
 }
 
-void UBDocumentController::documentSceneChanged(UBDocumentProxy* proxy, int pSceneIndex)
-{
-    Q_UNUSED(pSceneIndex);
-    QModelIndexList sel = mDocumentUI->documentTreeView->selectionModel()->selectedRows(0);
-
-    QModelIndex selection;
-    if(sel.count() > 0){
-        selection = sel.first();
-    }
-
-    TreeViewSelectionChanged(selection, QModelIndex());
-}
-
 void UBDocumentController::thumbnailPageDoubleClicked(QGraphicsItem* item, int index)
 {
     UBDocumentTreeModel *docModel = UBPersistenceManager::persistenceManager()->mDocumentTreeStructureModel;
@@ -3504,6 +3487,8 @@ void UBDocumentController::paste()
 
 void UBDocumentController::focusChanged(QWidget *old, QWidget *current)
 {
+    Q_UNUSED(old)
+
     UBDocumentTreeModel *treeModel = UBPersistenceManager::persistenceManager()->mDocumentTreeStructureModel;
 
     if (current == mDocumentUI->thumbnailWidget)
@@ -3594,7 +3579,6 @@ void UBDocumentController::updateActions()
     updateExportSubActions(selectedIndex);
 
     bool firstSceneSelected = false;
-    bool everyPageSelected = false;
 
     if (docSelected) {
         mMainWindow->actionDuplicate->setEnabled(!trashSelected);

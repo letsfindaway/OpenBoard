@@ -255,7 +255,7 @@ void UBGraphicsTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void UBGraphicsTextItem::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 {
-
+    Q_UNUSED(event)
 }
 
 void UBGraphicsTextItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
