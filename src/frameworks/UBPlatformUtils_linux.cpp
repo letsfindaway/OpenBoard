@@ -46,7 +46,7 @@ void UBPlatformUtils::init()
 
 QString UBPlatformUtils::applicationResourcesDirectory()
 {
-    return QApplication::applicationDirPath();
+    return APP_PREFIX;
 }
 
 void UBPlatformUtils::hideFile(const QString &filePath)
