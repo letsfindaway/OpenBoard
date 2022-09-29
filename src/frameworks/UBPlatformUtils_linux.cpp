@@ -31,6 +31,7 @@
 
 #include <QtGui>
 #include <QApplication>
+#include <QProcessEnvironment>
 
 #include <unistd.h>
 #include <X11/keysym.h>
@@ -46,7 +47,7 @@ void UBPlatformUtils::init()
 
 QString UBPlatformUtils::applicationResourcesDirectory()
 {
-    return APP_PREFIX;
+    return QProcessEnvironment::systemEnvironment().value("APP_PREFIX", APP_PREFIX);
 }
 
 void UBPlatformUtils::hideFile(const QString &filePath)
