@@ -72,6 +72,7 @@ include(plugins/plugins.pri)
 INCLUDEPATH += plugins/cffadaptor/src
 
 FORMS += resources/forms/mainWindow.ui \
+   resources/forms/pdfExport.ui \
    resources/forms/preferences.ui \
    resources/forms/brushProperties.ui \
    resources/forms/documents.ui \
