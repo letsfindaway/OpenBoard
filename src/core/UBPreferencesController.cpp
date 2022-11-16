@@ -85,6 +85,7 @@ UBPreferencesController::UBPreferencesController(QWidget *parent)
     mPreferencesWindow = new UBPreferencesDialog(this,parent, Qt::Dialog);
     mPreferencesUI = new Ui::preferencesDialog();  // deleted in destructor
     mPreferencesUI->setupUi(mPreferencesWindow);
+    mPreferencesUI->softwareUpdateGroupBox->hide();     // disable check for software update
     adjustScreensPreferences();
 
     connect(UBApplication::displayManager, &UBDisplayManager::availableScreenCountChanged, this, &UBPreferencesController::adjustScreensPreferences);
