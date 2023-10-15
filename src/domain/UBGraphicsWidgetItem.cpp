@@ -693,7 +693,7 @@ void UBGraphicsWidgetItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 /*
  * workaround for a bug related to (at least) QTBUG-79216 - to be removed when bug is fixed
 */
-QString UBGraphicsWidgetItem::getAccentedLetter(Qt::Key deadKey, const QString &letter) const
+QString UBGraphicsWidgetItem::getAccentedLetter(Qt::Key deadKey, const QString &letter)
 {
     // suppress blank after dead key
     const QString combined = sDeadKeys.value(deadKey, "") + (letter == " " ? "" : letter);

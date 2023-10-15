@@ -170,17 +170,6 @@ class UBGraphicsWidgetItem : public QGraphicsProxyWidget, public UBItem, public 
         QUrl mWidgetUrl;
         QMap<QString, QString> mDatastore;
         QMap<QString, QString> mPreferences;
-#ifndef Q_OS_WIN
-        /*
-         * workaround for QTBUG-79216 - to be removed when bug is fixed
-        */
-        Qt::Key mLastDeadKey{Qt::Key_unknown};
-
-        static const QMap<Qt::Key, QString> sDeadKeys;
-        static const QMap<QString, QString> sAccentedCharacters;
-
-        QString getAccentedLetter(Qt::Key deadKey, const QString& letter) const;
-#endif
 
         virtual bool event(QEvent *event) override;
         virtual void dropEvent(QGraphicsSceneDragDropEvent *event) override;
@@ -212,6 +201,18 @@ class UBGraphicsWidgetItem : public QGraphicsProxyWidget, public UBItem, public 
         QPointF mLastMousePos;
         QUrl mOwnFolder;
         QUrl mSnapshotFile;
+
+#ifndef Q_OS_WIN
+        /*
+         * workaround for QTBUG-79216 - to be removed when bug is fixed
+        */
+        Qt::Key mLastDeadKey{Qt::Key_unknown};
+
+        static const QMap<Qt::Key, QString> sDeadKeys;
+        static const QMap<QString, QString> sAccentedCharacters;
+
+        static QString getAccentedLetter(Qt::Key deadKey, const QString& letter);
+#endif
 
         static bool sInlineJavaScriptLoaded;
         static QStringList sInlineJavaScripts;
