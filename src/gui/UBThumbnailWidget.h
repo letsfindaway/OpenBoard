@@ -610,7 +610,7 @@ class UBDraggableLivePixmapItem : public UBDraggableThumbnailItem
         bool isExposed();
 
     public slots:
-        void updatePixmap(const QRectF &region = QRectF());
+        void updatePixmap(const QRectF &region = QRectF(), bool affectsWholeScene = false);
 
     private:
         static const int sSelectionItemMargin = 5;
@@ -622,6 +622,7 @@ class UBDraggableLivePixmapItem : public UBDraggableThumbnailItem
         QTransform mTransform;
         QTimer updateTimer;
         int updateCount;
+        QTimer holdoffTimer;
 };
 
 namespace UBThumbnailUI

@@ -73,7 +73,7 @@ signals:
     void resized(QResizeEvent* event);
     void shown();
     void mouseReleased();
-    void painted(const QRectF region);
+    void painted(const QRectF region, bool affectsWholeScene);
 
 protected:
 

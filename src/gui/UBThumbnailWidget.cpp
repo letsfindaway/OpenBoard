@@ -37,7 +37,7 @@
 #include <QWidget>
 
 #include "board/UBBoardController.h"
-
+#include "board/UBBoardView.h"
 #include "core/UBSettings.h"
 #include "core/UBApplication.h"
 
@@ -1085,6 +1085,10 @@ UBDraggableLivePixmapItem::UBDraggableLivePixmapItem(std::shared_ptr<UBGraphicsS
             updateTimer.stop();
         }
     });
+
+    connect(&holdoffTimer, &QTimer::timeout, this, [this](){
+        updatePixmap(QRectF(), true);
+    });
 }
 
 void UBDraggableLivePixmapItem::updatePos(qreal width, qreal height)
@@ -1181,14 +1185,26 @@ bool UBDraggableLivePixmapItem::isExposed()
     return mExposed;
 }
 
-void UBDraggableLivePixmapItem::updatePixmap(const QRectF &region)
+/**
+ * @brief Update the pixmap of an UBDraggableLivePixmapItem
+ * @param region Update region. Null when called directly, non-null when called by painted event.
+ * @param affectsWholeScene true if scene outside visible area is affected.
+ *
+ * Parameter combinations indicate:
+ *
+ * region   | affectsWholeScene | called by
+ * ---------+-------------------+---------------------------------------------------------
+ * null     | false             | program call to updatePixmap
+ * null     | true              | holdoff timer expired
+ * non-null | false             | painted signal affecting visible area only
+ * non-null | true              | painted signal affecting region outside of visible area
+ */
+void UBDraggableLivePixmapItem::updatePixmap(const QRectF &region, bool affectsWholeScene)
 {
     if (mSize.isValid() && mExposed)
     {
         QPixmap pixmap = this->pixmap();
         QRectF pixmapRect;
-        const auto tool = UBDrawingController::drawingController()->stylusTool();
-        const auto affectsWholeScene = tool == UBStylusTool::Play || tool == UBStylusTool::Selector;
 
         if (region.isNull() || affectsWholeScene)
         {
@@ -1212,10 +1228,43 @@ void UBDraggableLivePixmapItem::updatePixmap(const QRectF &region)
 
         if (pixmapRect.isValid())
         {
-            QPainter painter(&pixmap);
-            QRectF sceneRect = mTransform.inverted().mapRect(pixmapRect);
-            mScene->render(&painter, pixmapRect, sceneRect);
-            setPixmap(pixmap);
+            if (affectsWholeScene)
+            {
+                if (!holdoffTimer.isActive())
+                {
+                    if (region.isNull())
+                    {
+                        // timer expired
+                        QPainter painter(&pixmap);
+                        QRectF sceneRect = mTransform.inverted().mapRect(pixmapRect);
+                        mScene->render(&painter, pixmapRect, sceneRect);
+                        UBApplication::boardController->controlView()->setUpdatesEnabled(false);
+                        setPixmap(pixmap);
+                        UBApplication::boardController->controlView()->setUpdatesEnabled(true);
+                        holdoffTimer.setProperty("armed", false);
+                    }
+                    else
+                    {
+                        // to avoid endless trigger loops, first trigger arms timer, second trigger starts it
+                        if (!holdoffTimer.property("armed").toBool())
+                        {
+                            holdoffTimer.setProperty("armed", true);
+                        }
+                        else
+                        {
+                            holdoffTimer.setSingleShot(true);
+                            holdoffTimer.start(100);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                QPainter painter(&pixmap);
+                QRectF sceneRect = mTransform.inverted().mapRect(pixmapRect);
+                mScene->render(&painter, pixmapRect, sceneRect);
+                setPixmap(pixmap);
+            }
         }
     }
 }

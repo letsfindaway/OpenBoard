@@ -277,12 +277,13 @@ void UBBoardThumbnailsView::mousePressAndHoldEvent(QPoint pos)
     }
 }
 
-void UBBoardThumbnailsView::updateThumbnailPixmap(const QRectF region)
+void UBBoardThumbnailsView::updateThumbnailPixmap(const QRectF region, bool affectsWholeScene)
 {
     int index = UBApplication::boardController->activeSceneIndex();
-    if (mThumbnails.size() > 0)
+
+    if (mThumbnails.size() > index)
     {
-        mThumbnails.at(index)->updatePixmap(region);
+        mThumbnails.at(index)->updatePixmap(region, affectsWholeScene);
     }
 }
 

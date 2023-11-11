@@ -1790,7 +1790,10 @@ void UBBoardView::paintEvent(QPaintEvent *event)
 
     if (event->rect().right() >= paletteWidth)
     {
-        emit painted(mapToScene(event->rect()).boundingRect());
+        const auto tool = UBDrawingController::drawingController()->stylusTool();
+        const auto affectsWholeScene = tool == UBStylusTool::Play || tool == UBStylusTool::Selector;
+
+        emit painted(mapToScene(event->rect()).boundingRect(), affectsWholeScene);
     }
 }
 

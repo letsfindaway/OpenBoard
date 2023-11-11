@@ -58,7 +58,7 @@ public slots:
 
     void longPressTimeout();
     void mousePressAndHoldEvent(QPoint pos);
-    void updateThumbnailPixmap(const QRectF region);
+    void updateThumbnailPixmap(const QRectF region, bool affectsWholeScene);
 
 protected:
     virtual void resizeEvent(QResizeEvent *event);
