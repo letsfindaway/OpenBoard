@@ -1168,14 +1168,12 @@ void UBGraphicsScene::setSceneBackground(bool pIsDark, const UBBackgroundRuling 
         updatePenCircleColor();
         recolorAllItems();
 
-        UBSettings::settings()->setDarkBackground(mDarkBackground);
         needRepaint = true;
     }
 
     if (mBackground != background)
     {
         mBackground = background;
-        UBSettings::settings()->setPageBackgroundUuid(mBackground ? mBackground->uuid() : QUuid{});
         needRepaint = true;
     }
 
