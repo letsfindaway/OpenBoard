@@ -967,6 +967,12 @@ QString UBSettings::userDataDirectory()
             dataDirPath = getAppSettings()->value("App/DataDirectory").toString();
             dataDirPath = replaceWildcard(dataDirPath);
 
+            if (QDir{dataDirPath}.isRelative())
+            {
+                dataDirPath = "{Documents}/" + dataDirPath;
+                dataDirPath = replaceWildcard(dataDirPath);
+            }
+
             if(checkDirectory(dataDirPath))
                 return dataDirPath;
             else
@@ -1420,6 +1426,13 @@ bool UBSettings::checkDirectory(QString& dirPath)
 {
     bool result = true;
     QDir dir(dirPath);
+
+    if (dir.isRelative())
+    {
+        dirPath = QDir::cleanPath(userDataDirectory() + "/" + dirPath);
+        dir.setPath(dirPath);
+    }
+
     if(!dir.exists())
         result = dir.mkpath(dirPath);
     return result;
