@@ -29,6 +29,7 @@
 
 #include "UBPlatformUtils.h"
 
+#include <QtConcurrent>
 #include <QtGui>
 #include <QApplication>
 #include <QDBusConnectionInterface>
@@ -46,6 +47,7 @@
 #include "gui/UBMainWindow.h"
 
 static OnboardListener* listener = nullptr;
+static QElapsedTimer elapsed;
 
 void UBPlatformUtils::init()
 {
@@ -537,6 +539,24 @@ void UBPlatformUtils::showOSK(bool show)
     }
 }
 
+void UBPlatformUtils::grabScreen(QScreen* screen, std::function<void (QPixmap)> callback, QRect rect)
+{
+    QString sessionType = QProcessEnvironment::systemEnvironment().value("XDG_SESSION_TYPE", "");
+
+    if (true || sessionType == "wayland")
+    {
+        WaylandScreenshot* waylandScreenshot = new WaylandScreenshot;
+        waylandScreenshot->grabScreen(screen, callback, rect);
+    }
+    else
+    {
+        // see https://doc.qt.io/qt-6.2/qtwidgets-desktop-screenshot-example.html
+        // for using window id 0
+        QPixmap pixmap = screen->grabWindow(0, rect.x(), rect.y(), rect.width(), rect.height());
+        callback(pixmap);
+    }
+}
+
 OnboardListener::OnboardListener(const QDBusConnection& connection, QObject* parent)
         : QObject{parent}
         , mConnection{connection}
@@ -564,4 +584,53 @@ void OnboardListener::onboardPropertiesChanged(QString interface, QMap<QString, 
             oskAction->trigger();
         }
     }
+}
+
+WaylandScreenshot::WaylandScreenshot(QObject *parent)
+    : QObject(parent)
+{
+}
+
+void WaylandScreenshot::grabScreen(QScreen* screen, std::function<void (QPixmap)> callback, const QRect& rect)
+{
+    elapsed.start();
+    mScreen = screen;
+    mCallback = callback;
+    QDBusInterface screenshotPortal("org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop", "org.freedesktop.portal.Screenshot");
+
+    if (screenshotPortal.isValid())
+    {
+        QMap<QString, QVariant> options;
+        options["handle_token"] = "OpenBoard" + QString::number(QDateTime::currentMSecsSinceEpoch());
+        QDBusReply<QDBusObjectPath> reply = screenshotPortal.call("Screenshot", "", options);
+        QDBusObjectPath objectPath = reply.value();
+        QString path = objectPath.path();
+        QDBusConnection::sessionBus().connect(
+                            "",
+                            path,
+                            "org.freedesktop.portal.Request",
+                            "Response",
+                            "ua{sv}",
+                            this,
+                            SLOT(result(uint,QMap<QString,QVariant>)));
+    }
+    else
+    {
+        qDebug() << "No valid desktop portal";
+        callback(QPixmap{});
+        deleteLater();
+    }
+}
+
+void WaylandScreenshot::result(uint code, QMap<QString,QVariant> res)
+{
+    QUrl uri(res["uri"].toUrl());
+    QFile file(uri.toLocalFile());
+    QPixmap pixmap{file.fileName()};
+    file.remove();
+    qDebug() << "Screenshot took" << elapsed.nsecsElapsed()/1000 << "µs" << file.fileName();
+
+    // cut requested screen
+    mCallback(pixmap.copy(mScreen->geometry()));
+    deleteLater();
 }

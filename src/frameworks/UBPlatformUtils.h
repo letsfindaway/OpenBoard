@@ -35,6 +35,7 @@
 #include <QProcess>
 
 class QMainWindow;
+class QScreen;
 
 #define SYMBOL_KEYS_COUNT 47
 
@@ -212,6 +213,7 @@ public:
         static void setFrontProcess();
         static void showFullScreen(QWidget * pWidget);
         static void showOSK(bool show);
+        static void grabScreen(QScreen* screen, std::function<void(QPixmap)> callback, QRect rect = QRect(0, 0, -1, -1));
 
 #ifdef Q_OS_OSX
         static void SetMacLocaleByIdentifier(const QString& id);
@@ -238,6 +240,21 @@ private:
     QDBusConnection mConnection;
 };
 
+class WaylandScreenshot : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit WaylandScreenshot(QObject *parent = nullptr);
+    void grabScreen(QScreen* screen, std::function<void(QPixmap)> callback, const QRect& rect);
+
+private slots:
+    void result(uint code, QMap<QString, QVariant> res);
+
+private:
+    std::function<void(QPixmap)> mCallback;
+    QScreen* mScreen;
+};
 #endif
 
 
