@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Département de l'Instruction Publique (DIP-SEM)
+ * Copyright (C) 2015-2024 Département de l'Instruction Publique (DIP-SEM)
  *
  * Copyright (C) 2013 Open Education Foundation
  *
@@ -25,53 +25,34 @@
  */
 
 
+#pragma once
 
+#include <QQuickWidget>
 
-#ifndef UBSCREENMIRROR_H_
-#define UBSCREENMIRROR_H_
+// forward
+typedef struct _GstElement GstElement;
 
-#include <QtGui>
-#include <QWidget>
-
-// forwaed
-class UBDesktopPortal;
-class UBGstPlayer;
-
-class UBScreenMirror : public QWidget
+class UBGstPlayer : public QQuickWidget
 {
     Q_OBJECT
 
-    public:
-        UBScreenMirror(QWidget* parent = 0);
-        virtual ~UBScreenMirror();
+public:
+    UBGstPlayer(QWidget* parent = nullptr);
+    virtual ~UBGstPlayer();
 
-        virtual void paintEvent (QPaintEvent * event);
-        virtual void timerEvent(QTimerEvent *event);
+    void setStream(qint64 fd, const QString& path);
+    void play();
+    void stop();
 
-    public slots:
+protected:
+    void resizeEvent(QResizeEvent *event) override;
 
-        void setSourceWidget(QWidget *sourceWidget);
+private:
+    GstElement* createPipeline(qint64 fd, const QString& path) const;
 
-        void start();
-
-        void stop();
-
-    private:
-
-        void grabPixmap();
-        void startScreenCast();
-        void playStream(qint64 fd, const QString& path);
-
-    private:
-
-        QWidget* mSourceWidget;
-
-        QPixmap mLastPixmap;
-
-        long mTimerID;
-
-        UBDesktopPortal* mPortal{nullptr};
-        UBGstPlayer* mPlayer{nullptr};
+private:
+    qint64 mFd{0};
+    QString mPath;
+    GstElement* mPipeline{nullptr};
 };
 
-#endif /* UBSCREENMIRROR_H_ */

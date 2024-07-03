@@ -7,6 +7,8 @@ set(QT_COMPONENTS
     MultimediaWidgets
     Network
     PrintSupport
+    Quick
+    QuickWidgets
     Svg
     UiTools
     WebEngineWidgets

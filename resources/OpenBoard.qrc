@@ -397,5 +397,6 @@
         <file>images/removeFromFavorites.png</file>
         <file>images/toolbar/tip.png</file>
         <file>images/moveTool.svg</file>
+        <file>gstvideo.qml</file>
     </qresource>
 </RCC>

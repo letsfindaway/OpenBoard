@@ -33,6 +33,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     UBFeaturesWidget.h
     UBFloatingPalette.cpp
     UBFloatingPalette.h
+    UBGstPlayer.cpp
+    UBGstPlayer.h
     UBIconButton.cpp
     UBIconButton.h
     UBKeyboardPalette.cpp

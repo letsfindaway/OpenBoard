@@ -19,6 +19,8 @@ target_sources(openboard PRIVATE
 
 if(CMAKE_SYSTEM_NAME STREQUAL Linux)
     target_sources(openboard PRIVATE
+        UBDesktopPortal.cpp
+        UBDesktopPortal.h
         UBPlatformUtils_linux.cpp
     )
 endif()

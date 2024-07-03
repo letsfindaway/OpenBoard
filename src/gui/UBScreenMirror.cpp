@@ -33,6 +33,8 @@
 #include "core/UBApplication.h"
 #include "core/UBDisplayManager.h"
 #include "board/UBBoardController.h"
+#include "frameworks/UBDesktopPortal.h"
+#include "gui/UBGstPlayer.h"
 
 #if defined(Q_OS_OSX)
 #include <ApplicationServices/ApplicationServices.h>
@@ -101,6 +103,38 @@ void UBScreenMirror::grabPixmap()
     }
 }
 
+void UBScreenMirror::startScreenCast()
+{
+    // use UBDesktopPortal and UBGstPlayer
+    if (!mPortal)
+    {
+        mPortal = new UBDesktopPortal(this);
+
+        connect(mPortal, &UBDesktopPortal::streamStarted, this, &UBScreenMirror::playStream);
+        connect(mPortal, &UBDesktopPortal::screenCastAborted, this, [](){
+            UBApplication::applicationController->mirroringEnabled(false);
+        });
+    }
+
+    mPortal->startScreenCast(true);
+}
+
+void UBScreenMirror::playStream(qint64 fd, const QString& path)
+{
+    qDebug() << "Start stream player";
+
+    if (!mPlayer)
+    {
+        mPlayer = new UBGstPlayer(this);
+    }
+
+    mPlayer->setStream(fd, path);
+    mPlayer->move(0, 0);
+    mPlayer->resize(this->size());
+    mPlayer->play();
+    mPlayer->show();
+}
+
 
 void UBScreenMirror::setSourceWidget(QWidget *sourceWidget)
 {
@@ -116,6 +150,17 @@ void UBScreenMirror::start()
 {
     qDebug() << "mirroring START";
     UBApplication::boardController->freezeW3CWidgets(true);
+
+    QString sessionType = QProcessEnvironment::systemEnvironment().value("XDG_SESSION_TYPE", "");
+
+    if (mSourceWidget == nullptr && sessionType == "wayland")
+    {
+        // use desktop portal to start a screencast
+        mLastPixmap = {};
+        startScreenCast();
+        return;
+    }
+
     if (mTimerID == 0)
     {
         int ms = 125;
@@ -145,5 +190,17 @@ void UBScreenMirror::stop()
     {
         killTimer(mTimerID);
         mTimerID = 0;
+    }
+
+    if (mPlayer)
+    {
+        mPlayer->stop();
+        mPlayer->hide();
+        mPlayer->resize(1024, 768);
+    }
+
+    if (mPortal)
+    {
+        mPortal->stopScreenCast();
     }
 }
