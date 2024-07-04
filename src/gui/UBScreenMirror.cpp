@@ -192,15 +192,15 @@ void UBScreenMirror::stop()
         mTimerID = 0;
     }
 
+    if (mPortal)
+    {
+        mPortal->stopScreenCast();
+    }
+
     if (mPlayer)
     {
         mPlayer->stop();
         mPlayer->hide();
         mPlayer->resize(1024, 768);
-    }
-
-    if (mPortal)
-    {
-        mPortal->stopScreenCast();
     }
 }

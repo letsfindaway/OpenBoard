@@ -37,6 +37,10 @@
 #include "core/UBApplicationController.h"
 #include "desktop/UBDesktopAnnotationController.h"
 
+enum : uint { MONITOR = 1, WINDOW = 2, VIRTUAL = 4 } SourceType;
+enum : uint { HIDDEN = 1, EMBEDDED = 2, METADATA = 4 } CursorMode;
+enum : uint { TRANSIENT = 0, APPLICATION = 1, PERSISTENT = 2 } PersistMode;
+
 Q_DECLARE_METATYPE(UBDesktopPortal::Stream)
 Q_DECLARE_METATYPE(UBDesktopPortal::Streams)
 
@@ -76,6 +80,40 @@ UBDesktopPortal::~UBDesktopPortal()
     }
 }
 
+void UBDesktopPortal::grabScreen(QScreen* screen, const QRect& rect)
+{
+    mScreenRect = screen->geometry();
+
+    if (!rect.isNull())
+    {
+        mScreenRect = rect.translated(mScreenRect.topLeft());
+    }
+
+    QDBusInterface screenshotPortal("org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop", "org.freedesktop.portal.Screenshot");
+
+    if (screenshotPortal.isValid())
+    {
+        QMap<QString, QVariant> options;
+        options["handle_token"] = createRequestToken();
+        QDBusReply<QDBusObjectPath> reply = screenshotPortal.call("Screenshot", "", options);
+        QDBusObjectPath objectPath = reply.value();
+        QString path = objectPath.path();
+        QDBusConnection::sessionBus().connect(
+                            "",
+                            path,
+                            "org.freedesktop.portal.Request",
+                            "Response",
+                            "ua{sv}",
+                            this,
+                            SLOT(handleScreenshotResponse(uint,QMap<QString,QVariant>)));
+    }
+    else
+    {
+        qDebug() << "No valid screenshot portal";
+        emit screenGrabbed(QPixmap{});
+    }
+}
+
 void UBDesktopPortal::startScreenCast(bool withCursor)
 {
     mWithCursor = withCursor;
@@ -88,9 +126,13 @@ void UBDesktopPortal::startScreenCast(bool withCursor)
     }
 
     // Create ScreenCast session
+    QString requestToken = createRequestToken();
     QMap<QString, QVariant> options;
     options["session_handle_token"] = createSessionToken();
-    options["handle_token"] = createRequestToken();
+    options["handle_token"] = requestToken;
+
+    QDBusConnection::sessionBus().connect("", mRequestPath + requestToken, "org.freedesktop.portal.Request", "Response", "ua{sv}", this,
+                                          SLOT(handleCreateSessionResponse(uint,QMap<QString,QVariant>)));
 
     const QDBusReply<QDBusObjectPath> reply = portal->call("CreateSession", options);
 
@@ -101,12 +143,6 @@ void UBDesktopPortal::startScreenCast(bool withCursor)
         emit screenCastAborted();
         return;
     }
-
-    const QDBusObjectPath objectPath = reply.value();
-    const QString path = objectPath.path();
-    qDebug() << "CreateSession response" << path;
-    QDBusConnection::sessionBus().connect("", path, "org.freedesktop.portal.Request", "Response", "ua{sv}", this,
-                                          SLOT(handleCreateSessionResponse(uint,QMap<QString,QVariant>)));
 }
 
 void UBDesktopPortal::stopScreenCast()
@@ -126,11 +162,31 @@ void UBDesktopPortal::stopScreenCast()
         {
             qWarning() << "Couldn't get reply to ScreenCast/Close";
             qWarning() << "Error: " << reply.error().message();
+            mSession.clear();
             return;
         }
-
-        mSession.clear();
     }
+}
+
+void UBDesktopPortal::handleScreenshotResponse(uint code, const QMap<QString, QVariant>& results)
+{
+    QUrl uri(results["uri"].toUrl());
+    QFile file(uri.toLocalFile());
+
+    if (!file.exists())
+    {
+        qDebug() << "Screenshot image file does not exist";
+        emit screenGrabbed(QPixmap{});
+        return;
+    }
+
+    QPixmap pixmap{file.fileName()};
+    file.remove();
+
+    // cut requested screen
+    QPixmap screenshot = pixmap.copy(mScreenRect);
+
+    emit screenGrabbed(screenshot);
 }
 
 void UBDesktopPortal::handleCreateSessionResponse(uint response, const QVariantMap& results)
@@ -152,17 +208,22 @@ void UBDesktopPortal::handleCreateSessionResponse(uint response, const QVariantM
     }
 
     // Select sources
+    QString requestToken = createRequestToken();
     QMap<QString, QVariant> options;
     options["multiple"] = false;
-    options["types"] = uint(1);
-    options["cursor_mode"] = uint(mWithCursor ? 2 : 1);
-    options["handle_token"] = createRequestToken();
-    options["persist_mode"] = uint(2);
+    options["types"] = MONITOR;
+    options["cursor_mode"] = mWithCursor ? EMBEDDED : HIDDEN;
+    options["handle_token"] = requestToken;
+    options["persist_mode"] = PERSISTENT;
 
     if (!mRestoreToken.isEmpty())
     {
         options["restore_token"] = mRestoreToken;
     }
+
+    // connect before call
+    QDBusConnection::sessionBus().connect("", mRequestPath + requestToken, "org.freedesktop.portal.Request", "Response", "ua{sv}", this,
+                                          SLOT(handleSelectSourcesResponse(uint,QMap<QString,QVariant>)));
 
     const QDBusReply<QDBusObjectPath> reply = portal->call("SelectSources", QDBusObjectPath(mSession), options);
 
@@ -173,12 +234,6 @@ void UBDesktopPortal::handleCreateSessionResponse(uint response, const QVariantM
         emit screenCastAborted();
         return;
     }
-
-    const QDBusObjectPath objectPath = reply.value();
-    const QString path = objectPath.path();
-    qDebug() << "SelectSources response" << path;
-    QDBusConnection::sessionBus().connect("", path, "org.freedesktop.portal.Request", "Response", "ua{sv}", this,
-                                          SLOT(handleSelectSourcesResponse(uint,QMap<QString,QVariant>)));
 }
 
 void UBDesktopPortal::handleSelectSourcesResponse(uint response, const QVariantMap& results)
@@ -200,8 +255,13 @@ void UBDesktopPortal::handleSelectSourcesResponse(uint response, const QVariantM
     }
 
     // Start ScreenCast
+    QString requestToken = createRequestToken();
     QMap<QString, QVariant> options;
-    options["handle_token"] = createRequestToken();
+    options["handle_token"] = requestToken;
+
+    QDBusConnection::sessionBus().connect("", mRequestPath + requestToken, "org.freedesktop.portal.Request", "Response", "ua{sv}", this,
+                                          SLOT(handleStartResponse(uint,QMap<QString,QVariant>)));
+
     const QDBusReply<QDBusObjectPath> reply = portal->call("Start", QDBusObjectPath(mSession), "", options);
 
     if (!reply.isValid())
@@ -212,15 +272,8 @@ void UBDesktopPortal::handleSelectSourcesResponse(uint response, const QVariantM
         return;
     }
 
-    const QDBusObjectPath objectPath = reply.value();
-    const QString path = objectPath.path();
-    qDebug() << "Start response" << path;
-
     // Hide annotation drawing view in desktop mode so that portal dialog is topmost
     showGlassPane(false);
-
-    QDBusConnection::sessionBus().connect("", path, "org.freedesktop.portal.Request", "Response", "ua{sv}", this,
-                                          SLOT(handleStartResponse(uint,QMap<QString,QVariant>)));
 }
 
 void UBDesktopPortal::handleStartResponse(uint response, const QVariantMap& results)
@@ -276,6 +329,9 @@ QDBusInterface* UBDesktopPortal::screencastPortal()
         mScreencastPortal = new QDBusInterface("org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop",
                                                "org.freedesktop.portal.ScreenCast");
         mScreencastPortal->setParent(this);
+
+        mRequestPath = "/org/freedesktop/portal/desktop/request/" + mScreencastPortal->connection().baseService().remove(0, 1).replace('.', '_') + "/";
+        qDebug() << "request path" << mRequestPath;
     }
 
     if (mScreencastPortal->isValid())

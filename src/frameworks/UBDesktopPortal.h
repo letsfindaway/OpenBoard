@@ -28,10 +28,12 @@
 #pragma once
 
 #include <QObject>
+#include <QRect>
 #include <QVariantMap>
 
 // forward
 class QDBusInterface;
+class QScreen;
 
 class UBDesktopPortal : public QObject
 {
@@ -48,15 +50,19 @@ public:
     explicit UBDesktopPortal(QObject* parent = nullptr);
     virtual ~UBDesktopPortal();
 
+    void grabScreen(QScreen* screen, const QRect& rect = {});
+
 public slots:
     void startScreenCast(bool withCursor);
     void stopScreenCast();
 
 signals:
+    void screenGrabbed(QPixmap pixmap);
     void streamStarted(qint64 fd, QString path);
     void screenCastAborted();
 
 private slots:
+    void handleScreenshotResponse(uint code, const QMap<QString, QVariant>& results);
     void handleCreateSessionResponse(uint response, const QVariantMap& results);
     void handleSelectSourcesResponse(uint response, const QVariantMap& results);
     void handleStartResponse(uint response, const QVariantMap& results);
@@ -68,8 +74,10 @@ private:
     void showGlassPane(bool show) const;
 
 private:
+    QRect mScreenRect;
     bool mWithCursor{false};
     QString mSession;
+    QString mRequestPath;
     QString mRestoreToken;
     QDBusInterface* mScreencastPortal{nullptr};
 };
