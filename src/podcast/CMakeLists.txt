@@ -26,5 +26,7 @@ else()
         ffmpeg/UBFFmpegVideoEncoder.h
         ffmpeg/UBMicrophoneInput.cpp
         ffmpeg/UBMicrophoneInput.h
+        gstreamer/UBGstVideoEncoder.cpp
+        gstreamer/UBGstVideoEncoder.h
     )
 endif()

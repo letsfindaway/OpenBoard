@@ -67,6 +67,7 @@
 #elif defined(Q_OS_LINUX)
     #include "ffmpeg/UBFFmpegVideoEncoder.h"
     #include "ffmpeg/UBMicrophoneInput.h"
+    #include "gstreamer/UBGstVideoEncoder.h"
 #endif
 
 #include "core/memcheck.h"
@@ -316,7 +317,8 @@ void UBPodcastController::start()
 #elif defined(Q_OS_OSX)
         mVideoEncoder = new UBFFmpegVideoEncoder(this);
 #elif defined(Q_OS_LINUX)
-        mVideoEncoder = new UBFFmpegVideoEncoder(this);
+//        mVideoEncoder = new UBFFmpegVideoEncoder(this);
+        mVideoEncoder = new UBGstVideoEncoder(this);
 #endif
 
         if (mVideoEncoder)
