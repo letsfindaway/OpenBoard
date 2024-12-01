@@ -262,6 +262,24 @@ public:
         bool ProcessDropEvent(QGraphicsSceneDragDropEvent *);
         bool isDropableData(const QMimeData *pMimeData) const;
 
+        // cursor control
+        /**
+         * @brief Move cursor to the given position in widget coordinates
+         * @param x
+         * @param y
+         */
+        void moveCursor(double x, double y);
+
+        /**
+         * @brief Send a mouseDown event at the current cursor position
+         */
+        void mouseDown();
+
+        /**
+         * @brief Send a mouseUp event at the current cursor position
+         */
+        void mouseUp();
+
 signals:
         void dropDataChanged(const QString& data);
 

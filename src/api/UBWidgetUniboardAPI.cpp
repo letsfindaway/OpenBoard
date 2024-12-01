@@ -32,6 +32,7 @@
 #include <QDomDocument>
 #include <QtGui>
 
+#include "board/UBBoardView.h"
 #include "core/UB.h"
 #include "core/UBApplication.h"
 #include "core/UBSettings.h"
@@ -704,6 +705,48 @@ bool UBWidgetUniboardAPI::isDropableData(const QMimeData *pMimeData) const
         return true;
 
     return false;
+}
+
+void UBWidgetUniboardAPI::moveCursor(double x, double y)
+{
+    // map to scene coordinates
+    const auto scenePoint = mGraphicsWidget->mapToScene(x, y);
+
+    // map to view coordinates
+    const auto viewPoint = UBApplication::boardController->controlView()->mapFromScene(scenePoint);
+
+    // map to global coordinates
+    const auto globalPoint = UBApplication::boardController->controlView()->mapToGlobal(viewPoint);
+
+    QCursor::setPos(globalPoint);
+}
+
+void UBWidgetUniboardAPI::mouseDown()
+{
+    const auto globalPoint = QCursor::pos();
+
+    // map to view coordinates
+    const auto viewPoint = UBApplication::boardController->controlView()->mapFromGlobal(globalPoint);
+
+    // create a QMouseEvent and sent it to the widget at the cursor position
+    QMouseEvent* event = new QMouseEvent(QMouseEvent::MouseButtonPress, viewPoint, globalPoint, Qt::LeftButton, {Qt::LeftButton}, {});
+
+    QWidget* receiver = QApplication::widgetAt(globalPoint);
+    UBApplication::postEvent(receiver, event);
+}
+
+void UBWidgetUniboardAPI::mouseUp()
+{
+    const auto globalPoint = QCursor::pos();
+
+    // map to view coordinates
+    const auto viewPoint = UBApplication::boardController->controlView()->mapFromGlobal(globalPoint);
+
+    // create a QMouseEvent and sent it to the widget at the cursor position
+    QMouseEvent* event = new QMouseEvent(QMouseEvent::MouseButtonRelease, viewPoint, globalPoint, Qt::LeftButton, {}, {});
+
+    QWidget* receiver = QApplication::widgetAt(globalPoint);
+    UBApplication::postEvent(receiver, event);
 }
 
 
