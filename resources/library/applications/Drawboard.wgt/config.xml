@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" 
+        xmlns:ub="http://uniboard.mnemis.com/widgets"
+        id="http://letsfindaway.de/widgets/drawboard"
+        version="1.0"
+        width="600"
+        height="400"
+        ub:roles="tool overlay"
+        ub:resizable="true"
+        ub:transparent="true">
+    <name>Drawboard</name>
+    <author email="me@letsfindaway.de">Martin Winter</author>
+    <description>Drawboard client</description>
+    <content src="index.html"/>
+</widget>

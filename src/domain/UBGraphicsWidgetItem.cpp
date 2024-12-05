@@ -283,6 +283,11 @@ void UBGraphicsWidgetItem::setCanBeTool(bool tool)
     mCanBeTool = tool;
 }
 
+bool UBGraphicsWidgetItem::isOverlay() const
+{
+    return mCanBeTool & UBGraphicsWidgetItem::type_OVERLAY;
+}
+
 QString UBGraphicsWidgetItem::preference(const QString& key) const
 {
     return mPreferences.value(key);
@@ -1103,6 +1108,9 @@ UBGraphicsW3CWidgetItem::UBGraphicsW3CWidgetItem(const QUrl& pWidgetUrl, QGraphi
 
         if (roles.contains("tunix"))
             mCanBeTool |= UBGraphicsWidgetItem::type_UNIX;
+
+        if (roles.contains("overlay"))
+            mCanBeTool |= UBGraphicsWidgetItem::type_OVERLAY;
 
         /* --------- */
 

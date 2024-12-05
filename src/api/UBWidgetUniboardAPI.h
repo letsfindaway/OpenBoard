@@ -81,6 +81,11 @@ class UBWidgetUniboardAPI : public QObject
      */
     Q_PROPERTY(QString lang READ lang SCRIPTABLE true CONSTANT)
 
+    /**
+     * Returns true if the API belongs to a tool widget.
+     */
+    Q_PROPERTY(bool isTool READ isTool SCRIPTABLE true CONSTANT);
+
     Q_PROPERTY(QObject* messages READ messages SCRIPTABLE true CONSTANT)
 
     Q_PROPERTY(QObject* datastore READ datastore SCRIPTABLE true CONSTANT)
@@ -88,7 +93,7 @@ class UBWidgetUniboardAPI : public QObject
     Q_PROPERTY(QString dropData MEMBER mDropData WRITE setDropData NOTIFY dropDataChanged SCRIPTABLE true)
 
 public:
-        UBWidgetUniboardAPI(std::shared_ptr<UBGraphicsScene> pScene, UBGraphicsWidgetItem *widget = 0);
+        UBWidgetUniboardAPI(std::shared_ptr<UBGraphicsScene> pScene, UBGraphicsWidgetItem *widget = 0, bool isTool = false);
         ~UBWidgetUniboardAPI();
 
         QObject* messages() const;
@@ -280,11 +285,21 @@ public:
          */
         void mouseUp();
 
+        // scene management
+        /**
+         * @brief Send scene updates
+         * @param send
+         */
+        void sendSceneUpdates(bool send);
+
 signals:
         void dropDataChanged(const QString& data);
 
+        void sceneUpdated(double x, double y, double w, double h, QString img);
+
 private slots:
         void onDownloadFinished(bool pSuccess, sDownloadFileDesc desc, QByteArray pData);
+        void onSceneUpdated(QRectF region);
 
 private:
         inline void registerIDWidget(int id){webDownloadIds.append(id);}
@@ -293,6 +308,8 @@ private:
         QString uuid() const;
 
         QString lang() const;
+
+        bool isTool() const;
 
         void setDropData(const QString& data);
 
@@ -313,6 +330,10 @@ private:
         QList<int> webDownloadIds;
         bool mProcessFileDrop;
         QString mDropData;
+        bool mIsTool{false};
+        QRectF mRenderRect{};
+        QElapsedTimer mLastRendered;
+        QTimer mRenderTimer;
 };
 
 

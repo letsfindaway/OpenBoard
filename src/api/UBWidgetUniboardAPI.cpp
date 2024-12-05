@@ -80,10 +80,11 @@ const QString tMimeText = "text/plain";
 //Name of path inside widget to store objects
 const QString objectsPath = "objects";
 
-UBWidgetUniboardAPI::UBWidgetUniboardAPI(std::shared_ptr<UBGraphicsScene> pScene, UBGraphicsWidgetItem *widget)
+UBWidgetUniboardAPI::UBWidgetUniboardAPI(std::shared_ptr<UBGraphicsScene> pScene, UBGraphicsWidgetItem *widget, bool isTool)
     : QObject(pScene.get())
     , mScene(pScene)
     , mGraphicsWidget(widget)
+    , mIsTool(isTool)
     , mIsVisible(false)
     , mMessagesAPI(nullptr)
     , mDatastoreAPI(nullptr)
@@ -98,6 +99,11 @@ UBWidgetUniboardAPI::UBWidgetUniboardAPI(std::shared_ptr<UBGraphicsScene> pScene
     }
 
     connect(UBDownloadManager::downloadManager(), SIGNAL(downloadFinished(bool,sDownloadFileDesc,QByteArray)), this, SLOT(onDownloadFinished(bool,sDownloadFileDesc,QByteArray)));
+
+    mRenderTimer.setSingleShot(true);
+    mRenderTimer.callOnTimeout(this, [this](){
+        onSceneUpdated({});
+    });
 }
 
 
@@ -479,6 +485,11 @@ QString UBWidgetUniboardAPI::lang() const
     return lang;
 }
 
+bool UBWidgetUniboardAPI::isTool() const
+{
+    return mIsTool;
+}
+
 void UBWidgetUniboardAPI::sendFileMetadata(QString metaData)
 {
     //  Build the QMap of metadata and send it to application
@@ -642,6 +653,74 @@ void UBWidgetUniboardAPI::onDownloadFinished(bool pSuccess, sDownloadFileDesc de
     readyEvent.acceptProposedAction();
 }
 
+void UBWidgetUniboardAPI::onSceneUpdated(QRectF region)
+{
+    auto scene = mScene.lock();
+
+    if (scene && !mGraphicsWidget->isFrozen() && (mGraphicsWidget->isWebActive() || mIsTool) && mGraphicsWidget->hasLoadedSuccessfully())
+    {
+        if (region.isNull())
+        {
+            return;
+        }
+
+        mRenderRect |= region;
+
+        // collect region over some time
+        if (mLastRendered.isValid() && mLastRendered.elapsed() < 1000)
+        {
+            return;
+        }
+
+        // create pixmap from updated scene region
+        auto sceneRect = mRenderRect;
+
+        /*
+         * To avoid problems with antialiaing we have to make sure that the
+         * pixmapRect has an integer size and position and covers at least
+         * the affected region. The following steps assure this.
+         */
+        auto pixmapRect = (sceneRect + QMarginsF(1, 1, 1, 1)).toRect();
+        pixmapRect.moveTo(0, 0);
+
+        if (pixmapRect.isValid())
+        {
+            QPixmap pixmap({pixmapRect.size()});
+            pixmap.fill(Qt::transparent);
+            QPainter painter(&pixmap);
+
+            // do not render tools
+            auto renderingContext = scene->renderingContext();
+            scene->setRenderingContext(UBGraphicsScene::NonScreen);
+            qDebug() << pixmapRect << sceneRect;
+            scene->render(&painter, pixmapRect, sceneRect);
+            scene->setRenderingContext(renderingContext);
+
+            // Convert QPixmap to QImage
+            QImage image = pixmap.toImage();
+
+            // Create a buffer to hold the image data
+            QBuffer buffer;
+            buffer.open(QBuffer::WriteOnly);
+
+            // Save the image to the buffer in PNG format
+            image.save(&buffer, "png");
+
+            // Create data URL
+            QString dataUrl = QString("data:image/png;base64,%1").arg(buffer.data().toBase64());
+
+            emit sceneUpdated(mRenderRect.x(), mRenderRect.y(), mRenderRect.width(), mRenderRect.height(), dataUrl);
+        }
+
+        // reset timer and rect
+        mLastRendered.start();
+        mRenderRect = {};
+
+        // render at most after that time
+        mRenderTimer.start(1500);
+    }
+}
+
 QString UBWidgetUniboardAPI::createMimeText(bool downloaded, const QString &mimeType, const QString &fileName)
 {
     QString mimeXml;
@@ -728,11 +807,14 @@ void UBWidgetUniboardAPI::mouseDown()
     // map to view coordinates
     const auto viewPoint = UBApplication::boardController->controlView()->mapFromGlobal(globalPoint);
 
-    // create a QMouseEvent and sent it to the widget at the cursor position
+    // create a QMouseEvent and sent it to the view, but not to the originating web widget
     QMouseEvent* event = new QMouseEvent(QMouseEvent::MouseButtonPress, viewPoint, globalPoint, Qt::LeftButton, {Qt::LeftButton}, {});
 
+    const auto acceptedMouseButttons = mGraphicsWidget->acceptedMouseButtons();
+    mGraphicsWidget->setAcceptedMouseButtons({});
     QWidget* receiver = QApplication::widgetAt(globalPoint);
-    UBApplication::postEvent(receiver, event);
+    UBApplication::sendEvent(receiver, event);
+    mGraphicsWidget->setAcceptedMouseButtons(acceptedMouseButttons);
 }
 
 void UBWidgetUniboardAPI::mouseUp()
@@ -742,11 +824,26 @@ void UBWidgetUniboardAPI::mouseUp()
     // map to view coordinates
     const auto viewPoint = UBApplication::boardController->controlView()->mapFromGlobal(globalPoint);
 
-    // create a QMouseEvent and sent it to the widget at the cursor position
+    // create a QMouseEvent and sent it to the view, but not to the originating web widget
     QMouseEvent* event = new QMouseEvent(QMouseEvent::MouseButtonRelease, viewPoint, globalPoint, Qt::LeftButton, {}, {});
 
+    const auto acceptedMouseButttons = mGraphicsWidget->acceptedMouseButtons();
+    mGraphicsWidget->setAcceptedMouseButtons({});
     QWidget* receiver = QApplication::widgetAt(globalPoint);
-    UBApplication::postEvent(receiver, event);
+    UBApplication::sendEvent(receiver, event);
+    mGraphicsWidget->setAcceptedMouseButtons(acceptedMouseButttons);
+}
+
+void UBWidgetUniboardAPI::sendSceneUpdates(bool send)
+{
+    if (send)
+    {
+        connect(UBApplication::boardController->controlView(), &UBBoardView::painted, this, &UBWidgetUniboardAPI::onSceneUpdated);
+    }
+    else
+    {
+        disconnect(UBApplication::boardController->controlView(), &UBBoardView::painted, this, &UBWidgetUniboardAPI::onSceneUpdated);
+    }
 }
 
 

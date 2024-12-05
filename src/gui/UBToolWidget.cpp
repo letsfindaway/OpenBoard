@@ -103,7 +103,18 @@ void UBToolWidget::initialize()
     layout()->setContentsMargins(mContentMargin, mContentMargin, mContentMargin, mContentMargin);
     layout()->addWidget(mWebView);
 
-    setFixedSize(mToolWidget->boundingRect().width() + mContentMargin * 2, mToolWidget->boundingRect().height() + mContentMargin * 2);
+    if (mToolWidget->isOverlay())
+    {
+        const auto viewSize = parentWidget()->size();
+        setFixedSize(viewSize - QSize{mContentMargin, mContentMargin});
+        move(mContentMargin, mContentMargin);
+        // FIXME this also inhibits any interaction with the widget including removing it
+        setAttribute(Qt::WA_TransparentForMouseEvents);
+    }
+    else
+    {
+        setFixedSize(mToolWidget->boundingRect().width() + mContentMargin * 2, mToolWidget->boundingRect().height() + mContentMargin * 2);
+    }
 
     mWebView->load(mToolWidget->mainHtml());
 
@@ -234,7 +245,7 @@ void UBToolWidget::registerAPI()
 
     QWebChannel* channel = new QWebChannel(this);
     mWebView->page()->setWebChannel(channel);
-    mUniboardAPI = new UBWidgetUniboardAPI(UBApplication::boardController->activeScene(), mToolWidget);
+    mUniboardAPI = new UBWidgetUniboardAPI(UBApplication::boardController->activeScene(), mToolWidget, true);
 
     channel->registerObject("sankore", mUniboardAPI);
 
@@ -274,5 +285,8 @@ void UBToolWidget::remove()
 
 void UBToolWidget::centerOn(const QPoint& pos)
 {
-    QWidget::move(pos - QPoint(width() / 2, height() / 2));
+    if (!mToolWidget->isOverlay())
+    {
+        QWidget::move(pos - QPoint(width() / 2, height() / 2));
+    }
 }

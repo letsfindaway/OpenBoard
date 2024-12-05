@@ -85,6 +85,7 @@ class UBGraphicsWidgetItem : public QGraphicsProxyWidget, public UBItem, public 
         bool canBeContent() const;
         bool canBeTool() const;
         void setCanBeTool(bool tool);
+        bool isOverlay() const;
 
         QString preference(const QString& key) const;
         void setPreference(const QString& key, QString value);
@@ -152,6 +153,7 @@ class UBGraphicsWidgetItem : public QGraphicsProxyWidget, public UBItem, public 
             type_WIN  = 1, // 0001
             type_MAC  = 2, // 0010
             type_UNIX = 4, // 0100
+            type_OVERLAY = 8, // 1000
             type_ALL  = 7 // 0111
         };
 
