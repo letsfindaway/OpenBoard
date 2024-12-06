@@ -667,34 +667,39 @@ void UBWidgetUniboardAPI::onSceneUpdated(QRectF region)
         mRenderRect |= region;
 
         // collect region over some time
-        if (mLastRendered.isValid() && mLastRendered.elapsed() < 1000)
+        if (mLastRendered.isValid() && mLastRendered.elapsed() < 300)
         {
             return;
         }
 
         // create pixmap from updated scene region
-        auto sceneRect = mRenderRect;
+//        auto sceneRect = mRenderRect;
 
         /*
          * To avoid problems with antialiaing we have to make sure that the
          * pixmapRect has an integer size and position and covers at least
          * the affected region. The following steps assure this.
          */
-        auto pixmapRect = (sceneRect + QMarginsF(1, 1, 1, 1)).toRect();
+        const auto scaleFactor = UBApplication::boardController->systemScaleFactor();
+        QTransform transform;
+        transform.scale(scaleFactor, scaleFactor);
+
+        auto pixmapRect = transform.mapRect(mRenderRect);   // translate to pixmap coordinates
+        pixmapRect += QMarginsF(1, 1, 1, 1);                // add a margin
+        pixmapRect = pixmapRect.toRect();                   // cut to integer
+
+        const auto sceneRect = transform.inverted().mapRect(pixmapRect);
+
+        QPointF origin = pixmapRect.topLeft();
         pixmapRect.moveTo(0, 0);
 
         if (pixmapRect.isValid())
         {
-            QPixmap pixmap({pixmapRect.size()});
+            QPixmap pixmap({pixmapRect.size().toSize()});
             pixmap.fill(Qt::transparent);
             QPainter painter(&pixmap);
 
-            // do not render tools
-            auto renderingContext = scene->renderingContext();
-            scene->setRenderingContext(UBGraphicsScene::NonScreen);
-            qDebug() << pixmapRect << sceneRect;
             scene->render(&painter, pixmapRect, sceneRect);
-            scene->setRenderingContext(renderingContext);
 
             // Convert QPixmap to QImage
             QImage image = pixmap.toImage();
@@ -709,7 +714,7 @@ void UBWidgetUniboardAPI::onSceneUpdated(QRectF region)
             // Create data URL
             QString dataUrl = QString("data:image/png;base64,%1").arg(buffer.data().toBase64());
 
-            emit sceneUpdated(mRenderRect.x(), mRenderRect.y(), mRenderRect.width(), mRenderRect.height(), dataUrl);
+            emit sceneUpdated(origin.x(), origin.y(), pixmapRect.width(), pixmapRect.height(), dataUrl);
         }
 
         // reset timer and rect
@@ -717,7 +722,7 @@ void UBWidgetUniboardAPI::onSceneUpdated(QRectF region)
         mRenderRect = {};
 
         // render at most after that time
-        mRenderTimer.start(1500);
+        mRenderTimer.start(500);
     }
 }
 

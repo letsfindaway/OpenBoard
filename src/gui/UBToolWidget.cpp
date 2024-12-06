@@ -106,8 +106,8 @@ void UBToolWidget::initialize()
     if (mToolWidget->isOverlay())
     {
         const auto viewSize = parentWidget()->size();
-        setFixedSize(viewSize - QSize{mContentMargin, mContentMargin});
-        move(mContentMargin, mContentMargin);
+        setFixedSize(viewSize);
+        move(0, 0);
         // FIXME this also inhibits any interaction with the widget including removing it
         setAttribute(Qt::WA_TransparentForMouseEvents);
     }

@@ -23,10 +23,13 @@ var DrawBoard = {
     this.context.lineWidth = this.LINEWIDTH * 2;
   },
   resize: function () {
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+    this.canvas.width = window.innerWidth - 10;
+    this.canvas.height = window.innerHeight - 10;
   },
   draw: function (x, y) {
+    x = x + this.canvas.width / 2;
+    y = y + this.canvas.height / 2;
+
     if (this.ERASING)
     {
       this.context.clearRect(x - 20, y - 20, 40, 40);
