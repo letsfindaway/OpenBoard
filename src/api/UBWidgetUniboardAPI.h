@@ -269,7 +269,7 @@ public:
 
         // cursor control
         /**
-         * @brief Move cursor to the given position in widget coordinates
+         * @brief Move cursor to the given position in scene coordinates
          * @param x
          * @param y
          */

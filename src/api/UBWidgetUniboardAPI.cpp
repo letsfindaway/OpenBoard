@@ -793,11 +793,8 @@ bool UBWidgetUniboardAPI::isDropableData(const QMimeData *pMimeData) const
 
 void UBWidgetUniboardAPI::moveCursor(double x, double y)
 {
-    // map to scene coordinates
-    const auto scenePoint = mGraphicsWidget->mapToScene(x, y);
-
     // map to view coordinates
-    const auto viewPoint = UBApplication::boardController->controlView()->mapFromScene(scenePoint);
+    const auto viewPoint = UBApplication::boardController->controlView()->mapFromScene(x, y);
 
     // map to global coordinates
     const auto globalPoint = UBApplication::boardController->controlView()->mapToGlobal(viewPoint);

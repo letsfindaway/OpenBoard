@@ -10,7 +10,6 @@ var DrawBoard = {
   CANVAS_HEIGHT: 500,
   FILENAME: "draw.png",
   DRAWING: false,
-  ERASING: false,
   LINEWIDTH: 3,
   tools: {},
   init: function (element) {
@@ -30,12 +29,6 @@ var DrawBoard = {
     x = x + this.canvas.width / 2;
     y = y + this.canvas.height / 2;
 
-    if (this.ERASING)
-    {
-      this.context.clearRect(x - 20, y - 20, 40, 40);
-      return;
-    }
-
     this.context.lineTo(x, y);
     this.context.stroke();
     this.context.beginPath();
@@ -44,6 +37,12 @@ var DrawBoard = {
     this.context.beginPath();
     this.context.moveTo(x, y);
   },
+  erase: function (x, y, w, h) {
+    x = x + this.canvas.width / 2;
+    y = y + this.canvas.height / 2;
+
+    this.context.clearRect(x, y, w, h);
+  },
   clear: function () {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   },
@@ -51,7 +50,6 @@ var DrawBoard = {
     this.DRAWING = newStatus;
   },
   setColor: function (newColor) {
-    this.ERASING = newColor === "#ffffff";
     this.context.fillStyle = newColor;
     this.context.strokeStyle = newColor;
   },
@@ -130,7 +128,15 @@ function onSocketMessage(e) {
     case "setData":
       DrawBoard.setData(data.data);
       break;
+    case "erase":
+      DrawBoard.erase(data.data.x, data.data.y, data.data.w, data.data.h);
+      break;
     case "first":
+      break;
+    case "click":
+      window.sankore.moveCursor(data.data.x, data.data.y);
+      window.sankore.mouseDown();
+      window.sankore.mouseUp();
       break;
     default:
 //      alert("Grrr " + data.action);
