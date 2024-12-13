@@ -196,7 +196,7 @@ function initEvent() {
   */
 }
 
-function init() {
+async function init() {
   initElem();
   initEvent();
   DrawBoard.init(canvas);
@@ -207,6 +207,24 @@ function init() {
       socketSendData("scene-update", {x, y, w, h, img});
     }
   });
+  const url = "http://localhost:8020/endpointQr.svg";
+  const myRequest = new Request(url);
+
+  fetch(myRequest)
+    .then((response) => response.blob())
+    .then((myBlob) => {
+      let reader = new FileReader();
+      reader.addEventListener(
+        "load",
+        () => {
+          // add QR code image to board
+          window.sankore.addObject(reader.result);
+        },
+        false,
+      );
+
+      reader.readAsDataURL(myBlob);
+    });
 }
 
 document.addEventListener("DOMContentLoaded", init);
