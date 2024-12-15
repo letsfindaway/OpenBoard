@@ -25,17 +25,15 @@ var DrawBoard = {
     this.canvas.width = window.innerWidth - 10;
     this.canvas.height = window.innerHeight - 10;
   },
-  draw: function (x, y) {
-    x = x + this.canvas.width / 2;
-    y = y + this.canvas.height / 2;
-
-    this.context.lineTo(x, y);
+  draw: function (data) {
+    const dx = this.canvas.width / 2;
+    const dy = this.canvas.height / 2;
+    this.context.beginPath();
+    this.context.moveTo(data.from.x + dx, data.from.y + dy);
+    this.context.lineTo(data.to.x + dx, data.to.y + dy);
+    this.context.lineWidth = data.width * 2;
+    this.context.strokeStyle = data.color;
     this.context.stroke();
-    this.context.beginPath();
-    this.context.arc(x, y, this.LINEWIDTH, 0, Math.PI * 2, true);
-    this.context.fill();
-    this.context.beginPath();
-    this.context.moveTo(x, y);
   },
   erase: function (x, y, w, h) {
     x = x + this.canvas.width / 2;
@@ -107,7 +105,7 @@ function onSocketMessage(e) {
   var data = JSON.parse(e.data);
   switch (data.action) {
     case "draw":
-      DrawBoard.draw(data.data.X, data.data.Y);
+      DrawBoard.draw(data.data);
       break;
     case "stopDraw":
       DrawBoard.setStatus(false);
