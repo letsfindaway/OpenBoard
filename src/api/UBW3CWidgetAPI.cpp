@@ -124,9 +124,9 @@ QObject* UBW3CWidgetAPI::preferences() const
 }
 
 
-void UBW3CWidgetAPI::openURL(const QString& url)
+void UBW3CWidgetAPI::openURL(const QString& url, bool showInternet)
 {
-    UBApplication::webController->loadUrl(QUrl(url));
+    UBApplication::webController->loadUrl(QUrl(url), showInternet);
 }
 
 // NOTE @letsfindaway all code from here to the end is obsolete

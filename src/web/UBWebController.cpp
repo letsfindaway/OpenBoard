@@ -697,9 +697,10 @@ void UBWebController::tabCreated(WebView *webView)
 }
 
 
-void UBWebController::loadUrl(const QUrl& url)
+void UBWebController::loadUrl(const QUrl& url, bool showInternet)
 {
     UBApplication::applicationController->showInternet();
+
     if (UBSettings::settings()->webUseExternalBrowser->get().toBool())
     {
         QDesktopServices::openUrl(url);
@@ -708,6 +709,11 @@ void UBWebController::loadUrl(const QUrl& url)
     {
         WebView* view = mCurrentWebBrowser->tabWidget()->createTab();
         view->load(url);
+    }
+
+    if (!showInternet)
+    {
+        UBApplication::applicationController->showBoard();
     }
 }
 

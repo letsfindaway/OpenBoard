@@ -84,7 +84,7 @@ class UBWebController : public QObject
 
         void captureCurrentPage();
         void showTabAtTop(bool attop);
-        void loadUrl(const QUrl& url);
+        void loadUrl(const QUrl& url, bool showInternet = true);
         WebView* createNewTab();
         QUrl currentPageUrl() const;
         void show();

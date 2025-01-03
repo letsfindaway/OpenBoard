@@ -98,6 +98,7 @@ function onSocketOpen() {
   CONNECT_STATUS = true;
   socketSendData("first", null);
   window.sankore.sendSceneUpdates(true);
+  window.widget.openURL("http://localhost:8020/admin", false);
   DrawBoard.resize();
 }
 

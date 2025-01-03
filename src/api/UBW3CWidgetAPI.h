@@ -81,7 +81,8 @@ class UBW3CWidgetAPI : public QObject
         int width() const;
         int height() const;
 
-        void openURL(const QString& url);
+    public slots:
+        void openURL(const QString& url, bool showInternet);
 
 signals:
         void onenter();
