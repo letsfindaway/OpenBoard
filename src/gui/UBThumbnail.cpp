@@ -106,13 +106,22 @@ void UBThumbnail::setThumbnailSize(QSizeF size)
     mPixmapItem->setTransform(transform);
 
     // center pixmap horizontally
-    mPixmapItem->setPos((size.width() - pixmapSize.width() * scaleFactor) / 2, 0);
+    const QPointF pos{(size.width() - pixmapSize.width() * scaleFactor) / 2, 0};
+    mPixmapItem->setPos(pos);
 
     // set text width based on thumbnail width
     mTextItem->setWidth(size.width());
 
     // position label below pixmap
     mTextItem->setPos(0, pixmapSize.height() * scaleFactor + cLabelOffset);
+
+    // apply geometry and transform to live proxy
+    if (mLiveProxy)
+    {
+        mLiveProxy->setPos(pos);
+        mLiveProxy->resize(pixmapSize);
+        mLiveProxy->setTransform(transform);
+    }
 }
 
 void UBThumbnail::setColumn(int column)
@@ -137,8 +146,58 @@ int UBThumbnail::row() const
 
 void UBThumbnail::setPageScene(std::shared_ptr<UBGraphicsScene> pageScene)
 {
+    if (pageScene == mPageScene.lock())
+    {
+        return;
+    }
+
+    if (mLiveProxy)
+    {
+        qDebug() << "Delete proxy";
+        delete mLiveProxy;
+        mLiveProxy = nullptr;
+        updatePixmap();
+    }
+
     mPageScene = pageScene;
     adjustThumbnail();
+
+    if (pageScene)
+    {
+        qDebug() << "Create proxy" << mIndex;
+        const auto pixmapSize = mPixmapItem->pixmap().size();
+
+        // create a proxy widget on top of the pixmap
+        mLiveProxy = new QGraphicsProxyWidget{this};
+        auto* view = new QGraphicsView;
+        view->setInteractive(false);
+        view->setFrameShape(QFrame::NoFrame);
+        view->resize(pixmapSize);
+        view->setScene(pageScene.get());
+        view->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+        view->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+        view->setTransform(mTransform);
+        view->setSceneRect(pageScene->normalizedSceneRect());
+
+        // remove live view when scene vanishes
+        QObject::connect(pageScene.get(), &QObject::destroyed, mLiveProxy, [this](){
+            qDebug() << "Scene destroyed";
+            setPageScene(nullptr);
+        });
+
+        mLiveProxy->setFlag(QGraphicsItem::ItemStacksBehindParent);
+        mLiveProxy->setPos(mPixmapItem->pos());
+        mLiveProxy->resize(pixmapSize);
+        mLiveProxy->setWidget(view);
+        mLiveProxy->setTransform(mPixmapItem->transform());
+
+        mLiveProxy->show();
+        mPixmapItem->hide();
+    }
+    else
+    {
+        mPixmapItem->show();
+    }
 }
 
 void UBThumbnail::setDeletable(bool deletable)

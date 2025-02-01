@@ -25,6 +25,7 @@
 #include <QGraphicsRectItem>
 
 // forward
+class QGraphicsProxyWidget;
 class UBGraphicsScene;
 class UBThumbnailTextItem;
 
@@ -74,6 +75,7 @@ private:
 
 private:
     QGraphicsPixmapItem* mPixmapItem{nullptr};
+    QGraphicsProxyWidget* mLiveProxy{nullptr};
     UBThumbnailTextItem* mTextItem{nullptr};
     int mIndex{0};
     int mColumn{0};

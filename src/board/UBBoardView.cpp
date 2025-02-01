@@ -1244,6 +1244,9 @@ void UBBoardView::mousePressEvent (QMouseEvent *event)
 
 void UBBoardView::mouseMoveEvent (QMouseEvent *event)
 {
+    static QElapsedTimer elapsed;
+    qDebug() << "Elapsed" << elapsed.elapsed();
+    elapsed.start();
     //    static QTime lastCallTime;
     //    if (!lastCallTime.isNull()) {
     //        qDebug() << "time interval is " << lastCallTime.msecsTo(QTime::currentTime());
@@ -1377,6 +1380,7 @@ void UBBoardView::mouseMoveEvent (QMouseEvent *event)
 
     //  qDebug() << "mouse move time" << mouseMoveTime.msecsTo(QTime::currentTime());
     //  lastCallTime = QTime::currentTime();
+    qDebug() << "mouseMove needed" << elapsed.nsecsElapsed();
 
 }
 
@@ -1860,6 +1864,9 @@ void UBBoardView::resizeEvent (QResizeEvent * event)
 
 void UBBoardView::paintEvent(QPaintEvent *event)
 {
+    static QElapsedTimer ela;
+    ela.start();
+
     QGraphicsView::paintEvent(event);
 
     // ignore paint events under the left palette
@@ -1867,14 +1874,16 @@ void UBBoardView::paintEvent(QPaintEvent *event)
 
     if (event->rect().right() >= paletteWidth)
     {
-        emit painted(mapToScene(event->rect()).boundingRect());
+        //emit painted(mapToScene(event->rect()).boundingRect());
     }
+    qDebug() << "paintEvent needed" << ela.nsecsElapsed();
 }
 
 void UBBoardView::drawBackground (QPainter *painter, const QRectF &rect)
 {
     // draw the background of the QGraphicsScene
     QGraphicsView::drawBackground(painter, rect);
+    return;
 
     if (testAttribute (Qt::WA_TranslucentBackground))
     {
@@ -1911,6 +1920,7 @@ void UBBoardView::drawBackground (QPainter *painter, const QRectF &rect)
 
 void UBBoardView::drawForeground(QPainter* painter, const QRectF& rect)
 {
+    return;
     QTransform transform{viewportTransform()};
     QRect viewportRect(0, 0, viewport()->width(), viewport()->height());
     QRectF visible{mapToScene(viewportRect).boundingRect()};

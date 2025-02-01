@@ -812,7 +812,9 @@ void UBGraphicsScene::drawEraser(const QPointF &pPoint, bool pressed)
         qreal eraserRadius = eraserWidth / 2;
 
     // TODO UB 4.x optimize - no need to do that every time we move it
-        mEraser->setRect(QRectF(pPoint.x() - eraserRadius, pPoint.y() - eraserRadius, eraserWidth, eraserWidth));
+        if (!mEraser->isVisible())
+            mEraser->setRect(QRectF(-eraserRadius, -eraserRadius, eraserWidth, eraserWidth));
+        mEraser->setPos(pPoint);
         redrawEraser(pressed);
     }
 }
