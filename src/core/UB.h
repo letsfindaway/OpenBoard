@@ -34,6 +34,7 @@
 
 
 #define UB_MAX_ZOOM 9
+#define ENABLE_SHAPES
 
 #if defined(Q_OS_LINUX) || (defined(Q_OS_OSX) && (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)))
 #define UB_REQUIRES_MASK_UPDATE 1
@@ -73,6 +74,10 @@ struct UBStylusTool
         Line,
         Text,
         Capture
+#ifdef ENABLE_SHAPES
+        , Drawing
+        , ChangeFill
+#endif
     };
 };
 
@@ -173,6 +178,12 @@ struct UBGraphicsItemType
         GraphicsWidgetItemType,                         //65556
         UserTypesCount,                                 //65557
         AxesItemType,                                   //65558
+#ifdef ENABLE_SHAPES
+        GraphicsShapeItemType,
+        GraphicsPathItemType,
+        GraphicsRegularPathItemType,
+        GraphicsFreehandItemType,
+#endif
         SelectionFrameType                              // this line must be the last line in this enum because it is types counter.
     };
 };

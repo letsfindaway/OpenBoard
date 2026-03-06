@@ -58,3 +58,5 @@ target_sources(${PROJECT_NAME} PRIVATE
     UBWebEngineView.cpp
     UBWebEngineView.h
 )
+
+add_subdirectory(shapes)
