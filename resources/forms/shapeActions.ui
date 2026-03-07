@@ -1,0 +1,685 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ShapeActions</class>
+ <widget class="QWidget" name="ShapeActions">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>100</width>
+    <height>30</height>
+   </rect>
+  </property>
+  <action name="actionEllipse">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/ellipse.png</normaloff>
+     <normalon>:/images/drawingPalette/ellipseON.png</normalon>:/images/drawingPalette/ellipse.png</iconset>
+   </property>
+   <property name="text">
+    <string>Ellipse</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw an Ellipse</string>
+   </property>
+  </action>
+  <action name="actionChangeFillingColor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/paint-bucket.png</normaloff>
+     <normalon>:/images/drawingPalette/paint-bucketOn.png</normalon>:/images/drawingPalette/paint-bucket.png</iconset>
+   </property>
+   <property name="text">
+    <string>Change Filling Color</string>
+   </property>
+  </action>
+  <action name="actionPolygon">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/free-shape.png</normaloff>
+     <normalon>:/images/drawingPalette/free-shapeOn.png</normalon>:/images/drawingPalette/free-shape.png</iconset>
+   </property>
+   <property name="text">
+    <string>Polygon</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw a Polygon</string>
+   </property>
+  </action>
+  <action name="actionDrawing">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/paint-palette.png</normaloff>
+     <normalon>:/images/drawingPalette/paint-paletteOn.png</normalon>:/images/drawingPalette/paint-palette.png</iconset>
+   </property>
+   <property name="text">
+    <string>Drawing</string>
+   </property>
+   <property name="iconText">
+    <string>Drawing</string>
+   </property>
+   <property name="toolTip">
+    <string>Drawing</string>
+   </property>
+  </action>
+  <action name="actionCircle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/cercle.png</normaloff>
+     <normalon>:/images/drawingPalette/cercleON.png</normalon>:/images/drawingPalette/cercle.png</iconset>
+   </property>
+   <property name="text">
+    <string>Circle</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw a Circle</string>
+   </property>
+  </action>
+  <action name="actionRectangle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/rectangle.png</normaloff>
+     <normalon>:/images/drawingPalette/rectangleON.png</normalon>:/images/drawingPalette/rectangle.png</iconset>
+   </property>
+   <property name="text">
+    <string>Rectangle</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw a Rectangle</string>
+   </property>
+  </action>
+  <action name="actionSquare">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/square.png</normaloff>
+     <normalon>:/images/drawingPalette/squareON.png</normalon>:/images/drawingPalette/square.png</iconset>
+   </property>
+   <property name="text">
+    <string>Square</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw a Square</string>
+   </property>
+  </action>
+  <action name="actionSmartPen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/freeHand.png</normaloff>
+     <normalon>:/images/drawingPalette/freeHandOn.png</normalon>:/images/drawingPalette/freeHand.png</iconset>
+   </property>
+   <property name="text">
+    <string>Freehand Drawing</string>
+   </property>
+   <property name="toolTip">
+    <string>Freehand drawing</string>
+   </property>
+  </action>
+  <action name="actionSmartLine">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../OpenBoard.qrc">
+     <normaloff>:/images/stylusPalette/line.png</normaloff>
+     <normalon>:/images/stylusPalette/lineOn.png</normalon>:/images/stylusPalette/line.png</iconset>
+   </property>
+   <property name="text">
+    <string>Line</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw Lines</string>
+   </property>
+  </action>
+  <action name="actionRegularShapes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/triangle.png</normaloff>
+     <normalon>:/images/drawingPalette/triangleON.png</normalon>:/images/drawingPalette/triangle.png</iconset>
+   </property>
+   <property name="text">
+    <string>Regular Shapes</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw a regular shape</string>
+   </property>
+  </action>
+  <action name="actionRegularTriangle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/triangle.png</normaloff>
+     <normalon>:/images/drawingPalette/triangleON.png</normalon>:/images/drawingPalette/triangle.png</iconset>
+   </property>
+   <property name="text">
+    <string>Regular Triangle</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw a regular triangle</string>
+   </property>
+  </action>
+  <action name="actionRegularSquare">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/square.png</normaloff>
+     <normalon>:/images/drawingPalette/squareON.png</normalon>:/images/drawingPalette/square.png</iconset>
+   </property>
+   <property name="text">
+    <string>Regular Square</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw a regular square</string>
+   </property>
+  </action>
+  <action name="actionRegularPentagone">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/Penta.png</normaloff>
+     <normalon>:/images/drawingPalette/PentaON.png</normalon>:/images/drawingPalette/Penta.png</iconset>
+   </property>
+   <property name="text">
+    <string>Regular Pentagon</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw a regular pentagon</string>
+   </property>
+  </action>
+  <action name="actionRegularHexagone">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/hexa.png</normaloff>
+     <normalon>:/images/drawingPalette/hexaON.png</normalon>:/images/drawingPalette/hexa.png</iconset>
+   </property>
+   <property name="text">
+    <string>Regular Hexagon</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw a regular hexagon</string>
+   </property>
+  </action>
+  <action name="actionRegularHeptagone">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/hepta.png</normaloff>
+     <normalon>:/images/drawingPalette/heptaON.png</normalon>:/images/drawingPalette/hepta.png</iconset>
+   </property>
+   <property name="text">
+    <string>Regular Heptagon</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw a regular heptagon</string>
+   </property>
+  </action>
+  <action name="actionRegularOctogone">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/octo.png</normaloff>
+     <normalon>:/images/drawingPalette/octoON.png</normalon>:/images/drawingPalette/octo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Regular Octogon</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw a regular octogon</string>
+   </property>
+  </action>
+  <action name="actionStrokeProperties">
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/line-thickness.png</normaloff>:/images/drawingPalette/line-thickness.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stroke Properties</string>
+   </property>
+   <property name="toolTip">
+    <string>Stroke properties</string>
+   </property>
+  </action>
+  <action name="actionFillProperties">
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/fill-modes.png</normaloff>:/images/drawingPalette/fill-modes.png</iconset>
+   </property>
+   <property name="text">
+    <string>Filling Properties</string>
+   </property>
+   <property name="toolTip">
+    <string>Filling properties</string>
+   </property>
+  </action>
+  <action name="actionStrokePropertyThickness0">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../OpenBoard.qrc">
+     <normaloff>:/images/toolbar/smallPen.png</normaloff>:/images/toolbar/smallPen.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stroke Thickness</string>
+   </property>
+   <property name="toolTip">
+    <string>Stroke thickness</string>
+   </property>
+  </action>
+  <action name="actionStrokePropertyThickness1">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../OpenBoard.qrc">
+     <normaloff>:/images/toolbar/mediumPen.png</normaloff>:/images/toolbar/mediumPen.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stroke Thickness</string>
+   </property>
+   <property name="toolTip">
+    <string>Stroke thickness</string>
+   </property>
+  </action>
+  <action name="actionStrokePropertyThickness2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../OpenBoard.qrc">
+     <normaloff>:/images/toolbar/largePen.png</normaloff>:/images/toolbar/largePen.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stroke Thickness</string>
+   </property>
+   <property name="toolTip">
+    <string>Stroke thickness</string>
+   </property>
+  </action>
+  <action name="actionStrokePropertyStyleSolidLine">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/strokeStyleSolidLine.png</normaloff>:/images/drawingPalette/strokeStyleSolidLine.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stroke Style Solid Line</string>
+   </property>
+   <property name="toolTip">
+    <string>Stroke style : Solid Line</string>
+   </property>
+  </action>
+  <action name="actionStrokePropertyStyleDotLine">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/strokeStyleDotLine .png</normaloff>:/images/drawingPalette/strokeStyleDotLine .png</iconset>
+   </property>
+   <property name="text">
+    <string>Stroke Style Dot Line</string>
+   </property>
+   <property name="toolTip">
+    <string>Stroke style : Dot Line</string>
+   </property>
+  </action>
+  <action name="actionColorStyleTransparent">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/fill-transparent.png</normaloff>
+     <normalon>:/images/drawingPalette/fill-transparent.png</normalon>:/images/drawingPalette/fill-transparent.png</iconset>
+   </property>
+   <property name="text">
+    <string>Filling Style : Transparent</string>
+   </property>
+   <property name="toolTip">
+    <string>Filling Style : Transparent</string>
+   </property>
+  </action>
+  <action name="actionColorStyleGradient">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/fill-gradient.png</normaloff>
+     <normalon>:/images/drawingPalette/fill-gradient.png</normalon>:/images/drawingPalette/fill-gradient.png</iconset>
+   </property>
+   <property name="text">
+    <string>Filling Style : Gradient</string>
+   </property>
+   <property name="toolTip">
+    <string>Filling Style : Gradient</string>
+   </property>
+  </action>
+  <action name="actionColorStyleFull">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/fill-plain.png</normaloff>
+     <normalon>:/images/drawingPalette/fill-plain.png</normalon>:/images/drawingPalette/fill-plain.png</iconset>
+   </property>
+   <property name="text">
+    <string>Filling Style : Full</string>
+   </property>
+   <property name="toolTip">
+    <string>Filling Style : Full</string>
+   </property>
+  </action>
+  <action name="actionFillStyleDense">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/fill-dotted.png</normaloff>
+     <normalon>:/images/drawingPalette/fill-dotted.png</normalon>:/images/drawingPalette/fill-dotted.png</iconset>
+   </property>
+   <property name="text">
+    <string>Filling Style : Dense</string>
+   </property>
+   <property name="toolTip">
+    <string>Filling Style : Dense</string>
+   </property>
+  </action>
+  <action name="actionFillStyleDiag">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/fill-stripes.png</normaloff>
+     <normalon>:/images/drawingPalette/fill-stripes.png</normalon>:/images/drawingPalette/fill-stripes.png</iconset>
+   </property>
+   <property name="text">
+    <string>Filling Style : Diagonal</string>
+   </property>
+   <property name="toolTip">
+    <string>Filling Style : Diagonal</string>
+   </property>
+  </action>
+  <action name="actionStrokePropertyStyleCustomDash">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/strokeStyleCustomDash.png</normaloff>:/images/drawingPalette/strokeStyleCustomDash.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stroke Style Dot Dash</string>
+   </property>
+   <property name="toolTip">
+    <string>Stroke style : Dot Dash</string>
+   </property>
+  </action>
+  <action name="actionAlignObject">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/align-left.png</normaloff>
+     <normalon>:/images/drawingPalette/paint-bucketOn.png</normalon>:/images/drawingPalette/align-left.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align objects</string>
+   </property>
+   <property name="toolTip">
+    <string>Align objects</string>
+   </property>
+  </action>
+  <action name="actionAlignToLeft">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/align-left.png</normaloff>
+     <normalon>:/images/drawingPalette/paint-bucketOn.png</normalon>:/images/drawingPalette/align-left.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Left</string>
+   </property>
+   <property name="toolTip">
+    <string>Align objects to the left</string>
+   </property>
+  </action>
+  <action name="actionVerticalCenter">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/align-center.png</normaloff>
+     <normalon>:/images/drawingPalette/paint-bucketOn.png</normalon>:/images/drawingPalette/align-center.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Center Vertically</string>
+   </property>
+   <property name="toolTip">
+    <string>Align the center of the objects vertically</string>
+   </property>
+  </action>
+  <action name="actionAlignToRight">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/align-right.png</normaloff>
+     <normalon>:/images/drawingPalette/paint-bucketOn.png</normalon>:/images/drawingPalette/align-right.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Right</string>
+   </property>
+   <property name="toolTip">
+    <string>Align objects to the right</string>
+   </property>
+  </action>
+  <action name="actionAlignToTop">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/align-top.png</normaloff>
+     <normalon>:/images/drawingPalette/paint-bucketOn.png</normalon>:/images/drawingPalette/align-top.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Top</string>
+   </property>
+   <property name="toolTip">
+    <string>Align objects to the top</string>
+   </property>
+  </action>
+  <action name="actionHorizontalCenter">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/align-middle.png</normaloff>
+     <normalon>:/images/drawingPalette/paint-bucketOn.png</normalon>:/images/drawingPalette/align-middle.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Center Horizontally</string>
+   </property>
+   <property name="toolTip">
+    <string>Align the center of the objects horizontally</string>
+   </property>
+  </action>
+  <action name="actionAlignToBottom">
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/align-bottom.png</normaloff>
+     <normalon>:/images/drawingPalette/paint-bucketOn.png</normalon>:/images/drawingPalette/align-bottom.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align Bottom</string>
+   </property>
+   <property name="toolTip">
+    <string>Align objects to the bottom</string>
+   </property>
+  </action>
+  <action name="actionEndArrowStyleArrow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/endArrowStyleArrow.png</normaloff>:/images/drawingPalette/endArrowStyleArrow.png</iconset>
+   </property>
+   <property name="text">
+    <string>End arrow style : Arrow</string>
+   </property>
+   <property name="toolTip">
+    <string>End arrow style : Arrow</string>
+   </property>
+  </action>
+  <action name="actionStartArrowStyleArrow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/startArrowStyleArrow.png</normaloff>:/images/drawingPalette/startArrowStyleArrow.png</iconset>
+   </property>
+   <property name="text">
+    <string>Start arrow style : Arrow</string>
+   </property>
+   <property name="toolTip">
+    <string>Start arrow style : Arrow</string>
+   </property>
+  </action>
+  <action name="actionEndArrowStyleRound">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/endArrowStyleRound.png</normaloff>:/images/drawingPalette/endArrowStyleRound.png</iconset>
+   </property>
+   <property name="text">
+    <string>End arrow style : Round</string>
+   </property>
+   <property name="toolTip">
+    <string>End arrow style : Round</string>
+   </property>
+  </action>
+  <action name="actionStartArrowStyleRound">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/startArrowStyleRound.png</normaloff>:/images/drawingPalette/startArrowStyleRound.png</iconset>
+   </property>
+   <property name="text">
+    <string>Start arrow style : Round</string>
+   </property>
+   <property name="toolTip">
+    <string>Start arrow style : Round</string>
+   </property>
+  </action>
+  <action name="actionEndArrowStyleNone">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/endArrowStyleNone.png</normaloff>:/images/drawingPalette/endArrowStyleNone.png</iconset>
+   </property>
+   <property name="text">
+    <string>End arrow style : None</string>
+   </property>
+   <property name="toolTip">
+    <string>End arrow style : None</string>
+   </property>
+  </action>
+  <action name="actionStartArrowStyleNone">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/startArrowStyleNone.png</normaloff>:/images/drawingPalette/startArrowStyleNone.png</iconset>
+   </property>
+   <property name="text">
+    <string>Start arrow style : None</string>
+   </property>
+   <property name="toolTip">
+    <string>Start arrow style : None</string>
+   </property>
+  </action>
+  <action name="actionArrowProperties">
+   <property name="icon">
+    <iconset resource="../shapes.qrc">
+     <normaloff>:/images/drawingPalette/arrowsProperties.png</normaloff>:/images/drawingPalette/arrowsProperties.png</iconset>
+   </property>
+   <property name="text">
+    <string>Arrows Properties</string>
+   </property>
+   <property name="toolTip">
+    <string>Arrows properties</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../shapes.qrc"/>
+ </resources>
+ <connections/>
+</ui>

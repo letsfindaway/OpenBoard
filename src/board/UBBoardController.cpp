@@ -2191,6 +2191,13 @@ void UBBoardController::setPageSize(QSize newSize)
     }
 }
 
+#ifdef ENABLE_SHAPES
+UBShapeFactory& UBBoardController::shapeFactory()
+{
+    return mShapeFactory;
+}
+#endif
+
 void UBBoardController::notifyCache(bool visible)
 {
     if(visible)

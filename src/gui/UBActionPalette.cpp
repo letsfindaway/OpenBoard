@@ -65,6 +65,7 @@ void UBActionPalette::init(Qt::Orientation orientation)
 {
     m_customCloseProcessing = false;
 
+    mOrientation = orientation;
     mButtonSize = QSize(32, 32);
     mAutoClose = false;
     mActionGroup = nullptr;
@@ -325,6 +326,11 @@ void UBActionPaletteButton::mouseDoubleClickEvent(QMouseEvent *event)
 QSize UBActionPalette::buttonSize()
 {
     return mButtonSize;
+}
+
+Qt::Orientation UBActionPalette::orientation() const
+{
+    return mOrientation;
 }
 
 /**

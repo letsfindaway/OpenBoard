@@ -16,8 +16,6 @@
 
 #include "domain/UBGraphicsScene.h"
 
-// #include "gui/UBMainWindow.h"
-
 UBShapeFactory::UBShapeFactory()
 {
 
@@ -176,6 +174,10 @@ void UBShapeFactory::init()
 
 }
 
+Ui::ShapeActions* UBShapeFactory::shapeActions() const
+{
+    return mShapeActions;
+}
 
 UBAbstractGraphicsItem* UBShapeFactory::instanciateCurrentShape()
 {

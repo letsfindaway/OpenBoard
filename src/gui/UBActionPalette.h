@@ -74,6 +74,7 @@ class UBActionPalette : public UBFloatingPalette
         virtual int border();
         virtual void clearLayout();
         QSize buttonSize();
+        Qt::Orientation orientation() const;
 
         virtual UBActionPaletteButton* getButtonFromAction(QAction* action);
 
@@ -97,6 +98,7 @@ class UBActionPalette : public UBFloatingPalette
         QList<UBActionPaletteButton*> mButtons;
         QActionGroup* mActionGroup;
         QList<QAction*> mActions;
+        Qt::Orientation mOrientation;
         QMap<QAction*, UBActionPaletteButton*> mMapActionToButton;
 
         Qt::ToolButtonStyle mToolButtonStyle;

@@ -5,11 +5,13 @@
 #include <QGraphicsItem>
 
 #include "UBAbstractGraphicsPathItem.h"
+#include "ui_shapeActions.h"
 
 class UBAbstractGraphicsItem;
 class UBBoardView;
 class QMouseEvent;
 class UBDrawingController;
+
 
 class UBShapeFactory : public QObject
 {
@@ -18,6 +20,8 @@ class UBShapeFactory : public QObject
 public:
     UBShapeFactory();
     void init();
+
+    Ui::ShapeActions* shapeActions() const;
 
     static bool isShape(QGraphicsItem *item);
     static void desactivateEditionMode(QGraphicsItem *item);
@@ -126,6 +130,8 @@ private:
     bool mCursorMoved{false};
 
     QVector<qreal> mDotDashes{};
+
+    Ui::ShapeActions* mShapeActions{nullptr};
 
 protected:
     UBAbstractGraphicsItem *instanciateCurrentShape();
