@@ -75,6 +75,11 @@
 #include "core/UBPersistenceManager.h"
 #include "core/memcheck.h"
 
+#ifdef ENABLE_SHAPES
+#include "gui/shapes/UBDrawingPalette.h"
+#endif
+
+
 inline constexpr int longpress_interval = 350;
 
 UBBoardPaletteManager::UBBoardPaletteManager(QWidget* container, UBBoardController* pBoardController)
@@ -120,6 +125,10 @@ UBBoardPaletteManager::~UBBoardPaletteManager()
 void UBBoardPaletteManager::initPalettesPosAtStartup()
 {
     mStylusPalette->initPosition();
+#ifdef ENABLE_SHAPES
+    mDrawingPalette->initPosition();
+#endif
+
 }
 
 void UBBoardPaletteManager::setupLayout()
@@ -232,18 +241,24 @@ void UBBoardPaletteManager::setupPalettes()
 #endif
     }
 
-
     setupDockPaletteWidgets();
-
 
     // Add the other palettes
     mStylusPalette = new UBStylusPalette(mContainer, UBSettings::settings()->appToolBarOrientationVertical->get().toBool() ? Qt::Vertical : Qt::Horizontal);
     connect(mStylusPalette, SIGNAL(stylusToolDoubleClicked(int)), UBApplication::boardController, SLOT(stylusToolDoubleClicked(int)));
     mStylusPalette->show(); // always show stylus palette at startup
 
+
     mZoomPalette = new UBZoomPalette(mContainer);
 
     mStylusPalette->stackUnder(mZoomPalette);
+
+#ifdef ENABLE_SHAPES
+//    mDrawingPalette = new UBDrawingPalette(mContainer, UBSettings::settings()->appDrawingPaletteOrientationHorizontal->get().toBool() ? Qt::Horizontal : Qt::Vertical);
+    mDrawingPalette = new UBDrawingPalette(mContainer, Qt::Vertical);
+    mDrawingPalette->hide();
+    mDrawingPalette->stackUnder(mZoomPalette);
+#endif
 
     mTipPalette = new UBStartupHintsPalette(mContainer);
 
@@ -393,6 +408,12 @@ void UBBoardPaletteManager::connectPalettes()
 {
     connect(UBApplication::mainWindow->actionStylus, SIGNAL(toggled(bool)), this, SLOT(toggleStylusPalette(bool)));
 
+#ifdef ENABLE_SHAPES
+    connect(UBApplication::boardController->shapeFactory().shapeActions()->actionDrawing, &QAction::toggled, this, [this](bool checked){
+        mDrawingPalette->setVisible(checked);
+    });
+#endif
+
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
     foreach(QObject *widget, UBApplication::mainWindow->actionZoomIn->associatedObjects())
 #else
@@ -502,6 +523,14 @@ void UBBoardPaletteManager::containerResized()
         mStylusPalette->adjustSizeAndPosition();
         mStylusPalette->initPosition();
     }
+
+#ifdef ENABLE_SHAPES
+    if (mDrawingPalette)
+    {
+        mDrawingPalette->adjustSizeAndPosition(true);
+        mDrawingPalette->initPosition();
+    }
+#endif
 
     if(mZoomPalette)
     {

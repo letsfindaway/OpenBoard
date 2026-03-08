@@ -18,7 +18,9 @@
 
 UBShapeFactory::UBShapeFactory()
 {
-
+    mShapeActions = new Ui::ShapeActions;
+    QWidget* actionWidget = new QWidget();
+    mShapeActions->setupUi(actionWidget);
 }
 
 void UBShapeFactory::prepareChangeFill()
@@ -168,10 +170,9 @@ void UBShapeFactory::init()
     //Our custom dash is a point follow by a space
     mDotDashes << 0.1 << 3;
 
-    connect(mBoardView, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(onMouseMove(QMouseEvent*)));
-    connect(mBoardView, SIGNAL(mouseRelease(QMouseEvent*)), this, SLOT(onMouseRelease(QMouseEvent*)));
-    connect(mBoardView, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(onMousePress(QMouseEvent*)));
-
+    connect(mBoardView, &UBBoardView::mouseMove, this, &UBShapeFactory::onMouseMove);
+    connect(mBoardView, &UBBoardView::mouseRelease, this, &UBShapeFactory::onMouseRelease);
+    connect(mBoardView, &UBBoardView::mousePress, this, &UBShapeFactory::onMousePress);
 }
 
 Ui::ShapeActions* UBShapeFactory::shapeActions() const

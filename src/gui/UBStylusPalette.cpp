@@ -38,8 +38,7 @@
 #include "core/UBApplicationController.h"
 #include "core/UBShortcutManager.h"
 
-
-#include "board/UBDrawingController.h"
+#include "board/UBBoardController.h"
 
 #include "frameworks/UBPlatformUtils.h"
 
@@ -50,6 +49,14 @@ UBStylusPalette::UBStylusPalette(QWidget *parent, Qt::Orientation orient)
     , mLastSelectedId(-1)
 {
     QList<QAction*> actions;
+
+#ifdef ENABLE_SHAPES
+    if (UBSettings::settings()->value("Board/EnableShapes").toBool())
+    {
+        auto shapeActions = UBApplication::boardController->shapeFactory().shapeActions();
+        actions << shapeActions->actionDrawing;
+    }
+#endif
 
     actions << UBApplication::mainWindow->actionPen;
     actions << UBApplication::mainWindow->actionEraser;

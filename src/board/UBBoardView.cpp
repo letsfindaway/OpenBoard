@@ -1098,6 +1098,10 @@ void UBBoardView::longPressEvent()
 
 void UBBoardView::mousePressEvent (QMouseEvent *event)
 {
+#ifdef ENABLE_SHAPES
+    emit mousePress(event);
+#endif
+
     if (!bIsControl && !bIsDesktop) {
         event->ignore();
         return;
@@ -1239,6 +1243,9 @@ void UBBoardView::mousePressEvent (QMouseEvent *event)
 
 void UBBoardView::mouseMoveEvent (QMouseEvent *event)
 {
+#ifdef ENABLE_SHAPES
+    emit mouseMove(event);
+#endif
     //    static QTime lastCallTime;
     //    if (!lastCallTime.isNull()) {
     //        qDebug() << "time interval is " << lastCallTime.msecsTo(QTime::currentTime());
@@ -1377,6 +1384,10 @@ void UBBoardView::movingItemDestroyed(QObject*)
 
 void UBBoardView::mouseReleaseEvent (QMouseEvent *event)
 {
+#ifdef ENABLE_SHAPES
+    emit mouseRelease(event);
+#endif
+
     UBStylusTool::Enum currentTool = (UBStylusTool::Enum)UBDrawingController::drawingController ()->stylusTool ();
 
     setToolCursor (currentTool);
@@ -2014,6 +2025,10 @@ void UBBoardView::setToolCursor (int tool)
         controlViewport->setCursor (UBResources::resources ()->textCursor);
         break;
     case UBStylusTool::Capture:
+#ifdef ENABLE_SHAPES
+    case UBStylusTool::ChangeFill:
+    case UBStylusTool::Drawing:
+#endif
         controlViewport->setCursor (UBResources::resources ()->penCursor);
         break;
     default:

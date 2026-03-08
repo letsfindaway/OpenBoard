@@ -55,6 +55,8 @@ class UBApplicationController;
 class UBStartupHintsPalette;
 class UBPageNavigationWidget;
 
+class UBDrawingPalette;
+
 class UBBoardPaletteManager : public QObject
 {
     Q_OBJECT
@@ -78,6 +80,10 @@ class UBBoardPaletteManager : public QObject
 
         void setCurrentWebToolsPalette(UBWebToolsPalette *palette) {mWebToolsCurrentPalette = palette;}
         UBWebToolsPalette* mWebToolsCurrentPalette;
+
+#ifdef ENABLE_SHAPES
+        UBDrawingPalette* drawingPalette() const {return mDrawingPalette;}
+#endif
 
         void processPalettersWidget(UBDockPalette *paletter, eUBDockPaletteWidgetMode mode);
         void changeMode(eUBDockPaletteWidgetMode newMode, bool isInit = false);
@@ -120,6 +126,10 @@ class UBBoardPaletteManager : public QObject
         UBActionPalette* mAddItemPalette;
         UBActionPalette* mErasePalette;
         UBActionPalette* mPagePalette;
+
+#ifdef ENABLE_SHAPES
+        UBDrawingPalette* mDrawingPalette{nullptr};
+#endif
 
         QUrl mItemUrl;
         QPixmap mPixmap;

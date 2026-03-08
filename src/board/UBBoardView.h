@@ -80,6 +80,12 @@ signals:
     void mouseReleased();
     void painted(const QRectF region);
 
+#ifdef ENABLE_SHAPES
+    void mouseMove(QMouseEvent* event);
+    void mousePress(QMouseEvent* event);
+    void mouseRelease(QMouseEvent* event);
+#endif
+
 protected:
 
     bool itemIsLocked(QGraphicsItem *item);

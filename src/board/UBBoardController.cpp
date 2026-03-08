@@ -166,6 +166,10 @@ void UBBoardController::init()
     });
 
     undoRedoStateChange(true);
+
+#ifdef ENABLE_SHAPES
+    mShapeFactory.init();
+#endif
 }
 
 
