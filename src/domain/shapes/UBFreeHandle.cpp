@@ -13,7 +13,7 @@ UBFreeHandle::UBFreeHandle(UBFreeHandle* const src):
 
 void UBFreeHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    QPointF p = mapToParent(event->pos());
+    QPointF p = parentItem()->mapFromScene(event->scenePos());
 
     QPointF diff = p - pos();
 

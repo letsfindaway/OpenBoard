@@ -14,7 +14,7 @@ UBHorizontalHandle::UBHorizontalHandle(UBHorizontalHandle* const src):
 
 void UBHorizontalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    QPointF p = mapToParent(event->pos());
+    QPointF p = parentItem()->mapFromScene(event->scenePos());
 
     this->setPos(p.x(), pos().y());
 

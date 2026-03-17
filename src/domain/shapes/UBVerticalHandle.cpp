@@ -14,7 +14,7 @@ UBVerticalHandle::UBVerticalHandle(UBVerticalHandle* const src):
 
 void UBVerticalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    QPointF p = mapToParent(event->pos());
+    QPointF p = parentItem()->mapFromScene(event->scenePos());
 
     this->setPos(pos().x(), p.y());
 

@@ -14,7 +14,7 @@ UBDiagonalHandle::UBDiagonalHandle(UBDiagonalHandle* const src):
 
 void UBDiagonalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    QPointF p = mapToParent(event->pos());
+    QPointF p = parentItem()->mapFromScene(event->scenePos());
 
     QPointF diff(p - pos());
 
