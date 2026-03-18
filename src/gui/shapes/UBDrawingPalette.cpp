@@ -135,6 +135,20 @@ void UBDrawingPalette::buttonClicked()
         {
             subPalette->hide(); // Hide palette
         }
+
+        if (button->group())
+        {
+            // the button group created in the constructor does no longer work as the
+            // actions of those buttons are now grouped in the corresponding sub-palette
+            // we therefore have to mimic this function and uncheck all other buttons in the group
+            for (auto groupedButton : button->group()->buttons())
+            {
+                if (groupedButton != button)
+                {
+                    groupedButton->setChecked(false);
+                }
+            }
+        }
     }
     else if (sender() == UBApplication::boardController->shapeFactory().shapeActions()->actionChangeFillingColor)
     {
