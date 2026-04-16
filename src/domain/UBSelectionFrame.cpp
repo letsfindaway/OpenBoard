@@ -260,8 +260,9 @@ void UBSelectionFrame::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             qreal cntrX = nextRotCenter.x();
             qreal cntrY = nextRotCenter.y();
 
+            const auto flipped = ownTransform.m11() * ownTransform.m22() < 0;
             ownTransform.translate(cntrX, cntrY);
-            ownTransform.rotate(-dAngle);
+            ownTransform.rotate(flipped ? dAngle : -dAngle);
             ownTransform.translate(-cntrX, -cntrY);
 
             item->update();
