@@ -2040,6 +2040,13 @@ void UBGraphicsScene::deselectAllItems()
         UBGraphicsTextItem* textItem = dynamic_cast<UBGraphicsTextItem*>(gi);
         if(textItem)
             textItem->activateTextEditor(false);
+
+#ifdef ENABLE_SHAPES
+        if (UBShapeFactory::isShape(gi))
+        {
+            UBShapeFactory::desactivateEditionMode(gi);
+        }
+#endif
     }
 }
 
@@ -2052,6 +2059,13 @@ void UBGraphicsScene::deselectAllItemsExcept(QGraphicsItem* item)
             UBGraphicsTextItem* textItem = dynamic_cast<UBGraphicsTextItem*>(eachItem);
             if(textItem)
                 textItem->activateTextEditor(false);
+
+#ifdef ENABLE_SHAPES
+            if (UBShapeFactory::isShape(eachItem))
+            {
+                UBShapeFactory::desactivateEditionMode(eachItem);
+            }
+#endif
         }
     }
 }

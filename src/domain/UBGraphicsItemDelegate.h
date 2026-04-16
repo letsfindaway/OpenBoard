@@ -310,6 +310,9 @@ class UBGraphicsItemDelegate : public QObject
         void showMenu();
 
         virtual void showHide(bool show);
+#ifdef ENABLE_SHAPES
+        virtual void showFrame(bool show);
+#endif
         virtual void showOnDisplay(bool hide);
         virtual void hideOnDisplayWhenSelected(bool hide);
         virtual void lock(bool lock);

@@ -188,7 +188,7 @@ void UBEditableGraphicsRegularShapeItem::updateHandle(UBAbstractHandle *handle)
 {
     prepareGeometryChange();
 
-    // Delegate()->showFrame(false);
+    Delegate()->showFrame(false);
 
     QPointF diff = handle->pos() - path().boundingRect().topLeft();
 

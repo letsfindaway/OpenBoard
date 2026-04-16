@@ -31,7 +31,7 @@ void UBAbstractEditableGraphicsShapeItem::mouseReleaseEvent(QGraphicsSceneMouseE
             if(mMultiClickState %2 == 1){
                 onActivateEditionMode();
 
-                // Delegate()->showFrame(false);
+                Delegate()->showFrame(false);
                 setFocus();
                 showEditMode(true);
             }
@@ -39,7 +39,7 @@ void UBAbstractEditableGraphicsShapeItem::mouseReleaseEvent(QGraphicsSceneMouseE
             {
                 showEditMode(false);
                 Delegate()->positionHandles();
-                // Delegate()->showFrame(true);
+                Delegate()->showFrame(true);
             }
         }
     }

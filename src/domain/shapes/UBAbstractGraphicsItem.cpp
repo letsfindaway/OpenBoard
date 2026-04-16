@@ -18,6 +18,7 @@ UBAbstractGraphicsItem::UBAbstractGraphicsItem(QGraphicsItem *parent):
                                                GF_REVOLVABLE,
                                                GF_FLIPPABLE_ALL_AXIS
                                            }));
+    Delegate()->createControls();   // similar to init()
 
 
     // Delegate()->frame()->setOperationMode(UBGraphicsDelegateFrame::NoResizing);

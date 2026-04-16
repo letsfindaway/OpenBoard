@@ -51,7 +51,7 @@ void UBAbstractEditableGraphicsPathItem::mouseReleaseEvent(QGraphicsSceneMouseEv
             if(mMultiClickState %2 == 1){
                 onActivateEditionMode();
 
-                // Delegate()->showFrame(false);
+                Delegate()->showFrame(false);
                 setFocus();
                 showEditMode(true);
             }
@@ -59,7 +59,7 @@ void UBAbstractEditableGraphicsPathItem::mouseReleaseEvent(QGraphicsSceneMouseEv
             {
                 showEditMode(false);
                 Delegate()->positionHandles();
-                // Delegate()->showFrame(true);
+                Delegate()->showFrame(true);
             }
         }
     }
@@ -120,7 +120,7 @@ void UBAbstractEditableGraphicsPathItem::focusHandle(UBAbstractHandle *handle)
 {
     Q_UNUSED(handle)
 
-    // Delegate()->showFrame(false);
+    Delegate()->showFrame(false);
 }
 
 void UBAbstractEditableGraphicsPathItem::deactivateEditionMode()

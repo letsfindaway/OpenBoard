@@ -1333,7 +1333,12 @@ void UBBoardView::mouseMoveEvent (QMouseEvent *event)
                             || item->type() == UBGraphicsSvgItem::Type
                             || item->type() == UBGraphicsTextItem::Type
                             || item->type() == UBGraphicsStrokesGroup::Type
-                            || item->type() == UBGraphicsGroupContainerItem::Type) {
+                            || item->type() == UBGraphicsGroupContainerItem::Type
+#ifdef ENABLE_SHAPES
+                            || UBShapeFactory::isShape(item)
+#endif
+                            )
+                    {
 
 
                         if (!mJustSelectedItems.contains(item)) {
