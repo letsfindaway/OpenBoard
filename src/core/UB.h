@@ -34,7 +34,6 @@
 
 
 #define UB_MAX_ZOOM 9
-#define ENABLE_SHAPES
 
 #if defined(Q_OS_LINUX) || (defined(Q_OS_OSX) && (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)))
 #define UB_REQUIRES_MASK_UPDATE 1
