@@ -143,8 +143,6 @@ class UBSvgSubsetAdaptor
 
                 UBGraphicsPolygonItem* polygonItemFromPolygonSvg(const QColor& pDefaultBrushColor);
 
-                QList<UBGraphicsPolygonItem*> polygonItemsFromPolylineSvg(const QColor& pDefaultColor);
-
                 UBGraphicsPixmapItem* pixmapItemFromSvg();
 
                 UBGraphicsSvgItem* svgItemFromSvg();
@@ -217,11 +215,8 @@ class UBSvgSubsetAdaptor
             private:
 
                 void persistGroupToDom(QGraphicsItem *groupItem, QDomElement *curParent, QDomDocument *curDomDocument);
-                void persistStrokeToDom(QGraphicsItem *strokeItem, QDomElement *curParent, QDomDocument *curDomDocument);
                 void polygonItemToSvgPolygon(UBGraphicsPolygonItem* polygonItem, bool groupHoldsInfo);
                 void polygonItemToSvgLine(UBGraphicsPolygonItem* polygonItem, bool groupHoldsInfo);
-                void strokeToSvgPolyline(UBGraphicsStroke* stroke, bool groupHoldsInfo);
-                void strokeToSvgPolygon(UBGraphicsStroke* stroke, bool groupHoldsInfo);
 
                 inline QString pointsToSvgPointsAttribute(QVector<QPointF> points)
                 {
