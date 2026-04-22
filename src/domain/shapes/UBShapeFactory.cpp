@@ -9,6 +9,7 @@
 #include "UB1HEditableGraphicsCircleItem.h"
 #include "UB1HEditableGraphicsSquareItem.h"
 
+#include "adaptors/UBSvgShapeAdaptor.h"
 #include "core/UBApplication.h"
 #include "board/UBBoardController.h"
 #include "board/UBBoardView.h"
@@ -21,6 +22,8 @@ UBShapeFactory::UBShapeFactory()
     mShapeActions = new Ui::ShapeActions;
     QWidget* actionWidget = new QWidget();
     mShapeActions->setupUi(actionWidget);
+
+    UBSvgShapeAdaptor::registerExtension();
 }
 
 void UBShapeFactory::prepareChangeFill()

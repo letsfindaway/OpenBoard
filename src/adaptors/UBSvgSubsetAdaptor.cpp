@@ -366,6 +366,14 @@ QVersionNumber UBSvgSubsetAdaptor::sceneVersion(const QString& xmlContent)
     return QVersionNumber::fromString(xmlContent.mid(quoteStartIndex + 1, quoteEndIndex - quoteStartIndex - 1));
 }
 
+#ifdef ENABLE_SHAPES
+UBSvgSubsetAdaptor::UBSvgAdaptorExtension* UBSvgSubsetAdaptor::sAdaptorExtension = nullptr;
+
+void UBSvgSubsetAdaptor::registerAdapterExtension(UBSvgSubsetAdaptor::UBSvgAdaptorExtension* extension)
+{
+    sAdaptorExtension = extension;
+}
+#endif
 
 std::shared_ptr<UBGraphicsScene> UBSvgSubsetAdaptor::loadScene(std::shared_ptr<UBDocumentProxy> proxy, const QByteArray& pArray)
 {
@@ -388,6 +396,12 @@ UBSvgSubsetAdaptor::UBSvgSubsetReader::UBSvgSubsetReader(std::shared_ptr<UBDocum
     , mGroupHasInfo(false)
 {
     // NOOP
+#ifdef ENABLE_SHAPES
+    if (UBSvgSubsetAdaptor::sAdaptorExtension)
+    {
+        mReaderExtension = std::unique_ptr<UBSvgReaderExtension>(sAdaptorExtension->createSvgReaderExtension(mXmlReader));
+    }
+#endif
 }
 
 
@@ -960,6 +974,12 @@ void UBSvgSubsetAdaptor::UBSvgSubsetReader::processElement()
             //considering groups section at the end of the document
             readGroupRoot();
         }
+#ifdef ENABLE_SHAPES
+        else if (mReaderExtension)
+        {
+            mReaderExtension->readerExtension(scene());
+        }
+#endif
         else
         {
             // NOOP
@@ -1164,6 +1184,12 @@ UBSvgSubsetAdaptor::UBSvgSubsetWriter::UBSvgSubsetWriter(std::shared_ptr<UBDocum
 
 {
     // NOOP
+#ifdef ENABLE_SHAPES
+    if (UBSvgSubsetAdaptor::sAdaptorExtension)
+    {
+        mWriterExtension = std::unique_ptr<UBSvgWriterExtension>(sAdaptorExtension->createSvgWriterExtension(mXmlWriter));
+    }
+#endif
 }
 
 
@@ -1460,6 +1486,13 @@ bool UBSvgSubsetAdaptor::UBSvgSubsetWriter::persistScene(std::shared_ptr<UBDocum
             persistGroupToDom(groupItem, &groupRoot, &groupDomDocument);
             continue;
         }
+
+#ifdef ENABLE_SHAPES
+        if (mWriterExtension)
+        {
+            mWriterExtension->writerExtension(item);
+        }
+#endif
     }
 
     if (openStroke)

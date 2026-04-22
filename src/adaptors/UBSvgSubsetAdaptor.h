@@ -97,6 +97,29 @@ class UBSvgSubsetAdaptor
         static void setSceneUuid(std::shared_ptr<UBDocumentProxy> proxy, const int pageId, QUuid pUuid);
         static void replicateScene(const QString& sourcePath, const QString& targetPath, QUuid uuid);
 
+#ifdef ENABLE_SHAPES
+        class UBSvgReaderExtension
+        {
+        public:
+            virtual void readerExtension(std::shared_ptr<UBGraphicsScene> scene) = 0;
+        };
+
+        class UBSvgWriterExtension
+        {
+        public:
+            virtual void writerExtension(QGraphicsItem* item) = 0;
+        };
+
+        class UBSvgAdaptorExtension
+        {
+        public:
+            virtual UBSvgReaderExtension* createSvgReaderExtension(QXmlStreamReader& xmlReader) = 0;
+            virtual UBSvgWriterExtension* createSvgWriterExtension(QXmlStreamWriter& xmlWriter) = 0;
+        };
+
+        static void registerAdapterExtension(UBSvgAdaptorExtension* extension);
+#endif
+
         static const QString nsSvg;
         static const QString nsXLink;
         static const QString nsXHtml;
@@ -117,9 +140,16 @@ class UBSvgSubsetAdaptor
 
         static const QString sFormerUniboardDocumentNamespaceUri;
 
+#ifdef ENABLE_SHAPES
+    public:
+#endif
         static QString toSvgTransform(const QTransform& matrix);
         static QTransform fromSvgTransform(const QString& transform);
 
+#ifdef ENABLE_SHAPES
+    private:
+        static UBSvgAdaptorExtension* sAdaptorExtension;
+#endif
 
         class UBSvgSubsetReader
         {
@@ -200,6 +230,10 @@ class UBSvgSubsetAdaptor
                 UBGraphicsStroke* currentStroke = nullptr;
                 UBGraphicsWidgetItem *currentWidget = nullptr;
                 bool mMustFinalize = false;
+
+#ifdef ENABLE_SHAPES
+                std::unique_ptr<UBSvgReaderExtension> mReaderExtension{};
+#endif
         };
 
         class UBSvgSubsetWriter
@@ -283,6 +317,9 @@ class UBSvgSubsetAdaptor
                 QString mDocumentPath;
                 int mPageId;
 
+#ifdef ENABLE_SHAPES
+                std::unique_ptr<UBSvgWriterExtension> mWriterExtension{};
+#endif
         };
 };
 
