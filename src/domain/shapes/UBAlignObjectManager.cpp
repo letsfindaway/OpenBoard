@@ -65,7 +65,7 @@ void UBAlignObjectManager::alignToLeft() const
             leftPoints[i] = left;
         }
 
-        UBApplication::undoStack->beginMacro("leftAlign");
+        UBApplication::undoStack->beginMacro(UBSettings::undoCommandTransactionName);
 
         for(int i = 0; i < selectedItems.size(); i++){
             if(selectedItems.at(i) != reference){
@@ -125,7 +125,7 @@ void UBAlignObjectManager::alignToRight() const
             rightPoints[i] = right;
         }
 
-        UBApplication::undoStack->beginMacro("rightAlign");
+        UBApplication::undoStack->beginMacro(UBSettings::undoCommandTransactionName);
 
         for(int i = 0; i < selectedItems.size(); i++){
             if(selectedItems.at(i) != reference){
@@ -183,7 +183,7 @@ void UBAlignObjectManager::alignToTop() const
             topPoints[i] = top;
         }
 
-        UBApplication::undoStack->beginMacro("topAlign");
+        UBApplication::undoStack->beginMacro(UBSettings::undoCommandTransactionName);
 
         for(int i = 0; i < selectedItems.size(); i++){
             if(selectedItems.at(i) != reference){
@@ -243,7 +243,7 @@ void UBAlignObjectManager::alignToBottom() const
             bottomPoints[i] = bottom;
         }
 
-        UBApplication::undoStack->beginMacro("bottomAlign");
+        UBApplication::undoStack->beginMacro(UBSettings::undoCommandTransactionName);
 
         for(int i = 0; i < selectedItems.size(); i++){
             if(selectedItems.at(i) != reference){
@@ -307,7 +307,7 @@ void UBAlignObjectManager::verticalAlign() const
             verticalPoints[i] = x_vertical;
         }
 
-        UBApplication::undoStack->beginMacro("verticalAlign");
+        UBApplication::undoStack->beginMacro(UBSettings::undoCommandTransactionName);
 
         for(int i = 0; i < selectedItems.size(); i++){
             if(selectedItems.at(i) != reference){
@@ -371,7 +371,7 @@ void UBAlignObjectManager::horizontalAlign() const
             verticalPoints[i] = y_vertical;
         }
 
-        UBApplication::undoStack->beginMacro("horizontalAlign");
+        UBApplication::undoStack->beginMacro(UBSettings::undoCommandTransactionName);
 
         for(int i = 0; i < selectedItems.size(); i++){
             if(selectedItems.at(i) != reference){

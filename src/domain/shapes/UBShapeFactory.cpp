@@ -516,6 +516,10 @@ void UBShapeFactory::onMousePress(QMouseEvent *event)
             }
         }
     }
+    else if (mDrawingController->stylusTool() == UBStylusTool::ChangeFill && event->button() == Qt::LeftButton)
+    {
+        changeFillColor(event->scenePosition());
+    }
 
 }
 
