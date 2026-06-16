@@ -56,6 +56,7 @@ class UBStartupHintsPalette;
 class UBPageNavigationWidget;
 
 class UBDrawingPalette;
+class UBStylePalette;
 
 class UBBoardPaletteManager : public QObject
 {
@@ -129,6 +130,7 @@ class UBBoardPaletteManager : public QObject
 
 #ifdef ENABLE_SHAPES
         UBDrawingPalette* mDrawingPalette{nullptr};
+        UBStylePalette* mStylePalette{nullptr};
 #endif
 
         QUrl mItemUrl;

@@ -77,6 +77,7 @@
 
 #ifdef ENABLE_SHAPES
 #include "gui/shapes/UBDrawingPalette.h"
+#include "gui/shapes/UBStylePalette.h"
 #endif
 
 
@@ -258,6 +259,13 @@ void UBBoardPaletteManager::setupPalettes()
     mDrawingPalette = new UBDrawingPalette(mContainer, Qt::Vertical);
     mDrawingPalette->hide();
     mDrawingPalette->stackUnder(mZoomPalette);
+
+    mStylePalette = new UBStylePalette{mContainer};
+    mStylePalette->hide();
+
+    UBApplication::mainWindow->boardToolBar->insertAction(
+                UBApplication::mainWindow->actionBackgrounds,
+                UBApplication::boardController->shapeFactory().shapeActions()->actionToggleStylePalette);
 #endif
 
     mTipPalette = new UBStartupHintsPalette(mContainer);
@@ -412,6 +420,8 @@ void UBBoardPaletteManager::connectPalettes()
     connect(UBApplication::boardController->shapeFactory().shapeActions()->actionDrawing, &QAction::toggled, this, [this](bool checked){
         mDrawingPalette->setVisible(checked);
     });
+    connect(UBApplication::boardController->shapeFactory().shapeActions()->actionToggleStylePalette, &QAction::toggled,
+            mStylePalette, &QWidget::setVisible);
 #endif
 
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))

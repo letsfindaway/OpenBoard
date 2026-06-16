@@ -17,5 +17,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     UBRegularShapesPalette.h
     UBShapesPalette.cpp
     UBShapesPalette.h
+    UBStylePalette.cpp
+    UBStylePalette.h
 )
 

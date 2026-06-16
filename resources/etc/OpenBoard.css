@@ -15,7 +15,7 @@ QComboBox QAbstractItemView
     background: palette(button);
 }
 
-QPushButton:focus,
+/* QPushButton:focus, */
 QPushButton:pressed,
 QPushButton:checked,
 QPushButton:default,

@@ -677,8 +677,20 @@
     <string>Arrows properties</string>
    </property>
   </action>
+  <action name="actionToggleStylePalette">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Style Palette</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle Style Palette</string>
+   </property>
+  </action>
  </widget>
  <resources>
+  <include location="../OpenBoard.qrc"/>
   <include location="../shapes.qrc"/>
  </resources>
  <connections/>
