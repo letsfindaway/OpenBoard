@@ -1,6 +1,7 @@
 #pragma once
 
 #include "domain/UBItem.h"
+#include "domain/shapes/UBShapeStyle.h"
 
 
 #include <QAbstractGraphicsShapeItem>
@@ -11,6 +12,10 @@ public:
     UBAbstractGraphicsItem(QGraphicsItem *parent = 0);
 
     virtual ~UBAbstractGraphicsItem();
+
+    void applyStyle(const UBShapeStyle& style, bool isDark);
+    UBShapeStyle shapeStyle() const;
+    void setShapeStyle(const UBShapeStyle& style);
 
     bool hasFillingProperty() const;
 
@@ -62,6 +67,7 @@ protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 private:
+    UBShapeStyle mShapeStyle{};
     FillPattern mFillPatern;
     QBitmap patternPoint();
     QBitmap patternDiag();

@@ -1,7 +1,11 @@
 #include "UBAbstractGraphicsItem.h"
+#include "board/UBBoardController.h"
+#include "core/UBApplication.h"
 #include "domain/UBGraphicsItemDelegate.h"
 #include "domain/UBGraphicsDelegateFrame.h"
+#include "domain/shapes/UBShapeFactory.h"
 //#include "customWidgets/UBGraphicsItemAction.h"
+
 
 UBAbstractGraphicsItem::UBAbstractGraphicsItem(QGraphicsItem *parent):
     QAbstractGraphicsShapeItem(parent)
@@ -37,6 +41,43 @@ UBAbstractGraphicsItem::UBAbstractGraphicsItem(QGraphicsItem *parent):
 UBAbstractGraphicsItem::~UBAbstractGraphicsItem()
 {
 
+}
+
+void UBAbstractGraphicsItem::applyStyle(const UBShapeStyle& style, bool isDark)
+{
+    if (style.lineColor(isDark).isValid())
+    {
+        setStrokeColor(style.lineColor(isDark));
+        mShapeStyle.setLineColor(style.lineColor(false), style.lineColor(true));
+    }
+
+    if (style.lineWidth() > 0)
+    {
+        setStrokeSize(style.lineWidth());
+        mShapeStyle.setLineWidth(style.lineWidth());
+    }
+
+    if (style.lineStyle() != Qt::NoPen)
+    {
+        setStyle(style.lineStyle());
+        mShapeStyle.setLineStyle(style.lineStyle());
+    }
+
+    if (style.fillColor(isDark).isValid())
+    {
+        setFillColor(style.fillColor(isDark));
+        mShapeStyle.setFillColor(style.fillColor(false), style.fillColor(true));
+    }
+}
+
+UBShapeStyle UBAbstractGraphicsItem::shapeStyle() const
+{
+    return mShapeStyle;
+}
+
+void UBAbstractGraphicsItem::setShapeStyle(const UBShapeStyle& style)
+{
+    mShapeStyle = style;
 }
 
 void UBAbstractGraphicsItem::setStyle(Qt::PenStyle penStyle)
@@ -134,6 +175,13 @@ QVariant UBAbstractGraphicsItem::itemChange(GraphicsItemChange change, const QVa
 
     if(Delegate())
         newValue = Delegate()->itemChange(change, value);
+
+    static UBShapeFactory& shapeFactory = UBApplication::boardController->shapeFactory();
+
+    if (change == GraphicsItemChange::ItemSelectedHasChanged)
+    {
+        shapeFactory.selectionChanged(this, value.toBool());
+    }
 
     return QAbstractGraphicsShapeItem::itemChange(change, newValue);
 }
@@ -252,7 +300,7 @@ bool UBAbstractGraphicsItem::hasFillingProperty() const
 
 bool UBAbstractGraphicsItem::hasStrokeProperty() const
 {
-    return pen() != QPen();
+    return true || pen() != QPen();
 }
 
 bool UBAbstractGraphicsItem::hasGradient() const
@@ -285,4 +333,5 @@ void UBAbstractGraphicsItem::copyItemParameters(UBItem *copy) const
 
     cp->setBrush(brush());
     cp->setPen(pen());
+    cp->setShapeStyle(shapeStyle());
 }

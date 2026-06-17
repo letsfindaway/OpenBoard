@@ -10,6 +10,7 @@
 #include "UB1HEditableGraphicsSquareItem.h"
 
 #include "adaptors/UBSvgShapeAdaptor.h"
+#include "board/UBBoardPaletteManager.h"
 #include "core/UBApplication.h"
 #include "board/UBBoardController.h"
 #include "board/UBBoardView.h"
@@ -595,12 +596,16 @@ void UBShapeFactory::onMouseRelease(QMouseEvent *event)
         mFirstClickForFreeHand = true;
     }
 
+    if (mCurrentShape)
+    {
+        mCurrentShape->applyStyle(mShapeStyle, mBoardView->scene()->isDarkBackground());
+    }
+
     if (!mCursorMoved && mCurrentShape && mShapeType != Polygon)
         mBoardView->scene()->removeItem(mCurrentShape);
 
     if (mShapeType != Polygon)
         mCurrentShape = NULL;
-
 }
 
 QRectF UBShapeFactory::reverseRect(const QRectF& rect)
@@ -706,6 +711,47 @@ void UBShapeFactory::setThickness(int thickness)
 
         items.at(i)->update();
     }
+}
+
+void UBShapeFactory::selectionChanged(UBAbstractGraphicsItem* item, bool selected)
+{
+    if (selected)
+    {
+        mSelectedShapes << item;
+    }
+    else
+    {
+        mSelectedShapes.remove(item);
+    }
+
+    // compute common style of selected shapes
+    if (!mSelectedShapes.isEmpty())
+    {
+        UBShapeStyle commonStyle = (*mSelectedShapes.begin())->shapeStyle();
+
+        for (const auto shape : mSelectedShapes)
+        {
+            commonStyle = commonStyle.intersected(shape->shapeStyle());
+        }
+
+        UBApplication::boardController->paletteManager()->setShapeStyle(commonStyle);
+    }
+}
+
+void UBShapeFactory::applyStyle(const UBShapeStyle& style)
+{
+    const auto scene = mBoardView->scene();
+    const auto isDark = scene->isDarkBackground();
+
+    for (auto shape : mSelectedShapes)
+    {
+        shape->applyStyle(style, isDark);
+    }
+}
+
+void UBShapeFactory::setCurrentStyle(const UBShapeStyle& style)
+{
+    mShapeStyle = style;
 }
 
 void UBShapeFactory::setStrokeColor(QColor color)

@@ -214,13 +214,13 @@ void UBSvgShapeAdaptor::UBSvgShapeReader::getStyleFromSvg(UBAbstractGraphicsItem
 
     // Stroke width/thickness
     QStringView svgStrokeWidth = mXmlReader.attributes().value("stroke-width");
-    int strokeWidth = 2;
+    double strokeWidth = 2;
     if (!svgStrokeWidth.isNull())
     {
-        strokeWidth = svgStrokeWidth.toString().toInt();
+        strokeWidth = svgStrokeWidth.toString().toDouble();
     }
 
-    p.setWidth(strokeWidth);
+    p.setWidthF(strokeWidth);
 
     // Stroke style
     QStringView svgStrokeLineCap = mXmlReader.attributes().value("stroke-linecap");
@@ -308,6 +308,29 @@ void UBSvgShapeAdaptor::UBSvgShapeReader::getStyleFromSvg(UBAbstractGraphicsItem
         itemMatrix = UBSvgSubsetAdaptor::fromSvgTransform(svgTransform.toString());
         item->setTransform(itemMatrix);
     }
+
+    // ShapeStyle
+    UBShapeStyle style;
+    QStringView onLight = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "line-on-light-background");
+    QStringView onDark = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "line-on-dark-background");
+
+    if (!onLight.isNull() && !onDark.isNull())
+    {
+        style.setLineColor(QColor::fromString(onLight), QColor::fromString(onDark));
+    }
+
+    style.setLineWidth(strokeWidth);
+    style.setLineStyle(p.style() == Qt::CustomDashLine ? Qt::DashLine : p.style());
+
+    onLight = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "fill-on-light-background");
+    onDark = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "fill-on-dark-background");
+
+    if (!onLight.isNull() && !onDark.isNull())
+    {
+        style.setFillColor(QColor::fromString(onLight), QColor::fromString(onDark));
+    }
+
+    item->setShapeStyle(style);
 }
 
 UB3HEditableGraphicsEllipseItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapeEllipseFromSvg(const QColor& pDefaultPenColor) // EV-7 - ALTI/AOU - 20131231
@@ -754,13 +777,18 @@ void UBSvgShapeAdaptor::UBSvgShapeWriter::writeAbstractGraphicsItemStyle(UBAbstr
     // Stroke :
     if(item->hasStrokeProperty()){
         mXmlWriter.writeAttribute("stroke", QString("%1").arg(item->pen().color().name()));
-        mXmlWriter.writeAttribute("stroke-width", QString("%1").arg(item->pen().width()));
+        mXmlWriter.writeAttribute("stroke-width", QString("%1").arg(item->pen().widthF()));
+
+        mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri
+                                  , "line-on-light-background", item->shapeStyle().lineColor(false).name(QColor::HexArgb));
+        mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri
+                                  , "line-on-dark-background", item->shapeStyle().lineColor(true).name(QColor::HexArgb));
 
         if (item->pen().style() == Qt::DotLine){
             mXmlWriter.writeAttribute("stroke-dasharray", SVG_STROKE_DOTLINE);
         }
 
-        if(item->pen().style() == Qt::CustomDashLine){
+        if(item->pen().style() == Qt::CustomDashLine || item->pen().style() == Qt::DashLine){
             switch(item->pen().width()){
                 case UBDrawingStrokePropertiesPalette::Fine:
                     mXmlWriter.writeAttribute("stroke-dasharray", "1, 10");
@@ -793,6 +821,11 @@ void UBSvgShapeAdaptor::UBSvgShapeWriter::writeAbstractGraphicsItemStyle(UBAbstr
             if (item->brush().style() == Qt::TexturePattern){
                 mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "fill-pattern", QString("%1").arg(item->fillPattern()));
             }
+
+            mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri
+                                      , "fill-on-light-background", item->shapeStyle().fillColor(false).name(QColor::HexArgb));
+            mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri
+                                      , "fill-on-dark-background", item->shapeStyle().fillColor(true).name(QColor::HexArgb));
         }
         else
         {

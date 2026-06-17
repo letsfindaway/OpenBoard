@@ -5,6 +5,8 @@
 #include <QGraphicsItem>
 
 #include "UBAbstractGraphicsPathItem.h"
+#include "UBShapeStyle.h"
+
 #include "ui_shapeActions.h"
 
 class UBAbstractGraphicsItem;
@@ -96,10 +98,14 @@ public slots:
 
     void setThickness(int thickness);
 
+    void selectionChanged(UBAbstractGraphicsItem* item, bool selected);
+    void applyStyle(const UBShapeStyle& style);
+    void setCurrentStyle(const UBShapeStyle& style);
 
 private:
     UBAbstractGraphicsItem* mCurrentShape{nullptr};
     UBBoardView* mBoardView{nullptr};
+    UBShapeStyle mShapeStyle{};
 
     bool mIsCreating{false};
     bool mIsPress{false};
@@ -132,6 +138,8 @@ private:
     QVector<qreal> mDotDashes{};
 
     Ui::ShapeActions* mShapeActions{nullptr};
+
+    QSet<UBAbstractGraphicsItem*> mSelectedShapes{};
 
 protected:
     UBAbstractGraphicsItem *instanciateCurrentShape();

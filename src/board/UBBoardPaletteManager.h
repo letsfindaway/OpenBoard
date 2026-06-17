@@ -32,6 +32,7 @@
 
 #include <QtGui>
 
+#include "domain/shapes/UBShapeStyle.h"
 #include "gui/UBLeftPalette.h"
 #include "gui/UBRightPalette.h"
 #include "gui/UBCachePropertiesWidget.h"
@@ -102,6 +103,7 @@ class UBBoardPaletteManager : public QObject
         void slot_changeDesktopMode(bool);
 
         void toggleErasePalette(bool ckecked);
+        void setShapeStyle(const UBShapeStyle& style);
 
     private:
 

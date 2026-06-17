@@ -263,6 +263,9 @@ void UBBoardPaletteManager::setupPalettes()
     mStylePalette = new UBStylePalette{mContainer};
     mStylePalette->hide();
 
+    connect(mStylePalette, &UBStylePalette::styleChanged, &mBoardControler->shapeFactory(), &UBShapeFactory::setCurrentStyle);
+    mBoardControler->shapeFactory().setCurrentStyle(mStylePalette->selectedStyle());
+
     UBApplication::mainWindow->boardToolBar->insertAction(
                 UBApplication::mainWindow->actionBackgrounds,
                 UBApplication::boardController->shapeFactory().shapeActions()->actionToggleStylePalette);
@@ -623,6 +626,11 @@ void UBBoardPaletteManager::toggleErasePalette(bool checked)
         mErasePalette->move((mContainer->width() - mErasePalette->width()) / 2,
             (mContainer->height() - mErasePalette->height()) / 5);
     }
+}
+
+void UBBoardPaletteManager::setShapeStyle(const UBShapeStyle& style)
+{
+    mStylePalette->updateChoice(style);
 }
 
 
