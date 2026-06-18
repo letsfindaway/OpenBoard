@@ -1215,11 +1215,22 @@ void UBGraphicsScene::recolorAllItems()
             }
         }
 
-        if (item->type() == UBGraphicsTextItem::Type)
+        else if (item->type() == UBGraphicsTextItem::Type)
         {
             UBGraphicsTextItem *textItem = static_cast<UBGraphicsTextItem*>(item);
             textItem->recolor();
         }
+#ifdef ENABLE_SHAPES
+        else
+        {
+            auto shape = dynamic_cast<UBAbstractGraphicsItem*>(item);
+
+            if (shape)
+            {
+                shape->applyStyle(shape->shapeStyle(), isDarkBackground());
+            }
+        }
+#endif
     }
 
     foreach(QGraphicsView* view, views())
