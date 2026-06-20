@@ -39,12 +39,6 @@
 class UBGraphicsStrokesGroup : public QGraphicsItemGroup, public UBItem, public UBGraphicsItem
 {
 public:
-    enum colorType {
-        currentColor = 0
-        , colorOnLightBackground
-        , colorOnDarkBackground
-    };
-
     UBGraphicsStrokesGroup(QGraphicsItem* parent = 0);
     ~UBGraphicsStrokesGroup();
     virtual UBItem* deepCopy() const;
@@ -54,8 +48,6 @@ public:
     {
         return Type;
     }
-    void setColor(const QColor &color, colorType pColorType = currentColor);
-    QColor color(colorType pColorType = currentColor) const;
 
 protected:
 

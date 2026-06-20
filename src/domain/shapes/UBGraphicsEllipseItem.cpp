@@ -77,11 +77,11 @@ void UB3HEditableGraphicsEllipseItem::paint(QPainter *painter, const QStyleOptio
 
     setStyle(painter);
 
-    int rx = (mRadiusX < 0 ? -mRadiusX : mRadiusX);
-    int ry = (mRadiusY < 0 ? -mRadiusY : mRadiusY);
+    auto rx = (mRadiusX < 0 ? -mRadiusX : mRadiusX);
+    auto ry = (mRadiusY < 0 ? -mRadiusY : mRadiusY);
 
-    int x = (mRadiusX < 0 ? mRadiusX : 0);
-    int y = (mRadiusY < 0 ? mRadiusY : 0);
+    auto x = (mRadiusX < 0 ? mRadiusX : 0);
+    auto y = (mRadiusY < 0 ? mRadiusY : 0);
 
     //N/C - NNE - 20140312 : Litle work around for avoid crash under MacOs 10.9
     QPainterPath path;
@@ -104,11 +104,11 @@ void UB3HEditableGraphicsEllipseItem::paint(QPainter *painter, const QStyleOptio
 
 QRectF UB3HEditableGraphicsEllipseItem::boundingRect() const
 {
-    int x = (mRadiusX < 0 ? mRadiusX : 0);
-    int y = (mRadiusY < 0 ? mRadiusY : 0);
+    auto x = (mRadiusX < 0 ? mRadiusX : 0);
+    auto y = (mRadiusY < 0 ? mRadiusY : 0);
 
-    int rx = (mRadiusX < 0 ? -mRadiusX : mRadiusX);
-    int ry = (mRadiusY < 0 ? -mRadiusY : mRadiusY);
+    auto rx = (mRadiusX < 0 ? -mRadiusX : mRadiusX);
+    auto ry = (mRadiusY < 0 ? -mRadiusY : mRadiusY);
 
     rx *= 2;
     ry *= 2;
@@ -183,7 +183,8 @@ QPainterPath UB3HEditableGraphicsEllipseItem::shape() const
     if(isInEditMode()){
         path.addRect(boundingRect());
     }else{
-        path.addEllipse(boundingRect());
+        // path.addEllipse(boundingRect());
+        path.addEllipse({mRadiusX, mRadiusY}, mRadiusX, mRadiusY);
     }
     return path;
 }

@@ -55,11 +55,11 @@ void UB1HEditableGraphicsCircleItem::paint(QPainter *painter, const QStyleOption
 
     UBAbstractGraphicsItem::setStyle(painter);
 
-    int rx = wIsNeg ? -mRadius : mRadius;
-    int ry = hIsNeg ? -mRadius : mRadius;
+    auto rx = wIsNeg ? -mRadius : mRadius;
+    auto ry = hIsNeg ? -mRadius : mRadius;
 
-    int x = wIsNeg ? -mRadius : 0;
-    int y = hIsNeg ? -mRadius : 0;
+    auto x = wIsNeg ? -mRadius : 0;
+    auto y = hIsNeg ? -mRadius : 0;
 
     x *= 2;
     y *= 2;
@@ -85,13 +85,13 @@ void UB1HEditableGraphicsCircleItem::paint(QPainter *painter, const QStyleOption
 
 QRectF UB1HEditableGraphicsCircleItem::boundingRect() const
 {
-    int x = wIsNeg ? -mRadius : 0;
-    int y = hIsNeg ? -mRadius : 0;
+    auto x = wIsNeg ? -mRadius : 0;
+    auto y = hIsNeg ? -mRadius : 0;
 
     x *= 2;
     y *= 2;
 
-    QRectF rect(QRect(x, y, mRadius*2, mRadius*2));
+    QRectF rect(x, y, mRadius*2, mRadius*2);
 
     rect = adjustBoundingRect(rect);
 
@@ -139,7 +139,8 @@ QPainterPath UB1HEditableGraphicsCircleItem::shape() const
     if(isInEditMode()){
         path.addRect(boundingRect());
     }else{
-        path.addEllipse(boundingRect());
+        // path.addEllipse(boundingRect());
+        path.addEllipse({mRadius, mRadius}, mRadius, mRadius);
     }
 
     return path;
@@ -155,8 +156,8 @@ void UB1HEditableGraphicsCircleItem::setRect(QRectF rect)
 {
     prepareGeometryChange();
 
-    int w = rect.width();
-    int h = rect.height();
+    auto w = rect.width();
+    auto h = rect.height();
 
     wIsNeg = (w < 0);
     hIsNeg = (h < 0);
@@ -184,8 +185,8 @@ QRectF UB1HEditableGraphicsCircleItem::rect() const
     QRectF r;
     r.setTopLeft(pos());
 
-    int rx = wIsNeg ? -mRadius : mRadius;
-    int ry = hIsNeg ? -mRadius : mRadius;
+    auto rx = wIsNeg ? -mRadius : mRadius;
+    auto ry = hIsNeg ? -mRadius : mRadius;
 
     r.setWidth(rx*2);
     r.setHeight(ry*2);

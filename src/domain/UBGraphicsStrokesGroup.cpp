@@ -58,58 +58,6 @@ UBGraphicsStrokesGroup::~UBGraphicsStrokesGroup()
 {
 }
 
-void UBGraphicsStrokesGroup::setColor(const QColor &color, colorType pColorType)
-{
-    //TODO Implement common mechanism of managing groups, drop UBGraphicsStroke if it's obsolete
-    //Using casting for the moment
-    foreach (QGraphicsItem *item, childItems()) {
-        if (item->type() == UBGraphicsPolygonItem::Type) {
-            UBGraphicsPolygonItem *curPolygon = static_cast<UBGraphicsPolygonItem *>(item);
-
-            switch (pColorType) {
-            case currentColor :
-                curPolygon->setColor(color);
-                break;
-            case colorOnLightBackground :
-                 curPolygon->setColorOnLightBackground(color);
-                break;
-            case colorOnDarkBackground :
-                 curPolygon->setColorOnDarkBackground(color);
-                break;
-            }
-        }
-    }
-
-    if (mDebugText)
-        mDebugText->setBrush(QBrush(color));
-}
-
-QColor UBGraphicsStrokesGroup::color(colorType pColorType) const
-{
-    QColor result;
-
-    foreach (QGraphicsItem *item, childItems()) {
-        if (item->type() == UBGraphicsPolygonItem::Type) {
-            UBGraphicsPolygonItem *curPolygon = static_cast<UBGraphicsPolygonItem *>(item);
-
-            switch (pColorType) {
-            case currentColor :
-                result = curPolygon->color();
-                break;
-            case colorOnLightBackground :
-                result = curPolygon->colorOnLightBackground();
-                break;
-            case colorOnDarkBackground :
-                result = curPolygon->colorOnDarkBackground();
-                break;
-            }
-
-        }
-    }
-
-    return result;
-}
-
 void UBGraphicsStrokesGroup::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Delegate()->startUndoStep();

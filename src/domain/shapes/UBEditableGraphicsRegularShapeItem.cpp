@@ -93,7 +93,6 @@ void UBEditableGraphicsRegularShapeItem::paint(QPainter *painter, const QStyleOp
 
     setStyle(painter);
 
-    painter->fillPath(path(), painter->brush());
     painter->drawPath(path());
 
     if(isInEditMode()){

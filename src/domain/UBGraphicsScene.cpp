@@ -1050,6 +1050,15 @@ void UBGraphicsScene::eraseLineTo(const QPointF &pEndPoint, const qreal &pWidth)
 
     for(int i=0; i<collidItems.size(); i++)
     {
+#ifdef ENABLE_SHAPES
+        UBAbstractGraphicsItem* shapeItem = dynamic_cast<UBAbstractGraphicsItem*>(collidItems[i]);
+
+        if (shapeItem && eraserPath.intersects(shapeItem->sceneTransform().map(shapeItem->shape())))
+        {
+            // replace shape by equivalent strokes group
+            collidItems[i] = shapeToStrokesGroup(shapeItem);
+        }
+#endif
         UBGraphicsPolygonItem *pi = qgraphicsitem_cast<UBGraphicsPolygonItem*>(collidItems[i]);
         if(pi == NULL)
             continue;
@@ -1202,16 +1211,31 @@ void UBGraphicsScene::recolorAllItems()
     }
 
     bool currentIslight = isLightBackground();
+
     foreach (QGraphicsItem *item, items()) {
         if (item->type() == UBGraphicsStrokesGroup::Type) {
             UBGraphicsStrokesGroup *curGroup = static_cast<UBGraphicsStrokesGroup*>(item);
-            QColor compareColor =  curGroup->color(currentIslight ? UBGraphicsStrokesGroup::colorOnDarkBackground
-                                                                  : UBGraphicsStrokesGroup::colorOnLightBackground);
 
-            if (curGroup->color() == compareColor) {
-                QColor newColor = curGroup->color(!currentIslight ? UBGraphicsStrokesGroup::colorOnDarkBackground
-                                                                  : UBGraphicsStrokesGroup::colorOnLightBackground);
-                curGroup->setColor(newColor);
+            const auto groupItems = curGroup->childItems();
+
+            for (auto item : groupItems)
+            {
+                auto polygonItem = dynamic_cast<UBGraphicsPolygonItem*>(item);
+
+                if (polygonItem)
+                {
+                    const auto compareColor = currentIslight
+                            ? polygonItem->colorOnDarkBackground()
+                            : polygonItem->colorOnLightBackground();
+
+                    if (polygonItem->color() == compareColor)
+                    {
+                        const auto newColor = currentIslight
+                                ? polygonItem->colorOnLightBackground()
+                                : polygonItem->colorOnDarkBackground();
+                        polygonItem->setColor(newColor);
+                    }
+                }
             }
         }
 
@@ -1290,6 +1314,75 @@ void UBGraphicsScene::initPolygonItem(UBGraphicsPolygonItem* polygonItem)
 
     polygonItem->setData(UBGraphicsItemData::ItemLayerType, QVariant(UBItemLayerType::Graphic));
 }
+
+#ifdef ENABLE_SHAPES
+UBGraphicsStrokesGroup* UBGraphicsScene::shapeToStrokesGroup(UBAbstractGraphicsItem* shapeItem)
+{
+    // Convert a shape to a strokes group to allow use of the eraser
+
+    // The shape is a QPainterPath describing the line of a shape without pen or brush
+    // FIXME shape() is supposed to return the shape including pen!
+    auto shape = shapeItem->shape();
+
+    // We now create the outline of the line
+    QPainterPathStroker stroker{shapeItem->pen()};
+    auto outline = stroker.createStroke(shape);
+
+    // This outline is then converted to fill polygons, which then behaves like a stroke
+    // There might be one or more polygons, according to the complexity of the line
+    auto fillPolygons = outline.toFillPolygons();
+
+    // Now lets put all together in a strokes group
+    UBGraphicsStrokesGroup* strokesGroup = new UBGraphicsStrokesGroup();
+    const auto shapeStyle = shapeItem->shapeStyle();
+
+    // If it is not transparent, create one polygon for the fill area
+    if (shapeStyle.fillColor(isDarkBackground()) != QColor{Qt::transparent}
+            && (shapeItem->type() != UBGraphicsItemType::GraphicsPathItemType
+                || dynamic_cast<UBEditableGraphicsPolygonItem*>(shapeItem)->isClosed()))
+    {
+        UBGraphicsStroke* stroke = new UBGraphicsStroke{shared_from_this()};
+        UBGraphicsPolygonItem* polygonItem = new UBGraphicsPolygonItem{shape.toFillPolygon()};
+        polygonItem->setColor(shapeStyle.fillColor(isDarkBackground()));
+        polygonItem->setColorOnLightBackground(shapeStyle.fillColor(false));
+        polygonItem->setColorOnDarkBackground(shapeStyle.fillColor(true));
+        polygonItem->setStrokesGroup(strokesGroup);
+        polygonItem->setStroke(stroke);
+        addItem(polygonItem);
+        strokesGroup->addToGroup(polygonItem);
+    }
+
+    // Create one polygon for each fill polygon
+    if (!fillPolygons.isEmpty())
+    {
+        UBGraphicsStroke* stroke = new UBGraphicsStroke{shared_from_this()};
+
+        for (const auto fillPolygon : fillPolygons)
+        {
+            UBGraphicsPolygonItem* polygonItem = new UBGraphicsPolygonItem{fillPolygon};
+            polygonItem->setColor(shapeStyle.lineColor(isDarkBackground()));
+            polygonItem->setColorOnLightBackground(shapeStyle.lineColor(false));
+            polygonItem->setColorOnDarkBackground(shapeStyle.lineColor(true));
+            polygonItem->setStrokesGroup(strokesGroup);
+            polygonItem->setStroke(stroke);
+            addItem(polygonItem);
+            strokesGroup->addToGroup(polygonItem);
+        }
+    }
+
+    // replace shape by strokes group and create an undo command for this
+    addItem(strokesGroup);
+    strokesGroup->setPos(shapeItem->pos());
+    strokesGroup->setTransform(shapeItem->transform());
+
+    removeItem(shapeItem);
+
+    mRemovedItems << shapeItem;
+    mAddedItems << strokesGroup;
+
+    return strokesGroup;
+}
+#endif
 
 UBGraphicsPolygonItem* UBGraphicsScene::arcToPolygonItem(const QLineF& pStartRadius, qreal pSpanAngle, qreal pWidth)
 {

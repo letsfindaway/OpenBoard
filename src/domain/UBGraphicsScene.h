@@ -37,6 +37,7 @@
 
 #include "UBItem.h"
 
+class UBAbstractGraphicsItem;
 class UBBackgroundRuling;
 class UBGraphicsPixmapItem;
 class UBGraphicsSvgItem;
@@ -53,6 +54,7 @@ class UBGraphicsCompass;
 class UBDocumentProxy;
 class UBGraphicsCurtainItem;
 class UBGraphicsStroke;
+class UBGraphicsStrokesGroup;
 class UBMagnifierParams;
 class UBMagnifier;
 class UBGraphicsCache;
@@ -384,6 +386,10 @@ signals:
         void addPolygonItemToCurrentStroke(UBGraphicsPolygonItem* polygonItem);
 
         void initPolygonItem(UBGraphicsPolygonItem*);
+
+#ifdef ENABLE_SHAPES
+        UBGraphicsStrokesGroup* shapeToStrokesGroup(UBAbstractGraphicsItem* shapeItem);
+#endif
 
         void drawEraser(const QPointF& pEndPoint, bool pressed = true);
         void redrawEraser(bool pressed);

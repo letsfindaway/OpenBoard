@@ -205,12 +205,6 @@ void UBEditableGraphicsPolygonItem::paint(QPainter *painter, const QStyleOptionG
         painter->setBrush(brush());
 
     painter->setPen(pen());
-
-    if (isClosed())
-    {
-        painter->fillPath(path(), painter->brush());
-    }
-
     painter->drawPath(path());
 
     if (!isClosed())
