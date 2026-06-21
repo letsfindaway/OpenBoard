@@ -99,6 +99,7 @@ public slots:
     void setThickness(int thickness);
 
     void selectionChanged(UBAbstractGraphicsItem* item, bool selected);
+    void updateChoice();
     void applyStyle(const UBShapeStyle& style);
     void setCurrentStyle(const UBShapeStyle& style);
 

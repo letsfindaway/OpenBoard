@@ -17,6 +17,7 @@
 #include "board/UBDrawingController.h"
 
 #include "domain/UBGraphicsScene.h"
+#include "domain/shapes/UBShapeStyleUndoCommand.h"
 
 UBShapeFactory::UBShapeFactory()
 {
@@ -724,6 +725,11 @@ void UBShapeFactory::selectionChanged(UBAbstractGraphicsItem* item, bool selecte
         mSelectedShapes.remove(item);
     }
 
+    updateChoice();
+}
+
+void UBShapeFactory::updateChoice()
+{
     // compute common style of selected shapes
     if (!mSelectedShapes.isEmpty())
     {
@@ -741,12 +747,9 @@ void UBShapeFactory::selectionChanged(UBAbstractGraphicsItem* item, bool selecte
 void UBShapeFactory::applyStyle(const UBShapeStyle& style)
 {
     const auto scene = mBoardView->scene();
-    const auto isDark = scene->isDarkBackground();
 
-    for (auto shape : mSelectedShapes)
-    {
-        shape->applyStyle(style, isDark);
-    }
+    UBShapeStyleUndoCommand *uc = new UBShapeStyleUndoCommand(scene, mSelectedShapes, style);
+    UBApplication::undoStack->push(uc);
 }
 
 void UBShapeFactory::setCurrentStyle(const UBShapeStyle& style)
