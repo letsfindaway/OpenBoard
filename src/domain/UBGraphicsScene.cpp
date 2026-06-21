@@ -1321,14 +1321,18 @@ UBGraphicsStrokesGroup* UBGraphicsScene::shapeToStrokesGroup(UBAbstractGraphicsI
     // Convert a shape to a strokes group to allow use of the eraser
 
     // The painterPath is a QPainterPath describing the line of a shape without pen or brush
-    const auto painterPath = shapeItem->painterPath();
+    auto painterPath = shapeItem->painterPath();
 
     // We now create the outline of the line
-    QPainterPathStroker stroker{shapeItem->pen()};
+    auto currentPen = shapeItem->pen();
+    currentPen.setCapStyle(Qt::RoundCap);
+    currentPen.setJoinStyle(Qt::RoundJoin);
+    QPainterPathStroker stroker{currentPen};
     auto outline = stroker.createStroke(painterPath);
 
     // This outline is then converted to fill polygons, which then behaves like a stroke
     // There might be one or more polygons, according to the complexity of the line
+    outline.setFillRule(Qt::WindingFill);
     auto fillPolygons = outline.toFillPolygons();
 
     // Now lets put all together in a strokes group
@@ -1341,6 +1345,7 @@ UBGraphicsStrokesGroup* UBGraphicsScene::shapeToStrokesGroup(UBAbstractGraphicsI
                 || dynamic_cast<UBEditableGraphicsPolygonItem*>(shapeItem)->isClosed()))
     {
         UBGraphicsStroke* stroke = new UBGraphicsStroke{shared_from_this()};
+        painterPath.setFillRule(Qt::WindingFill);
         UBGraphicsPolygonItem* polygonItem = new UBGraphicsPolygonItem{painterPath.toFillPolygon()};
         polygonItem->setColor(shapeStyle.fillColor(isDarkBackground()));
         polygonItem->setColorOnLightBackground(shapeStyle.fillColor(false));

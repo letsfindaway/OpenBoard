@@ -259,7 +259,10 @@ QBitmap UBAbstractGraphicsItem::patternDiag()
 void UBAbstractGraphicsItem::setStyle(QPainter *painter)
 {
     if(hasStrokeProperty()){
-        painter->setPen(pen());
+        auto currentPen = pen();
+        currentPen.setCapStyle(Qt::RoundCap);
+        currentPen.setJoinStyle(Qt::RoundJoin);
+        painter->setPen(currentPen);
     }
 
     if(hasFillingProperty()){

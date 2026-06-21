@@ -201,10 +201,11 @@ void UBEditableGraphicsPolygonItem::paint(QPainter *painter, const QStyleOptionG
 {
     Q_UNUSED(widget)
 
-    if(this->isClosed())
-        painter->setBrush(brush());
+    setStyle(painter);
 
-    painter->setPen(pen());
+    if(!this->isClosed())
+        painter->setBrush(QBrush{});
+
     painter->drawPath(path());
 
     if (!isClosed())
