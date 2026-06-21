@@ -139,10 +139,16 @@ QPainterPath UB1HEditableGraphicsCircleItem::shape() const
     if(isInEditMode()){
         path.addRect(boundingRect());
     }else{
-        // path.addEllipse(boundingRect());
-        path.addEllipse({mRadius, mRadius}, mRadius, mRadius);
+        path.addEllipse(boundingRect());
     }
 
+    return path;
+}
+
+QPainterPath UB1HEditableGraphicsCircleItem::painterPath() const
+{
+    QPainterPath path;
+    path.addEllipse({mRadius, mRadius}, mRadius, mRadius);
     return path;
 }
 

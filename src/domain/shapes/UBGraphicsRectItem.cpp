@@ -70,13 +70,14 @@ void UB3HEditableGraphicsRectItem::paint(QPainter *painter, const QStyleOptionGr
 QPainterPath UB3HEditableGraphicsRectItem::shape() const
 {
     QPainterPath path;
+    path.addRect(boundingRect());
+    return path;
+}
 
-    if(isInEditMode()){
-        path.addRect(boundingRect());
-    }else{
-        path.addRect(0, 0, mWidth, mHeight);
-    }
-
+QPainterPath UB3HEditableGraphicsRectItem::painterPath() const
+{
+    QPainterPath path;
+    path.addRect(0, 0, mWidth, mHeight);
     return path;
 }
 

@@ -55,16 +55,14 @@ void UB1HEditableGraphicsSquareItem::paint(QPainter *painter, const QStyleOption
 QPainterPath UB1HEditableGraphicsSquareItem::shape() const
 {
     QPainterPath path;
+    path.addRect(boundingRect());
+    return path;
+}
 
-    if(isInEditMode()){
-        path.addRect(boundingRect());
-    }else{
-        int h = hIsNeg ? -mSide : mSide;
-        int w = wIsNeg ? -mSide : mSide;
-
-        path.addRect(0, 0, w, h);
-    }
-
+QPainterPath UB1HEditableGraphicsSquareItem::painterPath() const
+{
+    QPainterPath path;
+    path.addRect(QRectF{0, 0, mSide, mSide}.normalized());
     return path;
 }
 

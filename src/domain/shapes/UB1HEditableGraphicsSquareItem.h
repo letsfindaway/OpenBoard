@@ -24,7 +24,9 @@ public:
 
     virtual QRectF boundingRect() const;
 
-    QPainterPath shape() const;
+    virtual QPainterPath shape() const;
+
+    virtual QPainterPath painterPath() const;
 
     virtual void onActivateEditionMode();
 
@@ -33,7 +35,7 @@ public:
     QRectF rect() const;
 
 private:
-    int mSide;
+    double mSide;
     bool hIsNeg;
     bool wIsNeg;
 };

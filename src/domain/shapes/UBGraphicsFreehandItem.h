@@ -18,6 +18,7 @@ public:
     UBItem *deepCopy() const;
 
     QRectF boundingRect() const;
+    virtual QPainterPath painterPath() const { return path(); }
 
     void copyItemParameters(UBItem *copy) const;
 

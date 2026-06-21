@@ -29,8 +29,9 @@ public:
     virtual int type() const { return Type; }
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-    QRectF boundingRect() const;
-    QPainterPath shape() const;
+    virtual QRectF boundingRect() const;
+    virtual QPainterPath shape() const;
+    virtual QPainterPath painterPath() const;
 
     virtual void updateHandle(UBAbstractHandle *handle);
 

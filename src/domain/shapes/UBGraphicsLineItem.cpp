@@ -196,7 +196,8 @@ QPainterPath UBEditableGraphicsLineItem::shape() const
     if(mMultiClickState >= 1 || isSelected()){
         p.addRect(boundingRect());
     }else{
-        p = path();
+        QPainterPathStroker stroker{pen()};
+        p = stroker.createStroke(path());
     }
 
     return p;

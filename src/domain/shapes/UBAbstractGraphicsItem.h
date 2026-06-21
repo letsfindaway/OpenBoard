@@ -44,6 +44,10 @@ public:
     FillPattern fillPattern() const {return mFillPatern;}
     void setFillPattern(FillPattern pattern);
 
+    // get the path of the shape in local coordinates
+    // Note: shape() in contrast, returns the path of the outline of the shape, including pen width
+    virtual QPainterPath painterPath() const = 0;
+
     // UBItem interface
     void setUuid(const QUuid &pUuid);
 

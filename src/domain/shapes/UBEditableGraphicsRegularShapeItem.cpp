@@ -230,11 +230,18 @@ QPainterPath UBEditableGraphicsRegularShapeItem::shape() const
     if(isInEditMode()){
         path.addRect(boundingRect());
     }else{
-        path = this->path();
+        QPainterPathStroker stroker{pen()};
+        path = stroker.createStroke(this->path());
+        path = path.united(this->path());
     }
 
     return path;
 
+}
+
+QPainterPath UBEditableGraphicsRegularShapeItem::painterPath() const
+{
+    return path();
 }
 
 QPointF UBEditableGraphicsRegularShapeItem::correctStartPoint() const

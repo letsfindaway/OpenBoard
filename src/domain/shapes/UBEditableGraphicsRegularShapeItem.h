@@ -55,9 +55,11 @@ class UBEditableGraphicsRegularShapeItem : public UBAbstractEditableGraphicsShap
         virtual int type() const { return Type; }        
         virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-        QRectF boundingRect() const;
+        virtual QRectF boundingRect() const;
 
-        QPainterPath shape() const;
+        virtual QPainterPath shape() const;
+
+        virtual QPainterPath painterPath() const;
 
         inline const int nVertices() const { return mNVertices; }
         inline const QPointF& startPoint() const { return mStartPoint; }

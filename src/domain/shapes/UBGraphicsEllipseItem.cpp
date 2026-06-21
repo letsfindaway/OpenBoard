@@ -183,9 +183,15 @@ QPainterPath UB3HEditableGraphicsEllipseItem::shape() const
     if(isInEditMode()){
         path.addRect(boundingRect());
     }else{
-        // path.addEllipse(boundingRect());
-        path.addEllipse({mRadiusX, mRadiusY}, mRadiusX, mRadiusY);
+        path.addEllipse(boundingRect());
     }
+    return path;
+}
+
+QPainterPath UB3HEditableGraphicsEllipseItem::painterPath() const
+{
+    QPainterPath path;
+    path.addEllipse({mRadiusX, mRadiusY}, mRadiusX, mRadiusY);
     return path;
 }
 

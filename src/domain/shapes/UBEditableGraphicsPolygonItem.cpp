@@ -285,8 +285,15 @@ QPainterPath UBEditableGraphicsPolygonItem::shape() const
     if(isInEditMode()){
         path.addRect(boundingRect());
     }else{
-        path = this->path();
+        QPainterPathStroker stroker{pen()};
+        path = stroker.createStroke(this->path());
+        path = path.united(this->path());
     }
 
     return path;
+}
+
+QPainterPath UBEditableGraphicsPolygonItem::painterPath() const
+{
+    return path();
 }
