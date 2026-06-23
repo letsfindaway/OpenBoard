@@ -30,6 +30,10 @@
 
 #include "UBActionPalette.h"
 
+#ifdef ENABLE_SHAPES
+#include "gui/shapes/UBAbstractSubPalette.h"
+#endif
+
 #include "core/memcheck.h"
 
 UBActionPalette::UBActionPalette(QList<QAction*> actions, Qt::Orientation orientation, QWidget * parent)
@@ -92,10 +96,19 @@ void UBActionPalette::setActions(QList<QAction*> actions)
     actionChanged();
 }
 
-
+#ifdef ENABLE_SHAPES
+UBActionPaletteButton* UBActionPalette::createPaletteButton(QAction* action, QWidget *parent, UBAbstractSubPalette* subPalette)
+{
+    UBActionPaletteButton* button = subPalette
+            ? new UBActionSubPaletteButton(action, parent, subPalette)
+            : new UBActionPaletteButton(action, parent);
+#else
 UBActionPaletteButton* UBActionPalette::createPaletteButton(QAction* action, QWidget *parent)
 {
     UBActionPaletteButton* button = new UBActionPaletteButton(action, parent);
+#endif
+
+
     button->setIconSize(mButtonSize);
     button->setToolButtonStyle(mToolButtonStyle);
     action->setProperty("id", mButtons.length());
@@ -145,6 +158,87 @@ void UBActionPalette::addAction(QAction* action)
     mActions << action;
 }
 
+#ifdef ENABLE_SHAPES
+void UBActionPalette::attachSubPalette(QAction* action, UBAbstractSubPalette* subPalette, bool sameActionGroup)
+{
+    mSubPalette = subPalette;
+
+    auto button = getButtonFromAction(action);
+
+    if (button)
+    {
+        // use first action of subpalette for the new button
+        action = subPalette->actions().first();
+
+        // replace button by an UBActionSubPaletteButton
+        mSubPaletteButton = new UBActionSubPaletteButton(action, this, subPalette);
+        auto layoutItem = layout()->replaceWidget(button, mSubPaletteButton);
+
+        mMapActionToButton[action] = mSubPaletteButton;
+
+        const auto index = mButtons.indexOf(button);
+
+        if (index >= 0)
+        {
+            mButtons.replace(index, mSubPaletteButton);
+        }
+
+        delete layoutItem;
+        delete button;
+
+        subPalette->setActionPaletteButtonParent(mSubPaletteButton);
+
+        // set position of subpalette
+        auto positionSubPalette = [this](){
+            auto pos = mapToParent(mSubPaletteButton->pos());
+
+            if (orientation() == Qt::Horizontal)
+            {
+                pos -= QPoint{0, mSubPalette->height() + height() - mSubPaletteButton->height()};
+
+                if (pos.y() < 0)
+                {
+                    pos += QPoint{0, mSubPalette->height() + 2 * height() - mSubPaletteButton->height()};
+                }
+            }
+            else
+            {
+                pos += QPoint{width(), 0};
+
+                if (pos.x() + mSubPalette->width() > parentWidget()->width())
+                {
+                    pos -= QPoint{mSubPalette->width() + 2 * width() - mSubPaletteButton->width() , 0};
+                }
+            }
+
+            mSubPalette->move(pos);
+        };
+
+        connect(this, &UBFloatingPalette::moving, this, positionSubPalette);
+
+        // defer initial positioning until palette is visible
+        QTimer::singleShot(100, this, positionSubPalette);
+
+        // close subpalette when other action is clicked
+        connect(this, &UBActionPalette::buttonGroupClicked, this, [this, action, subPalette](QAction* a){
+            if (action != a)
+            {
+                subPalette->hide();
+            }
+        });
+
+        if (sameActionGroup && mActionGroup)
+        {
+            // include subpalette actions in my action group
+            for (auto action : subPalette->actions())
+            {
+                mActionGroup->addAction(action);
+            }
+        }
+    }
+}
+#endif
+
 void UBActionPalette::buttonClicked()
 {
     if (mAutoClose)
@@ -163,6 +257,13 @@ UBActionPalette::~UBActionPalette()
 {
     qDeleteAll(mButtons.begin(), mButtons.end());
     mButtons.clear();
+
+#ifdef ENABLE_SHAPES
+    if (mSubPalette)
+    {
+        delete mSubPalette;
+    }
+#endif
 }
 
 
@@ -315,7 +416,6 @@ UBActionPaletteButton::~UBActionPaletteButton()
 
 }
 
-
 void UBActionPaletteButton::mouseDoubleClickEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
@@ -350,4 +450,83 @@ bool UBActionPaletteButton::hitButton(const QPoint &pos) const
 {
     Q_UNUSED(pos);
     return true;
+}
+
+UBActionSubPaletteButton::UBActionSubPaletteButton(QAction* action, QWidget* parent, UBAbstractSubPalette* subPalette)
+    : UBActionPaletteButton{action, parent}
+    , mSubPalette{subPalette}
+    , mPressedPos{new QPoint}
+{
+    connect(this, &QToolButton::pressed, this, &UBActionSubPaletteButton::buttonPressed);
+    connect(this, &QToolButton::released, this, &UBActionSubPaletteButton::buttonReleased);
+    connect(&mPressedTimer, &QTimer::timeout, mSubPalette, &QWidget::show);
+}
+
+bool UBActionSubPaletteButton::hitButton(const QPoint& pos) const
+{
+    *mPressedPos = pos;
+
+    return true;
+}
+
+void UBActionSubPaletteButton::paintEvent(QPaintEvent* event)
+{
+    const auto arrowSize{6};
+    const auto areaSize{10};
+
+    QToolButton::paintEvent(event);
+
+    UBActionPalette* palette = dynamic_cast<UBActionPalette*>(parentWidget());
+
+    if (!palette)
+    {
+        return;
+    }
+
+    QPainter painter(this);
+    QBrush brush{Qt::black};
+    painter.setBrush(brush);
+    QPainterPath path;
+
+    if (palette->orientation() == Qt::Horizontal)
+    {
+        const auto tip = QPointF{size().width() / 2., 0.};
+        mArrowRect = QRectF{{tip - QPointF{areaSize, 0}}, QSizeF{2 * areaSize, areaSize}};
+
+        path.moveTo(tip);
+        path.lineTo(tip + QPointF{-arrowSize, arrowSize});
+        path.lineTo(tip + QPointF{arrowSize, arrowSize});
+        path.lineTo(tip);
+    }
+    else
+    {
+        const auto tip = QPointF{size().width() - 1., size().height() / 2.};
+        mArrowRect = QRectF{{tip - QPointF{areaSize, areaSize}}, QSizeF{areaSize, 2 * areaSize}};
+
+        path.moveTo(tip);
+        path.lineTo(tip + QPointF{-arrowSize, arrowSize});
+        path.lineTo(tip - QPointF{arrowSize, arrowSize});
+        path.lineTo(tip);
+    }
+
+    painter.drawPath(path);
+}
+
+void UBActionSubPaletteButton::buttonPressed()
+{
+    if (mArrowRect.contains(*mPressedPos))
+    {
+        mSubPalette->raise();
+        mSubPalette->show();
+        return;
+    }
+
+    mPressedTimer.setSingleShot(true);
+    mPressedTimer.setInterval(350);
+    mPressedTimer.start();
+}
+
+void UBActionSubPaletteButton::buttonReleased()
+{
+    mPressedTimer.stop();
 }

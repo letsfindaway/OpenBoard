@@ -38,27 +38,37 @@ UBShapesPalette::UBShapesPalette(Qt::Orientation orient, QWidget *parent )
     hide();
 
     auto shapeActions = UBApplication::boardController->shapeFactory().shapeActions();
+
     QList<QAction*> actions;
 
+    actions << shapeActions->actionSmartLine;
+    actions << shapeActions->actionPolygon;
     actions << shapeActions->actionEllipse;
     actions << shapeActions->actionCircle;
     actions << shapeActions->actionRectangle;
     actions << shapeActions->actionSquare;
+    actions << shapeActions->actionRegularPentagone;
+
+    // assign shape types
+    shapeActions->actionSmartLine->setProperty("ShapeType", UBShapeFactory::ShapeType::Line);
+    shapeActions->actionPolygon->setProperty("ShapeType", UBShapeFactory::ShapeType::Polygon);
+    shapeActions->actionEllipse->setProperty("ShapeType", UBShapeFactory::ShapeType::Ellipse);
+    shapeActions->actionCircle->setProperty("ShapeType", UBShapeFactory::ShapeType::Circle);
+    shapeActions->actionRectangle->setProperty("ShapeType", UBShapeFactory::ShapeType::Rectangle);
+    shapeActions->actionSquare->setProperty("ShapeType", UBShapeFactory::ShapeType::Square);
+    shapeActions->actionRegularPentagone->setProperty("ShapeType", UBShapeFactory::ShapeType::RegularPolygon);
 
     setActions(actions);
-    groupActions();
 
     layout()->setSpacing(0);
-    mButtons.at(0)->setStyleSheet(styleSheetLeftGroupedButton);
-    mButtons.at(1)->setStyleSheet(styleSheetCenterGroupedButton);
-    mButtons.at(2)->setStyleSheet(styleSheetCenterGroupedButton);
-    mButtons.at(3)->setStyleSheet(styleSheetRightGroupedButton);
 
     adjustSizeAndPosition();
 
-    foreach(const UBActionPaletteButton* button, mButtons)
+    for (const auto action : actions)
     {
-        connect(button, SIGNAL(clicked()), this, SLOT(buttonClicked()));
+        connect(action, &QAction::triggered, this, [this, action](){
+            actionActivated(action);
+        });
     }
 }
 
@@ -67,49 +77,58 @@ UBShapesPalette::~UBShapesPalette()
 
 }
 
-void UBShapesPalette::buttonClicked()
+void UBShapesPalette::actionActivated(QAction* action)
 {
-    UBActionPaletteButton * button = dynamic_cast<UBActionPaletteButton *>(sender());
-    if (button)
-    {
-        QAction * action = button->defaultAction();
+    auto& shapeFactory = UBApplication::boardController->shapeFactory();
+    const auto shapeType = action->property("ShapeType").value<UBShapeFactory::ShapeType>();
 
-        if (action)
+    switch (shapeType)
+    {
+    case UBShapeFactory::Ellipse:
+        shapeFactory.createEllipse(true);
+        break;
+
+    case UBShapeFactory::Circle:
+        shapeFactory.createCircle(true);
+        break;
+
+    case UBShapeFactory::Rectangle:
+        shapeFactory.createRectangle(true);
+        break;
+
+    case UBShapeFactory::Square:
+        shapeFactory.createSquare(true);
+        break;
+
+    case UBShapeFactory::Line:
+        shapeFactory.createLine(true);
+        break;
+
+    case UBShapeFactory::RegularPolygon:
+        shapeFactory.createRegularPolygon(5);
+        break;
+
+    case UBShapeFactory::Polygon:
+        shapeFactory.createPolygon(true);
+        break;
+
+    default:
+        break;
+    }
+
+    if (actionPaletteButtonParent()->defaultAction() != action)
+    {
+        if (!actionPaletteButtonParent()->actions().isEmpty())
         {
-            triggerAction(action);
-
-            // Change the Action shown in the DrawingPalette :
-            foreach (QAction* a, actionPaletteButtonParent()->actions()) {
-                actionPaletteButtonParent()->removeAction(a); // Remove all older actions, in order to let only one action associated to the button.
+            // Change the action shown in the stylus palette :
+            for (const auto a : actionPaletteButtonParent()->actions())
+            {
+                 // Remove all previois actions
+                actionPaletteButtonParent()->removeAction(a);
             }
-            actionPaletteButtonParent()->setDefaultAction(action); // Associate the new Action to the Button.
-        } 
-    }
+        }
 
-    hide();
-}
-
-void UBShapesPalette::triggerAction(QAction* action)
-{
-    if (action)
-    {
-        auto& shapeFactory = UBApplication::boardController->shapeFactory();
-
-        if (action == shapeFactory.shapeActions()->actionEllipse){
-            shapeFactory.createEllipse(true);
-        }
-        else if (action == shapeFactory.shapeActions()->actionCircle){
-            shapeFactory.createCircle(true);
-        }
-        else if (action == shapeFactory.shapeActions()->actionRectangle){
-            shapeFactory.createRectangle(true);
-        }
-        else if (action == shapeFactory.shapeActions()->actionSquare){
-            shapeFactory.createSquare(true);
-        }
+        // Associate the new action to the button.
+        actionPaletteButtonParent()->setDefaultAction(action);
     }
 }
-
-
-
-

@@ -38,6 +38,8 @@
 #include "UBFloatingPalette.h"
 
 class UBActionPaletteButton;
+class UBActionSubPaletteButton;
+class UBAbstractSubPalette;
 
 class UBActionPalette : public UBFloatingPalette
 {
@@ -58,6 +60,10 @@ class UBActionPalette : public UBFloatingPalette
         virtual void setActions(QList<QAction*> actions);
         void groupActions();
         virtual void addAction(QAction* action);
+
+#ifdef ENABLE_SHAPES
+        void attachSubPalette(QAction* action, UBAbstractSubPalette* subPalette, bool sameActionGroup = false);
+#endif
 
         void setClosable(bool closable);
         void setAutoClose(bool autoClose)
@@ -105,12 +111,22 @@ class UBActionPalette : public UBFloatingPalette
         bool mAutoClose;
         QSize mButtonSize;
         QPoint mMousePos;
+#ifdef ENABLE_SHAPES
+        UBActionPaletteButton *createPaletteButton(QAction* action, QWidget *parent, UBAbstractSubPalette* subPalette = nullptr);
+#else
         UBActionPaletteButton *createPaletteButton(QAction* action, QWidget *parent);
+#endif
         QAction* removePaletteButton(UBActionPaletteButton* button);
 
     protected slots:
         void buttonClicked();
         void actionChanged();
+
+#ifdef ENABLE_SHAPES
+    private:
+        QPointer<UBAbstractSubPalette> mSubPalette{nullptr};
+        UBActionSubPaletteButton* mSubPaletteButton{nullptr};
+#endif
 };
 
 
@@ -128,7 +144,31 @@ class UBActionPaletteButton : public QToolButton
     protected:
         virtual void mouseDoubleClickEvent(QMouseEvent *event);
         virtual bool hitButton(const QPoint &pos) const;
-
 };
+
+#ifdef ENABLE_SHAPES
+class UBActionSubPaletteButton : public UBActionPaletteButton
+{
+    Q_OBJECT
+
+public:
+    UBActionSubPaletteButton(QAction* action, QWidget* parent, UBAbstractSubPalette* subPalette);
+
+protected:
+    virtual bool hitButton(const QPoint &pos) const override;
+    virtual void paintEvent(QPaintEvent* event) override;
+
+private slots:
+    void buttonPressed();
+    void buttonReleased();
+
+private:
+    UBAbstractSubPalette* mSubPalette{};
+    QTimer mPressedTimer{};
+    QRectF mArrowRect{};
+    std::unique_ptr<QPoint> mPressedPos;    // use a pointer to be able to modify the value in const function hitButton
+};
+
+#endif
 
 #endif /* UBACTIONPALETTE_H_ */

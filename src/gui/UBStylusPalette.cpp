@@ -50,14 +50,6 @@ UBStylusPalette::UBStylusPalette(QWidget *parent, Qt::Orientation orient)
 {
     QList<QAction*> actions;
 
-#ifdef ENABLE_SHAPES
-    if (UBSettings::settings()->value("Board/EnableShapes").toBool())
-    {
-        auto shapeActions = UBApplication::boardController->shapeFactory().shapeActions();
-        actions << shapeActions->actionDrawing;
-    }
-#endif
-
     actions << UBApplication::mainWindow->actionPen;
     actions << UBApplication::mainWindow->actionEraser;
     actions << UBApplication::mainWindow->actionMarker;

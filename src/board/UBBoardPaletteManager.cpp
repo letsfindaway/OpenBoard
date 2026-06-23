@@ -76,7 +76,7 @@
 #include "core/memcheck.h"
 
 #ifdef ENABLE_SHAPES
-#include "gui/shapes/UBDrawingPalette.h"
+#include "gui/shapes/UBShapesPalette.h"
 #include "gui/shapes/UBStylePalette.h"
 #endif
 
@@ -126,10 +126,6 @@ UBBoardPaletteManager::~UBBoardPaletteManager()
 void UBBoardPaletteManager::initPalettesPosAtStartup()
 {
     mStylusPalette->initPosition();
-#ifdef ENABLE_SHAPES
-    mDrawingPalette->initPosition();
-#endif
-
 }
 
 void UBBoardPaletteManager::setupLayout()
@@ -245,21 +241,13 @@ void UBBoardPaletteManager::setupPalettes()
     setupDockPaletteWidgets();
 
     // Add the other palettes
-    mStylusPalette = new UBStylusPalette(mContainer, UBSettings::settings()->appToolBarOrientationVertical->get().toBool() ? Qt::Vertical : Qt::Horizontal);
-    connect(mStylusPalette, SIGNAL(stylusToolDoubleClicked(int)), UBApplication::boardController, SLOT(stylusToolDoubleClicked(int)));
-    mStylusPalette->show(); // always show stylus palette at startup
-
+    changeStylusPaletteOrientation(UBSettings::settings()->appToolBarOrientationVertical->get());
 
     mZoomPalette = new UBZoomPalette(mContainer);
 
     mStylusPalette->stackUnder(mZoomPalette);
 
 #ifdef ENABLE_SHAPES
-//    mDrawingPalette = new UBDrawingPalette(mContainer, UBSettings::settings()->appDrawingPaletteOrientationHorizontal->get().toBool() ? Qt::Horizontal : Qt::Vertical);
-    mDrawingPalette = new UBDrawingPalette(mContainer, Qt::Vertical);
-    mDrawingPalette->hide();
-    mDrawingPalette->stackUnder(mZoomPalette);
-
     mStylePalette = new UBStylePalette{mContainer};
     mStylePalette->hide();
 
@@ -420,9 +408,6 @@ void UBBoardPaletteManager::connectPalettes()
     connect(UBApplication::mainWindow->actionStylus, SIGNAL(toggled(bool)), this, SLOT(toggleStylusPalette(bool)));
 
 #ifdef ENABLE_SHAPES
-    connect(UBApplication::boardController->shapeFactory().shapeActions()->actionDrawing, &QAction::toggled, this, [this](bool checked){
-        mDrawingPalette->setVisible(checked);
-    });
     connect(UBApplication::boardController->shapeFactory().shapeActions()->actionToggleStylePalette, &QAction::toggled,
             mStylePalette, &QWidget::setVisible);
 #endif
@@ -537,14 +522,6 @@ void UBBoardPaletteManager::containerResized()
         mStylusPalette->initPosition();
     }
 
-#ifdef ENABLE_SHAPES
-    if (mDrawingPalette)
-    {
-        mDrawingPalette->adjustSizeAndPosition(true);
-        mDrawingPalette->initPosition();
-    }
-#endif
-
     if(mZoomPalette)
     {
         mZoomPalette->move(userLeft + userWidth - mZoomPalette->width()
@@ -628,11 +605,12 @@ void UBBoardPaletteManager::toggleErasePalette(bool checked)
     }
 }
 
+#ifdef ENABLE_SHAPES
 void UBBoardPaletteManager::setShapeStyle(const UBShapeStyle& style)
 {
     mStylePalette->updateChoice(style);
 }
-
+#endif
 
 void UBBoardPaletteManager::erasePaletteClosed()
 {
@@ -989,7 +967,7 @@ void UBBoardPaletteManager::showVirtualKeyboard(bool show)
 void UBBoardPaletteManager::changeStylusPaletteOrientation(QVariant var)
 {
     bool bVertical = var.toBool();
-    bool bVisible = mStylusPalette->isVisible();
+    bool bVisible = mStylusPalette ? mStylusPalette->isVisible() : true;
 
     // Clean the old palette
     if(NULL != mStylusPalette)
@@ -1010,6 +988,13 @@ void UBBoardPaletteManager::changeStylusPaletteOrientation(QVariant var)
 
     connect(mStylusPalette, SIGNAL(stylusToolDoubleClicked(int)), UBApplication::boardController, SLOT(stylusToolDoubleClicked(int)));
     mStylusPalette->setVisible(bVisible); // always show stylus palette at startup
+
+#ifdef ENABLE_SHAPES
+    // attach subpalette to line action
+    mShapesPalette = new UBShapesPalette{bVertical ? Qt::Horizontal : Qt::Vertical, mContainer};
+    mShapesPalette->setAutoClose(true);
+    mStylusPalette->attachSubPalette(UBApplication::mainWindow->actionLine, mShapesPalette, true); // TODO add parameter to include subactions in main action group
+#endif
 }
 
 

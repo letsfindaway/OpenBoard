@@ -56,7 +56,7 @@ class UBApplicationController;
 class UBStartupHintsPalette;
 class UBPageNavigationWidget;
 
-class UBDrawingPalette;
+class UBShapesPalette;
 class UBStylePalette;
 
 class UBBoardPaletteManager : public QObject
@@ -83,10 +83,6 @@ class UBBoardPaletteManager : public QObject
         void setCurrentWebToolsPalette(UBWebToolsPalette *palette) {mWebToolsCurrentPalette = palette;}
         UBWebToolsPalette* mWebToolsCurrentPalette;
 
-#ifdef ENABLE_SHAPES
-        UBDrawingPalette* drawingPalette() const {return mDrawingPalette;}
-#endif
-
         void processPalettersWidget(UBDockPalette *paletter, eUBDockPaletteWidgetMode mode);
         void changeMode(eUBDockPaletteWidgetMode newMode, bool isInit = false);
         void startDownloads();
@@ -103,7 +99,9 @@ class UBBoardPaletteManager : public QObject
         void slot_changeDesktopMode(bool);
 
         void toggleErasePalette(bool ckecked);
+#ifdef ENABLE_SHAPES
         void setShapeStyle(const UBShapeStyle& style);
+#endif
 
     private:
 
@@ -131,7 +129,7 @@ class UBBoardPaletteManager : public QObject
         UBActionPalette* mPagePalette;
 
 #ifdef ENABLE_SHAPES
-        UBDrawingPalette* mDrawingPalette{nullptr};
+        UBShapesPalette* mShapesPalette{nullptr};
         UBStylePalette* mStylePalette{nullptr};
 #endif
 
