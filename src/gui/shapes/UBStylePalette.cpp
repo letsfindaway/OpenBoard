@@ -24,6 +24,7 @@
 #include "UBStylePalette.h"
 
 #include "board/UBBoardController.h"
+#include "board/UBDrawingController.h"
 #include "core/UBApplication.h"
 #include "core/UBSettings.h"
 #include "domain/UBGraphicsScene.h"
@@ -43,6 +44,12 @@ UBStylePalette::UBStylePalette(QWidget* parent)
             &UBStylePalette::updateColorPalette);
     connect(UBApplication::boardController, &UBBoardController::activeSceneChanged, this,
             &UBStylePalette::updateColorPalette);
+    connect(UBDrawingController::drawingController(), &UBDrawingController::stylusToolChanged, this, [this](int tool){
+        if (tool == UBStylusTool::Pen || tool == UBStylusTool::Marker)
+        {
+            mToggleStylePalette->setChecked(false);
+        }
+    });
 
     connect(UBSettings::settings(), &UBSettings::colorContextChanged, this, &UBStylePalette::colorContextChanged);
 

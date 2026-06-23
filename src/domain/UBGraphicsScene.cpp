@@ -1323,18 +1323,6 @@ UBGraphicsStrokesGroup* UBGraphicsScene::shapeToStrokesGroup(UBAbstractGraphicsI
     // The painterPath is a QPainterPath describing the line of a shape without pen or brush
     auto painterPath = shapeItem->painterPath();
 
-    // We now create the outline of the line
-    auto currentPen = shapeItem->pen();
-    currentPen.setCapStyle(Qt::RoundCap);
-    currentPen.setJoinStyle(Qt::RoundJoin);
-    QPainterPathStroker stroker{currentPen};
-    auto outline = stroker.createStroke(painterPath);
-
-    // This outline is then converted to fill polygons, which then behaves like a stroke
-    // There might be one or more polygons, according to the complexity of the line
-    outline.setFillRule(Qt::WindingFill);
-    auto fillPolygons = outline.toFillPolygons();
-
     // Now lets put all together in a strokes group
     UBGraphicsStrokesGroup* strokesGroup = new UBGraphicsStrokesGroup();
     const auto shapeStyle = shapeItem->shapeStyle();
@@ -1355,6 +1343,18 @@ UBGraphicsStrokesGroup* UBGraphicsScene::shapeToStrokesGroup(UBAbstractGraphicsI
         addItem(polygonItem);
         strokesGroup->addToGroup(polygonItem);
     }
+
+    // We now create the outline of the line
+    auto currentPen = shapeItem->pen();
+    currentPen.setCapStyle(Qt::RoundCap);
+    currentPen.setJoinStyle(Qt::RoundJoin);
+    QPainterPathStroker stroker{currentPen};
+    auto outline = stroker.createStroke(painterPath);
+
+    // This outline is then converted to fill polygons, which then behaves like a stroke
+    // There might be one or more polygons, according to the complexity of the line
+    outline.setFillRule(Qt::WindingFill);
+    auto fillPolygons = outline.toFillPolygons();
 
     // Create one polygon for each fill polygon
     if (!fillPolygons.isEmpty())

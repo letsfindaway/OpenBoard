@@ -251,6 +251,11 @@ void UBBoardPaletteManager::setupPalettes()
     mStylePalette = new UBStylePalette{mContainer};
     mStylePalette->hide();
 
+    // move to top center later when container size is known
+    QTimer::singleShot(100, [this](){
+        mStylePalette->move((mContainer->width() - mStylePalette->width()) / 2, 5);
+    });
+
     connect(mStylePalette, &UBStylePalette::styleChanged, &mBoardControler->shapeFactory(), &UBShapeFactory::setCurrentStyle);
     mBoardControler->shapeFactory().setCurrentStyle(mStylePalette->selectedStyle());
 

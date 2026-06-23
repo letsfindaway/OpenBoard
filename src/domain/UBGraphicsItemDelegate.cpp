@@ -505,7 +505,7 @@ void UBGraphicsItemDelegate::positionHandles()
         mDelegated->setData(UBGraphicsItemData::ItemLocked, QVariant(isLocked()));
         updateFrame();
 
-        if (UBStylusTool::Play != UBDrawingController::drawingController()->stylusTool())
+        if (UBStylusTool::Play != UBDrawingController::drawingController()->stylusTool() && mFrame->isEnabled())
             mFrame->show();
 
         updateButtons(true);
@@ -660,11 +660,13 @@ void UBGraphicsItemDelegate::showFrame(bool show)
 
     if(!show){
         mFrame->hide();
+        mFrame->setEnabled(false);
         for(int i = 0; i < mButtons.size(); i++){
             mButtons.at(i)->hide();
         }
     }else{
         mFrame->show();
+        mFrame->setEnabled(true);
         for(int i = 0; i < mButtons.size(); i++){
             mButtons.at(i)->show();
         }
