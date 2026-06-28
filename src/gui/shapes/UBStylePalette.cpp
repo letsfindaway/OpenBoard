@@ -61,12 +61,12 @@ UBStylePalette::UBStylePalette(QWidget* parent)
 
     auto settings = UBSettings::settings();
 
-    const auto lineColorOnLight = QColor::fromString(settings->value("Board/StyleLineColorOnLight").toString());
-    const auto lineColorOnDark = QColor::fromString(settings->value("Board/StyleLineColorOnDark").toString());
-    const auto lineWidth = settings->value("Board/StyleLineWidth").toDouble();
-    const auto lineStyle = settings->value("Board/StyleLineStyle").value<Qt::PenStyle>();
-    const auto fillColorOnLight = QColor::fromString(settings->value("Board/StyleFillColorOnLight").toString());
-    const auto fillColorOnDark = QColor::fromString(settings->value("Board/StyleFillColorOnDark").toString());
+    const auto lineColorOnLight = QColor::fromString(settings->value("Board/StyleLineColorOnLight", "black").toString());
+    const auto lineColorOnDark = QColor::fromString(settings->value("Board/StyleLineColorOnDark", "white").toString());
+    const auto lineWidth = settings->value("Board/StyleLineWidth", 3.).toDouble();
+    const auto lineStyle = settings->value("Board/StyleLineStyle", static_cast<int>(Qt::SolidLine)).value<Qt::PenStyle>();
+    const auto fillColorOnLight = QColor::fromString(settings->value("Board/StyleFillColorOnLight", "transparent").toString());
+    const auto fillColorOnDark = QColor::fromString(settings->value("Board/StyleFillColorOnDark", "transparent").toString());
 
     updateChoice(UBShapeStyle{lineColorOnLight, lineColorOnDark, lineWidth, lineStyle, fillColorOnLight, fillColorOnDark});
 }
@@ -433,7 +433,10 @@ QPixmap UBStylePalette::createPreview(const UBShapeStyle& style) const
     QPainter painter{&pixmap};
     painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
-    background->draw(&painter, pixmap.rect(), 20., pixmap.rect(), isDark);
+    if (background)
+    {
+        background->draw(&painter, pixmap.rect(), 20., pixmap.rect(), isDark);
+    }
 
     const QPen borderPen{Qt::darkGray, 1};
     painter.setPen(borderPen);
