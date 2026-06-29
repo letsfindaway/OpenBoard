@@ -49,26 +49,28 @@ public:
     virtual QPainterPath painterPath() const = 0;
 
     // UBItem interface
-    void setUuid(const QUuid &pUuid);
+//    void setUuid(const QUuid &pUuid);
 
     void initializeFillingProperty();
 
     void initializeStrokeProperty();
 
     //disambiguation from UBGraphicsItem and QabstractGraphicsShapeItem
-    virtual int type() const = 0;
+    virtual int type() const  override = 0;
 
     //must be define, because the delegate use it
-    virtual QRectF boundingRect() const{ return QRect(); }
+    virtual QRectF boundingRect() const  override { return QRect(); }
 
-    virtual void copyItemParameters(UBItem *copy) const;
+    virtual void copyItemParameters(UBItem *copy) const  override;
+
+    virtual std::shared_ptr<UBGraphicsScene> scene() override;
 
 protected:
     void setStyle(QPainter *painter);
 
     QRectF adjustBoundingRect(QRectF rect) const;
 
-    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
 private:
     UBShapeStyle mShapeStyle{};

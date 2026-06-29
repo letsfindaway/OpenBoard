@@ -3,6 +3,7 @@
 #include "core/UBApplication.h"
 #include "domain/UBGraphicsItemDelegate.h"
 #include "domain/UBGraphicsDelegateFrame.h"
+#include "domain/UBGraphicsScene.h"
 #include "domain/shapes/UBShapeFactory.h"
 //#include "customWidgets/UBGraphicsItemAction.h"
 
@@ -151,12 +152,12 @@ void UBAbstractGraphicsItem::setFillPattern(UBAbstractGraphicsItem::FillPattern 
     }
 }
 
-void UBAbstractGraphicsItem::setUuid(const QUuid &pUuid)
-{
-    UBItem::setUuid(pUuid);
-    //store item uuid inside the QGraphicsItem to fast operations with Items on the scene
-    // setData(UBGraphicsItemData::ItemUuid, QVariant(pUuid));
-}
+// void UBAbstractGraphicsItem::setUuid(const QUuid &pUuid)
+// {
+//     UBItem::setUuid(pUuid);
+//     //store item uuid inside the QGraphicsItem to fast operations with Items on the scene
+//     // setData(UBGraphicsItemData::ItemUuid, QVariant(pUuid));
+// }
 
 QVariant UBAbstractGraphicsItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
@@ -326,4 +327,10 @@ void UBAbstractGraphicsItem::copyItemParameters(UBItem *copy) const
     cp->setBrush(brush());
     cp->setPen(pen());
     cp->setShapeStyle(shapeStyle());
+}
+
+std::shared_ptr<UBGraphicsScene> UBAbstractGraphicsItem::scene()
+{
+    auto scenePtr = dynamic_cast<UBGraphicsScene*>(QGraphicsItem::scene());
+    return scenePtr ? scenePtr->shared_from_this() : nullptr;
 }

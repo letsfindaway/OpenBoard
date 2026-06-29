@@ -16,6 +16,7 @@
 #include "board/UBBoardView.h"
 #include "board/UBDrawingController.h"
 
+#include "domain/UBGraphicsItemUndoCommand.h"
 #include "domain/UBGraphicsScene.h"
 #include "domain/shapes/UBShapeStyleUndoCommand.h"
 
@@ -512,7 +513,8 @@ void UBShapeFactory::onMousePress(QMouseEvent *event)
                     {
                         if (pathItem->path().elementCount() < 2)
                             mBoardView->scene()->removeItem(pathItem);
-                        mCurrentShape = NULL;
+                        // mCurrentShape = NULL;
+                        terminateShape();
                     }
                 }
             }
@@ -606,7 +608,8 @@ void UBShapeFactory::onMouseRelease(QMouseEvent *event)
         mBoardView->scene()->removeItem(mCurrentShape);
 
     if (mShapeType != Polygon)
-        mCurrentShape = NULL;
+        // mCurrentShape = NULL;
+        terminateShape();
 }
 
 QRectF UBShapeFactory::reverseRect(const QRectF& rect)
@@ -648,12 +651,29 @@ void UBShapeFactory::desactivate()
 
 void UBShapeFactory::terminateShape()
 {
+    if (!mCurrentShape)
+    {
+        return;
+    }
+
     //when clicking on stroke and fill subpalettes, creation mode could stay even though the current shape had changed
     if (mShapeType == Polygon)
     {
         UBEditableGraphicsPolygonItem* p = dynamic_cast<UBEditableGraphicsPolygonItem*>(mCurrentShape);
         if (p)
             p->setIsInCreationMode(false);
+    }
+
+    // If shape is not part of the scene, then delete it
+    if (!mCurrentShape->QGraphicsItem::scene())
+    {
+        delete mCurrentShape;
+    }
+    else
+    {
+        // commit an undo step for the shape
+        UBGraphicsItemUndoCommand *uc = new UBGraphicsItemUndoCommand(mCurrentShape->scene(), nullptr, mCurrentShape);
+        UBApplication::undoStack->push(uc);
     }
 
     // Ends the current shape :
