@@ -10,24 +10,13 @@
 UBAbstractGraphicsItem::UBAbstractGraphicsItem(QGraphicsItem *parent):
     QAbstractGraphicsShapeItem(parent)
 {
-    // UBGraphicsItemDelegate(QGraphicsItem* pDelegated, QObject * parent = 0,  bool respectRatio = true, bool canRotate = false, bool useToolBar = true, bool showGoContentButton = false);
-    // setDelegate(new UBGraphicsItemDelegate(this, 0, true, false, false));
-    // Delegate()->init();
-    // Delegate()->setFlippable(false);
-    // Delegate()->setRotatable(true);
-    // Delegate()->setCanTrigAnAction(true);
-    // Delegate()->setHorizontalMirror(true);
-    // Delegate()->setVerticalMirror(true);
     setDelegate(new UBGraphicsItemDelegate(this, nullptr, {
                                                GF_REVOLVABLE,
-                                               GF_FLIPPABLE_ALL_AXIS
+                                               GF_DUPLICATION_ENABLED,
+                                               GF_ZORDER_MANIPULATIONS_ALLOWED
                                            }));
-    Delegate()->createControls();   // similar to init()
+    Delegate()->createControls();
 
-
-    // Delegate()->frame()->setOperationMode(UBGraphicsDelegateFrame::NoResizing);
-
-    setUuid(QUuid::createUuid());
     //used for the podcast
     setData(UBGraphicsItemData::ItemLayerType, UBItemLayerType::Object);
 
