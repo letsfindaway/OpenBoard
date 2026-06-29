@@ -27,6 +27,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     UBEditableGraphicsPolygonItem.h
     UBEditableGraphicsRegularShapeItem.cpp
     UBEditableGraphicsRegularShapeItem.h
+    UBEditShapeUndoCommand.cpp
+    UBEditShapeUndoCommand.h
     UBFreeHandle.cpp
     UBFreeHandle.h
     UBGraphicsEllipseItem.cpp

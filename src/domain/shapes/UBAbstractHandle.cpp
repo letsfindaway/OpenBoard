@@ -35,6 +35,7 @@ void UBAbstractHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     if(mEditableObject){
         mEditableObject->updateHandle(this);
+        mEditableObject->setModified();
     }
 }
 

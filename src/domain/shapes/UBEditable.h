@@ -5,6 +5,8 @@
 
 #include "UBAbstractHandle.h"
 
+// forward
+class UBEditShapeUndoCommand;
 
 
 class UBAbstractEditable
@@ -29,11 +31,16 @@ public:
     }
 
     bool isInEditMode() const;
+
+    void setModified();
+
 protected:
     QVector<UBAbstractHandle*> mHandles;
 
 private:
     bool mEditMode;
+    bool mModified{false};
+    UBEditShapeUndoCommand* mUndoCommand{nullptr};
 };
 
 #endif // UBEDITABLE_H

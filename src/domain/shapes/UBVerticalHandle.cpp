@@ -19,6 +19,7 @@ void UBVerticalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     this->setPos(pos().x(), p.y());
 
     mEditableObject->updateHandle(this);
+    mEditableObject->setModified();
 }
 
 void UBVerticalHandle::mousePressEvent(QGraphicsSceneMouseEvent *event)

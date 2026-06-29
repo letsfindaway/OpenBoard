@@ -23,6 +23,7 @@ void UBDiagonalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     moveBy(proj, proj);
 
     mEditableObject->updateHandle(this);
+    mEditableObject->setModified();
 }
 
 void UBDiagonalHandle::mousePressEvent(QGraphicsSceneMouseEvent *event)

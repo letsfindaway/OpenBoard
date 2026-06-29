@@ -1,5 +1,7 @@
 #include "UBEditable.h"
 
+#include "domain/shapes/UBEditShapeUndoCommand.h"
+
 #include "core/UBApplication.h"
 #include "board/UBBoardController.h"
 #include "domain/UBGraphicsScene.h"
@@ -31,6 +33,29 @@ void UBAbstractEditable::showEditMode(bool show)
         }
     }
 
+    if (show && !mEditMode)
+    {
+        // reset and create undo command on transition to edit mode
+        mModified = false;
+        mUndoCommand = new UBEditShapeUndoCommand{dynamic_cast<UBAbstractGraphicsItem*>(this)};
+    }
+    else if (!show && mEditMode)
+    {
+        if (mModified)
+        {
+            // commit undo command when shape was modified during editing
+            mUndoCommand->recordEditedItem();
+            UBApplication::undoStack->push(mUndoCommand);
+        }
+        else
+        {
+            // delete undo command
+            delete mUndoCommand;
+        }
+
+        mUndoCommand = nullptr;
+    }
+
     mEditMode = show;
 }
 
@@ -42,4 +67,9 @@ void UBAbstractEditable::deactivateEditionMode()
 bool UBAbstractEditable::isInEditMode() const
 {
     return mEditMode;
+}
+
+void UBAbstractEditable::setModified()
+{
+    mModified = true;
 }

@@ -228,7 +228,7 @@ struct UBUndoType
     {
         undotype_UNKNOWN  = 0, undotype_DOCUMENT, undotype_GRAPHICITEMTRANSFORM, undotype_GRAPHICITEM, undotype_GRAPHICTEXTITEM, undotype_PAGESIZE, undotype_GRAPHICSGROUPITEM, undotype_GRAPHICITEMZVALUE
 #ifdef ENABLE_SHAPES
-        , undotype_SHAPESTYLE
+        , undotype_SHAPESTYLE, undotype_EDITSHAPE
 #endif
     };
 };

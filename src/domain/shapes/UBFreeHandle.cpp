@@ -20,6 +20,7 @@ void UBFreeHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     moveBy(diff.x(), diff.y());
 
     mEditableObject->updateHandle(this);
+    mEditableObject->setModified();
 }
 
 void UBFreeHandle::mousePressEvent(QGraphicsSceneMouseEvent *event)
