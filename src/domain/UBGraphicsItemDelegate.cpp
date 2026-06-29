@@ -757,11 +757,20 @@ void UBGraphicsItemDelegate::startUndoStep()
         mPreviousSize = resizableItem->size();
     else
         mPreviousSize = QSizeF();
+
+    mUndoStepStarted = true;
 }
 
 
 void UBGraphicsItemDelegate::commitUndoStep()
 {
+    if (!mUndoStepStarted)
+    {
+        return;
+    }
+
+    mUndoStepStarted = false;
+
     UBResizableGraphicsItem* resizableItem = dynamic_cast<UBResizableGraphicsItem*>(mDelegated);
 
     if (mDelegated->pos() != mPreviousPosition

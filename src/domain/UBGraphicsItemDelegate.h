@@ -384,7 +384,7 @@ private:
         QMimeData* mMimeData;
         QPixmap mDragPixmap;
 
-        bool mMoved;
+        bool mUndoStepStarted{false};
         UBGraphicsFlags mFlags;
 };
 
