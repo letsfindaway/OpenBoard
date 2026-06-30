@@ -152,13 +152,6 @@ void UBAbstractGraphicsItem::setFillPattern(UBAbstractGraphicsItem::FillPattern 
     }
 }
 
-// void UBAbstractGraphicsItem::setUuid(const QUuid &pUuid)
-// {
-//     UBItem::setUuid(pUuid);
-//     //store item uuid inside the QGraphicsItem to fast operations with Items on the scene
-//     // setData(UBGraphicsItemData::ItemUuid, QVariant(pUuid));
-// }
-
 QVariant UBAbstractGraphicsItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     QVariant newValue = value;

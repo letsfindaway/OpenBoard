@@ -48,9 +48,6 @@ public:
     // Note: shape() in contrast, returns the path of the outline of the shape, including pen width
     virtual QPainterPath painterPath() const = 0;
 
-    // UBItem interface
-//    void setUuid(const QUuid &pUuid);
-
     void initializeFillingProperty();
 
     void initializeStrokeProperty();
