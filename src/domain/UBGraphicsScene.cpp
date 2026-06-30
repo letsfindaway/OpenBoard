@@ -785,6 +785,7 @@ bool UBGraphicsScene::inputDeviceRelease(int tool, Qt::KeyboardModifiers modifie
                 auto pathItem = new UBEditableGraphicsLineItem();
                 pathItem->addPoint(originalLine.p1());
                 pathItem->addPoint(originalLine.p2());
+                pathItem->setZValue(pStrokes->zValue());
 
                 // apply style
                 UBShapeStyle style;
@@ -798,6 +799,8 @@ bool UBGraphicsScene::inputDeviceRelease(int tool, Qt::KeyboardModifiers modifie
                 removeItem(pStrokes);
                 mAddedItems << pathItem;
                 mAddedItems.remove(pStrokes);
+
+                delete pStrokes;
                 mCurrentStroke = nullptr;
             }
 #endif
@@ -1412,6 +1415,7 @@ UBGraphicsStrokesGroup* UBGraphicsScene::shapeToStrokesGroup(UBAbstractGraphicsI
     addItem(strokesGroup);
     strokesGroup->setPos(shapeItem->pos());
     strokesGroup->setTransform(shapeItem->transform());
+    strokesGroup->setZValue(shapeItem->zValue());
 
     removeItem(shapeItem);
 
