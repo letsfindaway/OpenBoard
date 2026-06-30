@@ -77,6 +77,10 @@
 
 #include "UBGraphicsStroke.h"
 
+#ifdef ENABLE_SHAPES
+#include "domain/shapes/UBGraphicsLineItem.h"
+#endif
+
 #include "core/memcheck.h"
 
 
@@ -768,6 +772,36 @@ bool UBGraphicsScene::inputDeviceRelease(int tool, Qt::KeyboardModifiers modifie
                 delete mCurrentStroke;
                 mCurrentStroke = 0;
             }
+
+#ifdef ENABLE_SHAPES
+            // convert to line shape if it is a nominal line
+            if (mCurrentStroke
+                    && mCurrentStroke->polygons().size() == 1
+                    &&  mCurrentStroke->polygons().at(0)->isNominalLine())
+            {
+                // construct line
+                const auto polygon = mCurrentStroke->polygons().at(0);
+                const auto originalLine = polygon->originalLine();
+                auto pathItem = new UBEditableGraphicsLineItem();
+                pathItem->addPoint(originalLine.p1());
+                pathItem->addPoint(originalLine.p2());
+
+                // apply style
+                UBShapeStyle style;
+                style.setLineColor(polygon->colorOnLightBackground(), polygon->colorOnDarkBackground());
+                style.setLineStyle(Qt::SolidLine);
+                style.setLineWidth(polygon->originalWidth());
+                pathItem->applyStyle(style, isDarkBackground());
+
+                // exchange items
+                addItem(pathItem);
+                removeItem(pStrokes);
+                mAddedItems << pathItem;
+                mAddedItems.remove(pStrokes);
+                mCurrentStroke = nullptr;
+            }
+#endif
+
             mCurrentPolygon = 0;
         }
     }
