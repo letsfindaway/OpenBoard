@@ -74,7 +74,7 @@ void UB1HEditableGraphicsCircleItem::paint(QPainter *painter, const QStyleOption
         QPen p;
         p.setColor(QColor(128, 128, 200));
         p.setStyle(Qt::DotLine);
-        p.setWidth(pen().width());
+        p.setWidth(3);
 
         painter->setPen(p);
         painter->setBrush(QBrush());

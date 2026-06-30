@@ -65,6 +65,7 @@ class UBEditableGraphicsRegularShapeItem : public UBAbstractEditableGraphicsShap
         inline const QPointF& startPoint() const { return mStartPoint; }
 
         void updateHandle(UBAbstractHandle *handle);
+        virtual void focusHandle(UBAbstractHandle *handle);
 
         QPointF circumscribedCenterCircle() const
         {
@@ -102,6 +103,7 @@ class UBEditableGraphicsRegularShapeItem : public UBAbstractEditableGraphicsShap
 
 private:
     int mNVertices;
+    int mNOriginalVertices{0};
     QList<QPair<double, double> > mVertices;
     QPointF mStartPoint;
 

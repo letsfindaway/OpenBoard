@@ -2,12 +2,14 @@
 
 #include "UBVerticalHandle.h"
 
-UBVerticalHandle::UBVerticalHandle()
+UBVerticalHandle::UBVerticalHandle(bool paintIndicators)
+    : mPaintIndicators{paintIndicators}
 {
 }
 
 UBVerticalHandle::UBVerticalHandle(UBVerticalHandle* const src):
     UBAbstractHandle(src)
+  , mPaintIndicators{src->mPaintIndicators}
 {
 
 }
@@ -30,6 +32,32 @@ void UBVerticalHandle::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void UBVerticalHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     UBAbstractHandle::mouseReleaseEvent(event);
+}
+
+void UBVerticalHandle::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+    UBAbstractHandle::paint(painter, option, widget);
+
+    if (mPaintIndicators)
+    {
+        const auto height = mRadius + 2;
+        const auto width = height;
+        const auto gap = 5;
+
+        QPainterPath path;
+
+        path.moveTo(-width, -mRadius - gap);
+        path.lineTo(0, -mRadius - height - gap);
+        path.lineTo(width, -mRadius - gap);
+        path.closeSubpath();
+
+        path.moveTo(-width, mRadius + gap);
+        path.lineTo(0, mRadius + height + gap);
+        path.lineTo(width, mRadius + gap);
+        path.closeSubpath();
+
+        painter->drawPath(path);
+    }
 }
 
 UBItem *UBVerticalHandle::deepCopy() const

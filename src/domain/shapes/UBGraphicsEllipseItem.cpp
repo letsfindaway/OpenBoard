@@ -93,7 +93,7 @@ void UB3HEditableGraphicsEllipseItem::paint(QPainter *painter, const QStyleOptio
         QPen p;
         p.setColor(QColor(128, 128, 200));
         p.setStyle(Qt::DotLine);
-        p.setWidth(pen().width());
+        p.setWidth(3);
 
         painter->setPen(p);
         painter->setBrush(QBrush());

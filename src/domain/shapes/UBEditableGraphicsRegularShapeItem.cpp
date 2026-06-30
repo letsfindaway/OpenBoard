@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "UBAbstractHandlesBuilder.h"
+#include "domain/shapes/UBVerticalHandle.h"
 
 UBEditableGraphicsRegularShapeItem::UBEditableGraphicsRegularShapeItem(int nVertices, QPointF startPos, QGraphicsItem * parent)
     : UBAbstractEditableGraphicsShapeItem(parent)
@@ -16,6 +17,14 @@ UBEditableGraphicsRegularShapeItem::UBEditableGraphicsRegularShapeItem(int nVert
     UB1HandleBuilder::buildHandles(mHandles);
     mHandles.at(0)->setParentItem(this);
     mHandles.at(0)->setEditableObject(this);
+    mHandles.at(0)->setId(0);
+
+    // add a handle in the center to change number of corners
+    mHandles << new UBVerticalHandle{true};
+    mHandles.at(1)->setParentItem(this);
+    mHandles.at(1)->setEditableObject(this);
+    mHandles.at(1)->setId(1);
+    mHandles.at(1)->hide();
 }
 
 UBEditableGraphicsRegularShapeItem::~UBEditableGraphicsRegularShapeItem()
@@ -102,7 +111,7 @@ void UBEditableGraphicsRegularShapeItem::paint(QPainter *painter, const QStyleOp
         p.setStyle(Qt::DashLine);
 
         p.setColor(QColor(128,128,128));
-        p.setWidth(pen().width());
+        p.setWidth(3);
 
         painter->setPen(p);
 
@@ -189,6 +198,23 @@ void UBEditableGraphicsRegularShapeItem::updateHandle(UBAbstractHandle *handle)
 
     Delegate()->showFrame(false);
 
+    if (handle->getId() == 1)
+    {
+        // modify number of vertices
+        const auto yDiff = mCenter.y() - handle->pos().y();
+        const int steps = yDiff / 20;
+        const auto vertices = qBound(3, mNOriginalVertices + steps, 20);
+
+        if (vertices != mNVertices)
+        {
+            mNVertices = vertices;
+            createGraphicsRegularPathItem();
+            updatePath(mHandles.at(0)->pos());
+        }
+
+        return;
+    }
+
     QPointF diff = handle->pos() - path().boundingRect().topLeft();
 
     qreal maxSize = handle->radius() * 4;
@@ -212,6 +238,15 @@ void UBEditableGraphicsRegularShapeItem::updateHandle(UBAbstractHandle *handle)
         setBrush(g);
     }
 
+    mHandles.at(1)->setPos(mCenter);
+}
+
+void UBEditableGraphicsRegularShapeItem::focusHandle(UBAbstractHandle* handle)
+{
+    if (handle->getId() == 1)
+    {
+        mNOriginalVertices = mNVertices;
+    }
 }
 
 void UBEditableGraphicsRegularShapeItem::onActivateEditionMode()
@@ -221,6 +256,7 @@ void UBEditableGraphicsRegularShapeItem::onActivateEditionMode()
     circle.addEllipse(mCenter, mRadius, mRadius);
 
     mHandles.at(0)->setPos(circle.boundingRect().bottomRight());
+    mHandles.at(1)->setPos(mCenter);
 }
 
 QPainterPath UBEditableGraphicsRegularShapeItem::shape() const

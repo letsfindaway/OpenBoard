@@ -63,6 +63,10 @@ void UBAbstractHandle::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     brush.setStyle(Qt::SolidPattern);
     painter->setBrush(brush);
 
+    auto pen = painter->pen();
+    pen.setStyle(Qt::SolidLine);
+    painter->setPen(pen);
+
     painter->drawEllipse(-mRadius, -mRadius, mRadius*2, mRadius*2);
 }
 
