@@ -92,11 +92,13 @@ class UBActionPalette : public UBFloatingPalette
         void closed();
         void buttonGroupClicked(QAction* action);
         void customMouseReleased();
+        void paletteVisible();
 
     protected:
         void onCloseButtonClicked() override;
         virtual void paintEvent(QPaintEvent *event);
         virtual void mouseReleaseEvent(QMouseEvent * event);
+        virtual void showEvent(QShowEvent *event) override;
         virtual void init(Qt::Orientation orientation);
 
         virtual void updateLayout();

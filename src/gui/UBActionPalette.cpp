@@ -215,9 +215,7 @@ void UBActionPalette::attachSubPalette(QAction* action, UBAbstractSubPalette* su
         };
 
         connect(this, &UBFloatingPalette::moving, this, positionSubPalette);
-
-        // defer initial positioning until palette is visible
-        QTimer::singleShot(100, this, positionSubPalette);
+        connect(subPalette, &UBActionPalette::paletteVisible, this, positionSubPalette);
 
         // close subpalette when other action is clicked
         connect(this, &UBActionPalette::buttonGroupClicked, this, [this, action, subPalette](QAction* a){
@@ -367,6 +365,13 @@ void UBActionPalette::close()
 void UBActionPalette::mouseReleaseEvent(QMouseEvent * event)
 {
     UBFloatingPalette::mouseReleaseEvent(event);
+}
+
+void UBActionPalette::showEvent(QShowEvent* event)
+{
+    UBFloatingPalette::showEvent(event);
+
+    emit paletteVisible();
 }
 
 

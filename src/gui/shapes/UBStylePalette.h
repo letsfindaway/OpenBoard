@@ -49,6 +49,7 @@ signals:
 
 protected:
     virtual int border() override;
+    virtual void onCloseButtonClicked() override;
 
 private:
     void init();

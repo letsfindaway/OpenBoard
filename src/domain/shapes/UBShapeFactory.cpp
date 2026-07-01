@@ -512,9 +512,15 @@ void UBShapeFactory::onMousePress(QMouseEvent *event)
                     if (pathItem->isClosed() || pathItem->isOpened())
                     {
                         if (pathItem->path().elementCount() < 2)
+                        {
                             mBoardView->scene()->removeItem(pathItem);
-                        // mCurrentShape = NULL;
-                        terminateShape();
+                            delete mCurrentShape;
+                            mCurrentShape = NULL;
+                        }
+                        else
+                        {
+                            terminateShape();
+                        }
                     }
                 }
             }
@@ -536,7 +542,11 @@ void UBShapeFactory::onMouseRelease(QMouseEvent *event)
     if (line)
     {
         if (line->startPoint() == line->endPoint())
+        {
              mBoardView->scene()->removeItem(line);
+             delete mCurrentShape;
+             mCurrentShape = nullptr;
+        }
     }
     else if(mShapeType == Rectangle)
     {
@@ -605,7 +615,11 @@ void UBShapeFactory::onMouseRelease(QMouseEvent *event)
     }
 
     if (!mCursorMoved && mCurrentShape && mShapeType != Polygon)
+    {
         mBoardView->scene()->removeItem(mCurrentShape);
+        delete mCurrentShape;
+        mCurrentShape = nullptr;
+    }
 
     if (mShapeType != Polygon)
         // mCurrentShape = NULL;

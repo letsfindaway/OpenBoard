@@ -22,6 +22,11 @@ UBEditableGraphicsPolygonItem::~UBEditableGraphicsPolygonItem()
 
 void UBEditableGraphicsPolygonItem::addPoint(const QPointF & point)
 {
+    if (!mIsInCreationMode)
+    {
+        return;
+    }
+
     prepareGeometryChange();
 
     QPointF p(mapFromScene(point));
@@ -164,6 +169,9 @@ void UBEditableGraphicsPolygonItem::copyItemParameters(UBItem *copy) const
     UBEditableGraphicsPolygonItem *cp = dynamic_cast<UBEditableGraphicsPolygonItem*>(copy);
 
     if(cp){
+        qDeleteAll(cp->mHandles);
+        cp->mHandles.clear();
+
         for(int i = 0; i < mHandles.size(); i++){
             UBFreeHandle *handle = new UBFreeHandle();
 
@@ -288,7 +296,11 @@ QPainterPath UBEditableGraphicsPolygonItem::shape() const
     }else{
         QPainterPathStroker stroker{pen()};
         path = stroker.createStroke(this->path());
-        path = path.united(this->path());
+
+        if (isClosed())
+        {
+            path = path.united(this->path());
+        }
     }
 
     return path;

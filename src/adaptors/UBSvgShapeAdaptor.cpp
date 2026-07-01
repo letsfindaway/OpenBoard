@@ -495,6 +495,13 @@ UBAbstractGraphicsPathItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapePathFromSv
 
     getStyleFromSvg(pathItem, pDefaultPenColor);
 
+    auto polygonItem = dynamic_cast<UBEditableGraphicsPolygonItem*>(pathItem);
+
+    if (polygonItem)
+    {
+        polygonItem->setIsInCreationMode(false);
+    }
+
     return pathItem;
 }
 

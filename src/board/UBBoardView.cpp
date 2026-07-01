@@ -595,6 +595,11 @@ Here we determines cases when items should to get mouse press event at pressing 
         break;
 
     case UBGraphicsItemType::StrokeItemType:
+#ifdef ENABLE_SHAPES
+    case UBGraphicsItemType::GraphicsShapeItemType:
+    case UBGraphicsItemType::GraphicsPathItemType:
+    case UBGraphicsItemType::GraphicsRegularPathItemType:
+#endif
         if (currentTool == UBStylusTool::Play || currentTool == UBStylusTool::Selector)
             return true;
         break;
@@ -697,6 +702,11 @@ bool UBBoardView::itemShouldBeMoved(QGraphicsItem *item)
 
     case UBGraphicsSvgItem::Type:
     case UBGraphicsPixmapItem::Type:
+#ifdef ENABLE_SHAPES
+    case UBGraphicsItemType::GraphicsShapeItemType:
+    case UBGraphicsItemType::GraphicsPathItemType:
+    case UBGraphicsItemType::GraphicsRegularPathItemType:
+#endif
         if (currentTool == UBStylusTool::Play || !item->isSelected())
             return true;
         if (item->isSelected())

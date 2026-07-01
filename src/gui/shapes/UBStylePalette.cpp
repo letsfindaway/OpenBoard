@@ -39,6 +39,7 @@ UBStylePalette::UBStylePalette(QWidget* parent)
     mToggleStylePalette = UBApplication::boardController->shapeFactory().shapeActions()->actionToggleStylePalette;
 
     init();
+    setClosable(true);
 
     connect(UBApplication::boardController, &UBBoardController::backgroundChanged, this,
             &UBStylePalette::updateColorPalette);
@@ -144,6 +145,11 @@ int UBStylePalette::border()
     return 5;
 }
 
+void UBStylePalette::onCloseButtonClicked()
+{
+    mToggleStylePalette->setChecked(false);
+}
+
 void UBStylePalette::init()
 {
     mFormLayout = new QFormLayout{this};
@@ -168,7 +174,6 @@ void UBStylePalette::init()
                 [this]()
                 {
                     const auto color = sender()->property("color").value<QVariantList>();
-                    qDebug() << "Line color is now" << color;
                     auto newStyle = mStyle;
                     newStyle.setLineColor(QColor::fromString(color.at(0).toString()),
                                           QColor::fromString(color.at(1).toString()));
@@ -194,7 +199,6 @@ void UBStylePalette::init()
             [this]()
             {
                 const auto width = UBSettings::settings()->boardPenFineWidth->get().toDouble();
-                qDebug() << "Line width is now" << width;
                 auto newStyle = mStyle;
                 newStyle.setLineWidth(width);
                 applyStyle(newStyle);
@@ -207,7 +211,6 @@ void UBStylePalette::init()
             [this]()
             {
                 const auto width = UBSettings::settings()->boardPenMediumWidth->get().toDouble();
-                qDebug() << "Line width is now" << width;
                 auto newStyle = mStyle;
                 newStyle.setLineWidth(width);
                 applyStyle(newStyle);
@@ -220,7 +223,6 @@ void UBStylePalette::init()
             [this]()
             {
                 const auto width = UBSettings::settings()->boardPenStrongWidth->get().toDouble();
-                qDebug() << "Line width is now" << width;
                 auto newStyle = mStyle;
                 newStyle.setLineWidth(width);
                 applyStyle(newStyle);
@@ -290,7 +292,6 @@ void UBStylePalette::init()
                 [this]()
                 {
                     auto color = sender()->property("color").value<QVariantList>();
-                    qDebug() << "Fill color is now" << color;
                     auto newStyle = mStyle;
                     newStyle.setFillColor(QColor::fromString(color.at(0).toString()),
                                           QColor::fromString(color.at(1).toString()));
@@ -360,7 +361,6 @@ void UBStylePalette::setLineStyleIconAndConnect(UBToolbarButtonGroup* buttonGrou
     connect(buttonList.at(index)->defaultAction(), &QAction::triggered, this,
             [this, style]()
             {
-                qDebug() << "Line style is now" << style;
                 auto newStyle = mStyle;
                 newStyle.setLineStyle(style);
                 applyStyle(newStyle);
