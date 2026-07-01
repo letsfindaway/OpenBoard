@@ -26,8 +26,6 @@ public:
 
     virtual QRectF boundingRect() const;
 
-    virtual QPainterPath shape() const;
-
     virtual QPainterPath painterPath() const;
 
     virtual void onActivateEditionMode();

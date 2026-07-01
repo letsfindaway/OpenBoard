@@ -133,18 +133,6 @@ void UB1HEditableGraphicsCircleItem::updateHandle(UBAbstractHandle *handle)
     }
 }
 
-QPainterPath UB1HEditableGraphicsCircleItem::shape() const
-{
-    QPainterPath path;
-    if(isInEditMode()){
-        path.addRect(boundingRect());
-    }else{
-        path.addEllipse(boundingRect());
-    }
-
-    return path;
-}
-
 QPainterPath UB1HEditableGraphicsCircleItem::painterPath() const
 {
     QPainterPath path;

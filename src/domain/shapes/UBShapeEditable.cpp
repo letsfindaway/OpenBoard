@@ -7,6 +7,30 @@ UBAbstractEditableGraphicsShapeItem::UBAbstractEditableGraphicsShapeItem(QGraphi
     mHasMoved = false;
 }
 
+QPainterPath UBAbstractEditableGraphicsShapeItem::shape() const
+{
+    QPainterPath outline;
+
+    if (isInEditMode())
+    {
+        outline.addRect(boundingRect());
+    }
+    else
+    {
+        QPainterPathStroker stroker{pen()};
+        stroker.setDashPattern(Qt::SolidLine);
+        const auto path = painterPath();
+        outline = stroker.createStroke(path);
+
+        if (brush().color() != Qt::transparent)
+        {
+            outline = outline.united(path);
+        }
+    }
+
+    return outline;
+}
+
 void UBAbstractEditableGraphicsShapeItem::onActivateEditionMode()
 {
     //NOOP

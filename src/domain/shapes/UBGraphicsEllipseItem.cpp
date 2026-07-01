@@ -177,17 +177,6 @@ void UB3HEditableGraphicsEllipseItem::updateHandle(UBAbstractHandle *handle)
     }
 }
 
-QPainterPath UB3HEditableGraphicsEllipseItem::shape() const
-{
-    QPainterPath path;
-    if(isInEditMode()){
-        path.addRect(boundingRect());
-    }else{
-        path.addEllipse(boundingRect());
-    }
-    return path;
-}
-
 QPainterPath UB3HEditableGraphicsEllipseItem::painterPath() const
 {
     QPainterPath path;

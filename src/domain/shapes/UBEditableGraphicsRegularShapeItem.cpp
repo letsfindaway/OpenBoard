@@ -259,22 +259,6 @@ void UBEditableGraphicsRegularShapeItem::onActivateEditionMode()
     mHandles.at(1)->setPos(mCenter);
 }
 
-QPainterPath UBEditableGraphicsRegularShapeItem::shape() const
-{
-    QPainterPath path;
-
-    if(isInEditMode()){
-        path.addRect(boundingRect());
-    }else{
-        QPainterPathStroker stroker{pen()};
-        path = stroker.createStroke(this->path());
-        path = path.united(this->path());
-    }
-
-    return path;
-
-}
-
 QPainterPath UBEditableGraphicsRegularShapeItem::painterPath() const
 {
     return path();

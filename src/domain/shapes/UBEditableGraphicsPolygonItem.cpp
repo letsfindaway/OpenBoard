@@ -291,15 +291,20 @@ void UBEditableGraphicsPolygonItem::updateHandle(UBAbstractHandle *handle)
 QPainterPath UBEditableGraphicsPolygonItem::shape() const
 {
     QPainterPath path;
-    if(isInEditMode()){
-        path.addRect(boundingRect());
-    }else{
-        QPainterPathStroker stroker{pen()};
-        path = stroker.createStroke(this->path());
 
-        if (isClosed())
+    if (isInEditMode())
+    {
+        path.addRect(boundingRect());
+    }
+    else
+    {
+        QPainterPathStroker stroker{pen()};
+        stroker.setDashPattern(Qt::SolidLine);
+        path = stroker.createStroke(painterPath());
+
+        if (isClosed() && brush().color() != Qt::transparent)
         {
-            path = path.united(this->path());
+            path = path.united(painterPath());
         }
     }
 

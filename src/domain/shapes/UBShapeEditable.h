@@ -11,6 +11,8 @@ public:
 
     virtual ~UBAbstractEditableGraphicsShapeItem(){ }
 protected:
+    virtual QPainterPath shape() const override;
+
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);

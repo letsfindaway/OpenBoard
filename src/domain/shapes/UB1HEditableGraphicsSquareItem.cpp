@@ -52,13 +52,6 @@ void UB1HEditableGraphicsSquareItem::paint(QPainter *painter, const QStyleOption
     painter->drawRect(0, 0, w, h);
 }
 
-QPainterPath UB1HEditableGraphicsSquareItem::shape() const
-{
-    QPainterPath path;
-    path.addRect(boundingRect());
-    return path;
-}
-
 QPainterPath UB1HEditableGraphicsSquareItem::painterPath() const
 {
     QPainterPath path;
