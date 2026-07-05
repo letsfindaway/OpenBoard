@@ -18,7 +18,7 @@ QRectF UB1HEditableGraphicsBasicShapeItem::adjustBoundingRect(QRectF rect) const
     rect = UBAbstractEditableGraphicsShapeItem::adjustBoundingRect(rect);
 
     if(isInEditMode()){
-        qreal r = getHandle()->radius();
+        qreal r = getHandle(HandleId::Diagonal)->radius();
 
         rect.adjust(-r, -r, r, r);
     }

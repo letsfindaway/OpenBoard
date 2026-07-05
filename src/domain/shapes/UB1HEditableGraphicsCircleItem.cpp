@@ -96,7 +96,7 @@ QRectF UB1HEditableGraphicsCircleItem::boundingRect() const
     rect = adjustBoundingRect(rect);
 
     if(isInEditMode()){
-        qreal r = getHandle()->radius();
+        qreal r = getHandle(HandleId::Diagonal)->radius();
 
         rect.adjust(-r, -r, r, r);
     }
@@ -106,7 +106,8 @@ QRectF UB1HEditableGraphicsCircleItem::boundingRect() const
 
 void UB1HEditableGraphicsCircleItem::onActivateEditionMode()
 {
-    getHandle()->setPos(mRadius*2, mRadius*2);
+    getHandle(HandleId::Diagonal)->setPos(mRadius*2, mRadius*2);
+    getHandle(HandleId::Stretch)->setPos(mRadius*2, 0);
 }
 
 void UB1HEditableGraphicsCircleItem::updateHandle(UBAbstractHandle *handle)
@@ -115,13 +116,30 @@ void UB1HEditableGraphicsCircleItem::updateHandle(UBAbstractHandle *handle)
 
     qreal maxSize = handle->radius() * 4;
 
-    qreal r = qMin(handle->pos().x(), handle->pos().y()) / 2;
+    if (handle->getId() == HandleId::Diagonal)
+    {
+        qreal r = qMin(handle->pos().x(), handle->pos().y()) / 2;
 
-    if(r >= maxSize){
-        mRadius = r;
+        if(r >= maxSize){
+            mRadius = r;
+        }
+    }
+    else if (handle->getId() == HandleId::Stretch)
+    {
+        //it's the stretch handle
+        if (handle->pos().x() >= maxSize)
+        {
+            double delta = handle->pos().x()/2. - mRadius;
+
+            mRadius += delta;
+
+            setTransform(transform().translate(-delta, -delta));
+        }
     }
 
-    getHandle()->setPos(mRadius*2, mRadius*2);
+
+    getHandle(HandleId::Diagonal)->setPos(mRadius*2, mRadius*2);
+    getHandle(HandleId::Stretch)->setPos(mRadius*2, 0);
 
     if(hasGradient()){
         QLinearGradient g(QPointF(), QPointF(mRadius*2, 0));

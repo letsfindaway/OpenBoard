@@ -15,16 +15,16 @@ UBEditableGraphicsRegularShapeItem::UBEditableGraphicsRegularShapeItem(int nVert
     createGraphicsRegularPathItem();
 
     UB1HandleBuilder::buildHandles(mHandles);
-    mHandles.at(0)->setParentItem(this);
-    mHandles.at(0)->setEditableObject(this);
-    mHandles.at(0)->setId(0);
 
     // add a handle in the center to change number of corners
-    mHandles << new UBVerticalHandle{true};
-    mHandles.at(1)->setParentItem(this);
-    mHandles.at(1)->setEditableObject(this);
-    mHandles.at(1)->setId(1);
-    mHandles.at(1)->hide();
+    addHandle(new UBVerticalHandle{true});
+
+    for (auto handle : mHandles)
+    {
+        handle->setEditableObject(this);
+        handle->setParentItem(this);
+        handle->hide();
+    }
 }
 
 UBEditableGraphicsRegularShapeItem::~UBEditableGraphicsRegularShapeItem()
@@ -198,7 +198,39 @@ void UBEditableGraphicsRegularShapeItem::updateHandle(UBAbstractHandle *handle)
 
     Delegate()->showFrame(false);
 
-    if (handle->getId() == 1)
+    qreal maxSize = handle->radius() * 4;
+
+    if (handle->getId() == HandleId::Diagonal)
+    {
+        QPointF diff = handle->pos() - path().boundingRect().topLeft();
+
+        qreal maxSize = handle->radius() * 4;
+
+        if(diff.x() < maxSize){
+            handle->setX(handle->pos().x() + (maxSize - diff.x()));
+        }
+
+        if(diff.y() < maxSize){
+            handle->setY(handle->pos().y() + (maxSize - diff.y()));
+        }
+
+        updatePath(handle->pos());
+    }
+    else if (handle->getId() == HandleId::Stretch)
+    {
+        const auto sizeX = handle->pos().x() - (mCenter.x() - mRadius);
+
+        if (sizeX >= maxSize)
+        {
+            const auto delta = sizeX / 2. - mRadius;
+
+            setTransform(transform().translate(-delta, -delta));
+
+            // calculate a virtual position for the diagonal handle to update path
+            updatePath(QPointF{handle->pos().x(), mCenter.y() + (handle->pos().x() - mCenter.x())});
+        }
+    }
+    else if (handle->getId() == HandleId::Other)
     {
         // modify number of vertices
         const auto yDiff = mCenter.y() - handle->pos().y();
@@ -209,25 +241,11 @@ void UBEditableGraphicsRegularShapeItem::updateHandle(UBAbstractHandle *handle)
         {
             mNVertices = vertices;
             createGraphicsRegularPathItem();
-            updatePath(mHandles.at(0)->pos());
+            updatePath(getHandle(HandleId::Diagonal)->pos());
         }
 
         return;
     }
-
-    QPointF diff = handle->pos() - path().boundingRect().topLeft();
-
-    qreal maxSize = handle->radius() * 4;
-
-    if(diff.x() < maxSize){
-        handle->setX(handle->pos().x() + (maxSize - diff.x()));
-    }
-
-    if(diff.y() < maxSize){
-        handle->setY(handle->pos().y() + (maxSize - diff.y()));
-    }
-
-    updatePath(handle->pos());
 
     if(hasGradient()){
         QLinearGradient g(path().boundingRect().topLeft(), path().boundingRect().topRight());
@@ -238,12 +256,17 @@ void UBEditableGraphicsRegularShapeItem::updateHandle(UBAbstractHandle *handle)
         setBrush(g);
     }
 
-    mHandles.at(1)->setPos(mCenter);
+    auto bounds = QRectF{0, 0, 2. * mRadius, 2. * mRadius};
+    bounds.moveCenter(mCenter);
+
+    getHandle(HandleId::Diagonal)->setPos(bounds.bottomRight());
+    getHandle(HandleId::Stretch)->setPos(bounds.topRight());
+    getHandle(HandleId::Other)->setPos(bounds.center());
 }
 
 void UBEditableGraphicsRegularShapeItem::focusHandle(UBAbstractHandle* handle)
 {
-    if (handle->getId() == 1)
+    if (handle->getId() == HandleId::Other)
     {
         mNOriginalVertices = mNVertices;
     }
@@ -251,12 +274,12 @@ void UBEditableGraphicsRegularShapeItem::focusHandle(UBAbstractHandle* handle)
 
 void UBEditableGraphicsRegularShapeItem::onActivateEditionMode()
 {
-    QPainterPath circle;
+    auto bounds = QRectF{0, 0, 2. * mRadius, 2. * mRadius};
+    bounds.moveCenter(mCenter);
 
-    circle.addEllipse(mCenter, mRadius, mRadius);
-
-    mHandles.at(0)->setPos(circle.boundingRect().bottomRight());
-    mHandles.at(1)->setPos(mCenter);
+    getHandle(HandleId::Diagonal)->setPos(bounds.bottomRight());
+    getHandle(HandleId::Stretch)->setPos(bounds.topRight());
+    getHandle(HandleId::Other)->setPos(bounds.center());
 }
 
 QPainterPath UBEditableGraphicsRegularShapeItem::painterPath() const

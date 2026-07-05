@@ -76,9 +76,10 @@ QPainterPath UB3HEditableGraphicsRectItem::painterPath() const
 
 void UB3HEditableGraphicsRectItem::onActivateEditionMode()
 {
-    horizontalHandle()->setPos(mWidth, mHeight/2);
-    verticalHandle()->setPos(mWidth/2, mHeight);
-    diagonalHandle()->setPos(mWidth, mHeight);
+    getHandle(HandleId::Horizontal)->setPos(mWidth, mHeight/2);
+    getHandle(HandleId::Vertical)->setPos(mWidth/2, mHeight);
+    getHandle(HandleId::Diagonal)->setPos(mWidth, mHeight);
+    getHandle(HandleId::Stretch)->setPos(mWidth, 0);
 }
 
 void UB3HEditableGraphicsRectItem::updateHandle(UBAbstractHandle *handle)
@@ -87,17 +88,17 @@ void UB3HEditableGraphicsRectItem::updateHandle(UBAbstractHandle *handle)
 
     qreal maxSize = handle->radius() * 4;
 
-    if(handle->getId() == 1){
+    if(handle->getId() == HandleId::Vertical){
         //it's the vertical handle
         if(handle->pos().y() >= maxSize){
             mHeight = handle->pos().y();
         }
-    }else if(handle->getId() == 0){
+    }else if(handle->getId() == HandleId::Horizontal){
         //it's the horizontal handle
         if(handle->pos().x() > maxSize){
             mWidth = handle->pos().x();
         }
-    }else{
+    }else if(handle->getId() == HandleId::Diagonal){
         //it's the diagonal handle
         if(handle->pos().x() >= maxSize && handle->pos().y() >= maxSize){
             float ratio = mHeight / mWidth;
@@ -111,10 +112,37 @@ void UB3HEditableGraphicsRectItem::updateHandle(UBAbstractHandle *handle)
             }
         }
     }
+    else if (handle->getId() == HandleId::Stretch)
+    {
+        //it's the stretch handle
+        if (handle->pos().x() >= maxSize)
+        {
+            double ratio = mHeight / mWidth;
+            double dx;
+            double dy;
 
-    horizontalHandle()->setPos(mWidth, mHeight/2);
-    verticalHandle()->setPos(mWidth/2, mHeight);
-    diagonalHandle()->setPos(mWidth, mHeight);
+            if (mWidth > mHeight)
+            {
+                dx = handle->pos().x() - mWidth;
+                dy = ratio * dx;
+            }
+            else
+            {
+                dy = handle->pos().y() - mHeight;
+                dx = dy / ratio;
+            }
+
+            mWidth += 2 * dx;
+            mHeight += 2 * dy;
+
+            setTransform(transform().translate(-dx, -dy));
+        }
+    }
+
+    getHandle(HandleId::Horizontal)->setPos(mWidth, mHeight/2);
+    getHandle(HandleId::Vertical)->setPos(mWidth/2, mHeight);
+    getHandle(HandleId::Diagonal)->setPos(mWidth, mHeight);
+    getHandle(HandleId::Stretch)->setPos(mWidth, 0);
 
     if(hasGradient()){
         QLinearGradient g(QPointF(), QPointF(mWidth, 0));

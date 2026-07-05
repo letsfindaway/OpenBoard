@@ -4,12 +4,12 @@
 
 UBDiagonalHandle::UBDiagonalHandle()
 {
+    mId = Diagonal;
 }
 
 UBDiagonalHandle::UBDiagonalHandle(UBDiagonalHandle* const src):
     UBAbstractHandle(src)
 {
-
 }
 
 void UBDiagonalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -17,11 +17,7 @@ void UBDiagonalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QPointF p = parentItem()->mapFromScene(event->scenePos());
 
     QPointF diff(p - pos());
-
-    qreal proj = qMin(diff.x(), diff.y());
-
-    moveBy(proj, proj);
-
+    moveBy(diff.x(), diff.y());
     mEditableObject->updateHandle(this);
     mEditableObject->setModified();
 }

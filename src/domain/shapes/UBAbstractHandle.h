@@ -10,6 +10,16 @@
 
 class UBAbstractEditable;
 
+enum HandleId
+{
+    Free,
+    Horizontal,
+    Vertical,
+    Diagonal,
+    Stretch,
+    Other
+};
+
 class UBAbstractHandle : public QGraphicsItem, public UBItem
 {
 public:

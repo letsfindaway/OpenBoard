@@ -5,6 +5,7 @@
 UBVerticalHandle::UBVerticalHandle(bool paintIndicators)
     : mPaintIndicators{paintIndicators}
 {
+    mId = paintIndicators ? Other : Vertical;
 }
 
 UBVerticalHandle::UBVerticalHandle(UBVerticalHandle* const src):

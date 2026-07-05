@@ -61,7 +61,8 @@ QPainterPath UB1HEditableGraphicsSquareItem::painterPath() const
 
 void UB1HEditableGraphicsSquareItem::onActivateEditionMode()
 {
-    getHandle()->setPos(mSide, mSide);
+    getHandle(HandleId::Diagonal)->setPos(mSide, mSide);
+    getHandle(HandleId::Stretch)->setPos(mSide, 0);
 }
 
 void UB1HEditableGraphicsSquareItem::updateHandle(UBAbstractHandle *handle)
@@ -70,13 +71,29 @@ void UB1HEditableGraphicsSquareItem::updateHandle(UBAbstractHandle *handle)
 
     qreal maxSize = handle->radius() * 4;
 
-    qreal side = qMin(handle->pos().x(), handle->pos().y());
+    if (handle->getId() == HandleId::Diagonal)
+    {
+        qreal side = qMin(handle->pos().x(), handle->pos().y());
 
-    if(side > maxSize){
-        mSide = side;
+        if(side >= maxSize){
+            mSide = side;
+        }
+    }
+    else if (handle->getId() == HandleId::Stretch)
+    {
+        //it's the stretch handle
+        if (handle->pos().x() >= maxSize)
+        {
+            double delta = handle->pos().x() - mSide;
+
+            mSide += delta;
+
+            setTransform(transform().translate(-delta / 2., -delta / 2.));
+        }
     }
 
-    getHandle()->setPos(mSide, mSide);
+    getHandle(HandleId::Diagonal)->setPos(mSide, mSide);
+    getHandle(HandleId::Stretch)->setPos(mSide, 0);
 
     if(hasGradient()){
         QLinearGradient g(QPointF(), QPointF(mSide, 0));

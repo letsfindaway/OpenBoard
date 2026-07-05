@@ -8,11 +8,6 @@ class UB1HEditableGraphicsBasicShapeItem : public UBAbstractEditableGraphicsShap
 public:
     UB1HEditableGraphicsBasicShapeItem(QGraphicsItem *parent = 0);
 
-    UBAbstractHandle *getHandle() const
-    {
-        return mHandles.first();
-    }
-
     QRectF adjustBoundingRect(QRectF rect) const;
 };
 

@@ -4,12 +4,12 @@
 
 UBHorizontalHandle::UBHorizontalHandle()
 {
+    mId = Horizontal;
 }
 
 UBHorizontalHandle::UBHorizontalHandle(UBHorizontalHandle* const src):
     UBAbstractHandle(src)
 {
-
 }
 
 void UBHorizontalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)

@@ -16,10 +16,15 @@ void UB1HandleBuilder::buildHandles(QVector<UBAbstractHandle *> &handles)
     }
 
     UBDiagonalHandle *dh = new UBDiagonalHandle();
+    UBDiagonalHandle *sh = new UBDiagonalHandle();
+
+    sh->setId(Stretch);
 
     dh->hide();
+    sh->hide();
 
     handles.push_back(dh);
+    handles.push_back(sh);
 }
 
 void UB3HandlesBuilder::buildHandles(QVector<UBAbstractHandle *> &handles)
@@ -36,15 +41,17 @@ void UB3HandlesBuilder::buildHandles(QVector<UBAbstractHandle *> &handles)
     UBHorizontalHandle *hh = new UBHorizontalHandle();
     UBVerticalHandle *vh = new UBVerticalHandle();
     UBDiagonalHandle *dh = new UBDiagonalHandle();
+    UBDiagonalHandle *sh = new UBDiagonalHandle();
 
-    vh->setId(1);
-    dh->setId(2);
+    sh->setId(Stretch);
 
     hh->hide();
     vh->hide();
     dh->hide();
+    sh->hide();
 
     handles.push_back(hh);
     handles.push_back(vh);
     handles.push_back(dh);
+    handles.push_back(sh);
 }

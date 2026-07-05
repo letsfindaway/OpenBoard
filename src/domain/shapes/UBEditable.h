@@ -18,6 +18,8 @@ public:
 
     void addHandle(UBAbstractHandle *mhandle);
 
+    UBAbstractHandle* getHandle(HandleId id) const;
+
     void showEditMode(bool show);
 
     virtual void updateHandle(UBAbstractHandle *handle) = 0;

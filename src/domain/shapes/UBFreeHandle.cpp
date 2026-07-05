@@ -3,12 +3,12 @@
 
 UBFreeHandle::UBFreeHandle()
 {
+    mId = Free;
 }
 
 UBFreeHandle::UBFreeHandle(UBFreeHandle* const src):
     UBAbstractHandle(src)
 {
-
 }
 
 void UBFreeHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)

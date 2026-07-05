@@ -21,6 +21,19 @@ void UBAbstractEditable::addHandle(UBAbstractHandle *handle)
     mHandles.push_back(handle);
 }
 
+UBAbstractHandle* UBAbstractEditable::getHandle(HandleId id) const
+{
+    for (auto handle : mHandles)
+    {
+        if (handle->getId() == id)
+        {
+            return handle;
+        }
+    }
+
+    return nullptr;
+}
+
 void UBAbstractEditable::showEditMode(bool show)
 {
     if(!show){
