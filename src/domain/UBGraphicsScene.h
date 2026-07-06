@@ -31,6 +31,7 @@
 #include <QtGui>
 #include <optional>
 
+#include "domain/UBGraphicsItemUndoCommand.h"
 #include "frameworks/UBCoreGraphicsScene.h"
 
 #include "core/UB.h"
@@ -434,6 +435,7 @@ signals:
 
         QSet<QGraphicsItem*> mAddedItems;
         QSet<QGraphicsItem*> mRemovedItems;
+        UBGraphicsItemUndoCommand::GroupDataTable mGroupsMap;
 
         std::shared_ptr<UBDocumentProxy> mDocument;
 

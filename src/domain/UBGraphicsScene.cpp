@@ -402,6 +402,7 @@ void UBGraphicsScene::selectionChangedProcessing()
 bool UBGraphicsScene::inputDevicePress(const QPointF& scenePos, const qreal& pressure, Qt::KeyboardModifiers modifiers)
 {
     bool accepted = false;
+    mGroupsMap.clear();
 
     if (mInputDeviceIsPressed) {
         qWarning() << "scene received input device pressed, without input device release, muting event as input device move";
@@ -814,7 +815,7 @@ bool UBGraphicsScene::inputDeviceRelease(int tool, Qt::KeyboardModifiers modifie
         if (mUndoRedoStackEnabled) { //should be deleted after scene own undo stack implemented
             if (UBApplication::undoStack)
             {
-                UBGraphicsItemUndoCommand* udcmd = new UBGraphicsItemUndoCommand(shared_from_this(), mRemovedItems, mAddedItems); //deleted by the undoStack
+                UBGraphicsItemUndoCommand* udcmd = new UBGraphicsItemUndoCommand(shared_from_this(), mRemovedItems, mAddedItems, mGroupsMap); //deleted by the undoStack
                 UBApplication::undoStack->push(udcmd);
             }
         }
@@ -1411,11 +1412,25 @@ UBGraphicsStrokesGroup* UBGraphicsScene::shapeToStrokesGroup(UBAbstractGraphicsI
         }
     }
 
-    // replace shape by strokes group and create an undo command for this
-    addItem(strokesGroup);
-    strokesGroup->setPos(shapeItem->pos());
-    strokesGroup->setTransform(shapeItem->transform());
-    strokesGroup->setZValue(shapeItem->zValue());
+    auto group = dynamic_cast<UBGraphicsGroupContainerItem*>(shapeItem->parentItem());
+
+    if (group)
+    {
+        group->removeFromGroup(shapeItem);
+        strokesGroup->setPos(shapeItem->pos());
+        strokesGroup->setTransform(shapeItem->transform());
+        strokesGroup->setZValue(shapeItem->zValue());
+        group->addToGroup(strokesGroup);
+        mGroupsMap.insert(group, shapeItem->uuid());
+    }
+    else
+    {
+        // replace shape by strokes group
+        addItem(strokesGroup);
+        strokesGroup->setPos(shapeItem->pos());
+        strokesGroup->setTransform(shapeItem->transform());
+        strokesGroup->setZValue(shapeItem->zValue());
+    }
 
     removeItem(shapeItem);
 
