@@ -2721,6 +2721,15 @@ QPointF UBGraphicsScene::snap(const QRectF& rect, Qt::Corner* corner) const
 
 QRectF UBGraphicsScene::itemRect(const QGraphicsItem* item)
 {
+#ifdef ENABLE_SHAPES
+    const auto shape = dynamic_cast<const UBAbstractGraphicsItem*>(item);
+
+    if (shape)
+    {
+        // use the provided painter path to calculate the item rectangle
+        return shape->painterPath().boundingRect();
+    }
+#endif
     // compute an item's rectangle in item coordinates
     // taking into account the shape of the item and
     // the nature of nominal lines

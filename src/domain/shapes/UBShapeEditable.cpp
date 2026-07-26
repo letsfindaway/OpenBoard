@@ -49,8 +49,6 @@ void UBAbstractEditableGraphicsShapeItem::mousePressEvent(QGraphicsSceneMouseEve
 {
     mMultiClickState++;
     mHasMoved = false;
-
-    UBAbstractGraphicsItem::mousePressEvent(event);
 }
 
 void UBAbstractEditableGraphicsShapeItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -61,7 +59,7 @@ void UBAbstractEditableGraphicsShapeItem::mouseReleaseEvent(QGraphicsSceneMouseE
     {
         if (!Delegate()->isLocked())
         {
-            if(mMultiClickState %2 == 1){
+            if(mMultiClickState %2 == 0){
                 onActivateEditionMode();
 
                 Delegate()->showFrame(false);
@@ -85,8 +83,6 @@ void UBAbstractEditableGraphicsShapeItem::mouseReleaseEvent(QGraphicsSceneMouseE
         }
     }
 
-    UBAbstractGraphicsItem::mouseReleaseEvent(event);
-
     mHasMoved = false;
 }
 
@@ -97,7 +93,6 @@ void UBAbstractEditableGraphicsShapeItem::mouseMoveEvent(QGraphicsSceneMouseEven
         mHasMoved = true;
 
         if(!isInEditMode()){
-            UBAbstractGraphicsItem::mouseMoveEvent(event);
             Delegate()->mouseMoveEvent(event);
         }
     }

@@ -529,6 +529,13 @@ void UBBoardView::handleItemsSelection(QGraphicsItem *item)
                 mCornerPoints << item->mapToScene(bounds.topRight());
                 mCornerPoints << item->mapToScene(bounds.bottomLeft());
                 mCornerPoints << item->mapToScene(bounds.bottomRight());
+#ifdef ENABLE_SHAPES
+                if (item->type() == UBGraphicsItemType::GraphicsShapeItemType
+                        || item->type() == UBGraphicsItemType::GraphicsRegularPathItemType)
+                {
+                    mCornerPoints << item->mapToScene(bounds.center());
+                }
+#endif
             }
         }
     }
@@ -576,6 +583,11 @@ Here we determines cases when items should to get mouse press event at pressing 
         else
             return false;
     case DelegateButton::Type:
+#ifdef ENABLE_SHAPES
+    case UBGraphicsItemType::GraphicsShapeItemType:
+    case UBGraphicsItemType::GraphicsPathItemType:
+    case UBGraphicsItemType::GraphicsRegularPathItemType:
+#endif
         return true;
 
     case UBGraphicsMediaItem::Type:
@@ -595,11 +607,6 @@ Here we determines cases when items should to get mouse press event at pressing 
         break;
 
     case UBGraphicsItemType::StrokeItemType:
-#ifdef ENABLE_SHAPES
-    case UBGraphicsItemType::GraphicsShapeItemType:
-    case UBGraphicsItemType::GraphicsPathItemType:
-    case UBGraphicsItemType::GraphicsRegularPathItemType:
-#endif
         if (currentTool == UBStylusTool::Play || currentTool == UBStylusTool::Selector)
             return true;
         break;
@@ -901,6 +908,19 @@ void UBBoardView::handleItemMouseMove(QMouseEvent *event)
         {
             mLastPressedMousePos = scenePos;
         }
+
+#ifdef ENABLE_SHAPES
+        switch (movingItem->type())
+        {
+        case UBGraphicsItemType::GraphicsShapeItemType:
+        case UBGraphicsItemType::GraphicsPathItemType:
+        case UBGraphicsItemType::GraphicsRegularPathItemType:
+            QGraphicsView::mouseMoveEvent(event);
+            break;
+        default:
+            break;
+        }
+#endif
 
         mWidgetMoved = true;
         event->accept();

@@ -63,6 +63,7 @@ void UBSnapIndicator::appear(Qt::Corner corner, QPointF snapPoint, double angle)
         break;
 
     default:
+        mAngle += 315;
         break;
     }
 

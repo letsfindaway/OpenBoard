@@ -300,6 +300,12 @@ QPainterPath UBEditableGraphicsPolygonItem::shape() const
     {
         QPainterPathStroker stroker{pen()};
         stroker.setDashPattern(Qt::SolidLine);
+
+        if (pen().width() < 3)
+        {
+            stroker.setWidth(3);
+        }
+
         path = stroker.createStroke(painterPath());
 
         if (isClosed() && brush().color() != Qt::transparent)

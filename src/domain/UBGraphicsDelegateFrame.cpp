@@ -300,6 +300,13 @@ void UBGraphicsDelegateFrame::mousePressEvent(QGraphicsSceneMouseEvent *event)
     mCornerPoints << delegated()->mapToScene(bounds.topRight());
     mCornerPoints << delegated()->mapToScene(bounds.bottomLeft());
     mCornerPoints << delegated()->mapToScene(bounds.bottomRight());
+#ifdef ENABLE_SHAPES
+                if (delegated()->type() == UBGraphicsItemType::GraphicsShapeItemType
+                        || delegated()->type() == UBGraphicsItemType::GraphicsRegularPathItemType)
+                {
+                    mCornerPoints << delegated()->mapToScene(bounds.center());
+                }
+#endif
 
     if (mMirrorX)
     {
