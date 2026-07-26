@@ -65,6 +65,8 @@ void UB3HEditableGraphicsRectItem::paint(QPainter *painter, const QStyleOptionGr
     setStyle(painter);
 
     painter->drawRect(0, 0, mWidth, mHeight);
+
+    paintCenterMark(painter);
 }
 
 QPainterPath UB3HEditableGraphicsRectItem::painterPath() const

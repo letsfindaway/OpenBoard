@@ -50,6 +50,8 @@ void UB1HEditableGraphicsSquareItem::paint(QPainter *painter, const QStyleOption
     int w = wIsNeg ? -mSide : mSide;
 
     painter->drawRect(0, 0, w, h);
+
+    paintCenterMark(painter);
 }
 
 QPainterPath UB1HEditableGraphicsSquareItem::painterPath() const

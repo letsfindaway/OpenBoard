@@ -13,14 +13,15 @@ public:
 protected:
     virtual QPainterPath shape() const override;
 
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    virtual void focusOutEvent(QFocusEvent *event);
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void focusOutEvent(QFocusEvent *event) override;
+    virtual void paintCenterMark(QPainter *painter);
 
     virtual void onActivateEditionMode();
 
-    virtual void deactivateEditionMode();
+    virtual void deactivateEditionMode() override;
 
     int mMultiClickState;
 

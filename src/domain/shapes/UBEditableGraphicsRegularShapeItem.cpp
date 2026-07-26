@@ -125,6 +125,8 @@ void UBEditableGraphicsRegularShapeItem::paint(QPainter *painter, const QStyleOp
 
         painter->drawRect(ccircle.boundingRect());
     }
+
+    paintCenterMark(painter);
 }
 
 void UBEditableGraphicsRegularShapeItem::setStartPoint(QPointF pos)

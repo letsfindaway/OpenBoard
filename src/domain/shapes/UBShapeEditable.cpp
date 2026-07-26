@@ -1,5 +1,8 @@
 #include "UBShapeEditable.h"
 
+#include "domain/UBGraphicsDelegateFrame.h"
+#include "domain/UBGraphicsScene.h"
+
 UBAbstractEditableGraphicsShapeItem::UBAbstractEditableGraphicsShapeItem(QGraphicsItem *parent):
     UBAbstractGraphicsItem(parent)
 {
@@ -19,6 +22,12 @@ QPainterPath UBAbstractEditableGraphicsShapeItem::shape() const
     {
         QPainterPathStroker stroker{pen()};
         stroker.setDashPattern(Qt::SolidLine);
+
+        if (pen().width() < 3)
+        {
+            stroker.setWidth(3);
+        }
+
         const auto path = painterPath();
         outline = stroker.createStroke(path);
 
@@ -102,6 +111,54 @@ void UBAbstractEditableGraphicsShapeItem::focusOutEvent(QFocusEvent *event)
         prepareGeometryChange();
         mMultiClickState = 0;
         showEditMode(false);
+    }
+}
+
+void UBAbstractEditableGraphicsShapeItem::paintCenterMark(QPainter* painter)
+{
+    if (mHasMoved || (Delegate() && Delegate()->frame() && Delegate()->frame()->moving()))
+    {
+        painter->save();
+
+        // determine contrast color to item
+        auto fillColor = painter->brush().color();
+
+        if (fillColor == Qt::transparent)
+        {
+            // get background color
+            fillColor = scene()->isDarkBackground() ? Qt::black : Qt::white;
+        }
+
+        fillColor = fillColor.toHsv();
+
+        // compute a color which has the opposite color and brightness
+        auto hue = fillColor.hueF() + 0.5;
+        hue -= (long)hue;
+
+        if (hue < 0.)
+        {
+            hue = 0;
+        }
+
+        const auto saturation = fillColor.saturationF();
+
+        // prefer brighter colors
+        auto value = fillColor.valueF() * fillColor.valueF() + 0.5;
+        value -= (long)value;
+
+        const auto markColor = QColor::fromHsvF(hue, saturation, value);
+
+        painter->setBrush(QBrush());
+        QPen p;
+        p.setColor(markColor);
+        p.setWidth(3);
+        painter->setPen(p);
+
+        const auto center = boundingRect().center();
+        painter->drawLine(center - QPointF{5, 0}, center + QPointF{5, 0});
+        painter->drawLine(center - QPointF{0, 5}, center + QPointF{0, 5});
+
+        painter->restore();
     }
 }
 

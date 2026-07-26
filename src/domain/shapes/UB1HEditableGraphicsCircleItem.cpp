@@ -81,6 +81,8 @@ void UB1HEditableGraphicsCircleItem::paint(QPainter *painter, const QStyleOption
 
         painter->drawRect(0, 0, rx*2, ry*2);
     }
+
+    paintCenterMark(painter);
 }
 
 QRectF UB1HEditableGraphicsCircleItem::boundingRect() const

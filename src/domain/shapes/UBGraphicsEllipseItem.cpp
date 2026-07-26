@@ -100,6 +100,8 @@ void UB3HEditableGraphicsEllipseItem::paint(QPainter *painter, const QStyleOptio
 
         painter->drawRect(0, 0, mRadiusX*2, mRadiusY*2);
     }
+
+    paintCenterMark(painter);
 }
 
 QRectF UB3HEditableGraphicsEllipseItem::boundingRect() const
