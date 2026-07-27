@@ -1,6 +1,7 @@
 #include "UBAbstractHandle.h"
 
 #include "UBEditable.h"
+#include "domain/UBGraphicsScene.h"
 
 UBAbstractHandle::UBAbstractHandle()
 {
@@ -76,4 +77,10 @@ QRectF UBAbstractHandle::boundingRect() const
     int y = x;
 
     return QRectF(x, y, d, d);
+}
+
+std::shared_ptr<UBGraphicsScene> UBAbstractHandle::scene()
+{
+    auto scenePtr = dynamic_cast<UBGraphicsScene*>(QGraphicsItem::scene());
+    return scenePtr ? scenePtr->shared_from_this() : nullptr;
 }

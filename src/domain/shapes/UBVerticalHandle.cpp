@@ -1,4 +1,5 @@
 #include "UBEditable.h"
+#include "domain/UBGraphicsScene.h"
 
 #include "UBVerticalHandle.h"
 
@@ -17,7 +18,14 @@ UBVerticalHandle::UBVerticalHandle(UBVerticalHandle* const src):
 
 void UBVerticalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    QPointF p = parentItem()->mapFromScene(event->scenePos());
+    auto scenePos = event->scenePos();
+
+    if (scene()->isSnapping())
+    {
+        scenePos += scene()->snap(scenePos);
+    }
+
+    QPointF p = parentItem()->mapFromScene(scenePos);
 
     this->setPos(pos().x(), p.y());
 

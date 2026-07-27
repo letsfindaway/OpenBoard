@@ -1,5 +1,6 @@
 #include "UBFreeHandle.h"
 #include "UBEditable.h"
+#include "domain/UBGraphicsScene.h"
 
 UBFreeHandle::UBFreeHandle()
 {
@@ -13,7 +14,14 @@ UBFreeHandle::UBFreeHandle(UBFreeHandle* const src):
 
 void UBFreeHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    QPointF p = parentItem()->mapFromScene(event->scenePos());
+    auto scenePos = event->scenePos();
+
+    if (scene()->isSnapping())
+    {
+        scenePos += scene()->snap(scenePos);
+    }
+
+    QPointF p = parentItem()->mapFromScene(scenePos);
 
     QPointF diff = p - pos();
 

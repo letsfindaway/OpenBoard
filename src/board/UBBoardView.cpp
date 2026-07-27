@@ -1225,6 +1225,12 @@ void UBBoardView::mousePressEvent (QMouseEvent *event)
             event->accept ();
             break;
 
+#if ENABLE_SHAPES
+        case UBStylusTool::Drawing:
+            event->accept ();
+            break;
+#endif
+
         default:
             if (UBDrawingController::drawingController()->activeRuler() == nullptr) {
                 viewport()->setCursor (QCursor (Qt::BlankCursor));

@@ -364,6 +364,41 @@ void UBShapeFactory::onMouseMove(QMouseEvent *event)
         mCursorMoved = true;
         QPointF cursorPosition = mBoardView->mapToScene(event->pos());
 
+        if (mBoardView->scene()->isSnapping())
+        {
+            std::optional<QPointF> altPosition;
+            QPointF lineStartPoint;
+
+            if (mShapeType == Line)
+            {
+                const auto step = UBSettings::settings()->rotationAngleStep->get().toDouble();
+                UBEditableGraphicsLineItem* line = dynamic_cast<UBEditableGraphicsLineItem*>(mCurrentShape);
+                lineStartPoint = line->startPoint();
+                QLineF radius(lineStartPoint, cursorPosition);
+                auto angle = radius.angle();
+                angle = qRound(angle / step) * step;
+                radius.setAngle(angle);
+                altPosition = radius.p2();
+            }
+
+            QPointF gridSnapPoint;
+            cursorPosition += mBoardView->scene()->snap(cursorPosition, nullptr, altPosition, &gridSnapPoint);
+
+            if (mShapeType == Line)
+            {
+                if (cursorPosition != gridSnapPoint)
+                {
+                    const auto angle1 = QLineF{lineStartPoint, cursorPosition}.angle();
+                    const auto angle2 = QLineF{lineStartPoint, gridSnapPoint}.angle();
+
+                    if (std::fmod(std::fabs(angle1 - angle2), 360.) < 0.01)
+                    {
+                        cursorPosition = gridSnapPoint;
+                    }
+                }
+            }
+        }
+
         if(mIsRegularShape)
         {
             if (mShapeType == Ellipse)
@@ -397,6 +432,15 @@ void UBShapeFactory::onMouseMove(QMouseEvent *event)
                 UBEditableGraphicsLineItem* line = dynamic_cast<UBEditableGraphicsLineItem*>(mCurrentShape);
 
                 line->setEndPoint(cursorPosition);
+
+                QLineF radius(line->startPoint(), cursorPosition);
+                auto angle = radius.angle();
+                QLineF viewRadius{UBApplication::boardController->controlView()->mapFromScene(radius.p1()),
+                        UBApplication::boardController->controlView()->mapFromScene(radius.p2())};
+                QPoint offset = - viewRadius.p2().toPoint();
+                viewRadius.setLength(viewRadius.length() + 30);
+                offset += viewRadius.p2().toPoint();
+                UBApplication::boardController->setCursorFromAngle(angle, offset);
             }
         }else{
             if(mShapeType == Pen){
@@ -435,6 +479,11 @@ void UBShapeFactory::onMousePress(QMouseEvent *event)
         mIsPress = true;
 
         QPointF cursorPosition = mBoardView->mapToScene(event->pos());
+
+        if (mBoardView->scene()->isSnapping())
+        {
+            cursorPosition += mBoardView->scene()->snap(cursorPosition);
+        }
 
         if(mIsRegularShape){
             if (mShapeType == Ellipse)

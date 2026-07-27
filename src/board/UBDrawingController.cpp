@@ -192,7 +192,11 @@ bool UBDrawingController::isSnappingTool() const
 {
     return (mStylusTool == UBStylusTool::Selector)
             || (mStylusTool == UBStylusTool::Play)
+#ifdef ENABLE_SHAPES
+            || (mStylusTool == UBStylusTool::Drawing);
+#else
             || (mStylusTool == UBStylusTool::Line);
+#endif
 }
 
 

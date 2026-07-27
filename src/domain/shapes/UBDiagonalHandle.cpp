@@ -1,6 +1,7 @@
 #include "UBDiagonalHandle.h"
 
 #include "UBEditable.h"
+#include "domain/UBGraphicsScene.h"
 
 UBDiagonalHandle::UBDiagonalHandle()
 {
@@ -14,7 +15,14 @@ UBDiagonalHandle::UBDiagonalHandle(UBDiagonalHandle* const src):
 
 void UBDiagonalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    QPointF p = parentItem()->mapFromScene(event->scenePos());
+    auto scenePos = event->scenePos();
+
+    if (scene()->isSnapping())
+    {
+        scenePos += scene()->snap(scenePos);
+    }
+
+    QPointF p = parentItem()->mapFromScene(scenePos);
 
     QPointF diff(p - pos());
     moveBy(diff.x(), diff.y());

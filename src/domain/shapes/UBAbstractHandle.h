@@ -38,9 +38,9 @@ public:
         return mId;
     }
 
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
-    QRectF boundingRect() const;
+    QRectF boundingRect() const override;
 
     void setEditableObject(UBAbstractEditable *eo)
     {
@@ -53,19 +53,21 @@ public:
     }
 
     // enum { Type = UBGraphicsItemType::GraphicsHandle };
-    virtual int type() const { return Type; }
+    virtual int type() const  override { return Type; }
 
     int radius() const
     {
         return this->mRadius;
     }
 
+    virtual std::shared_ptr<UBGraphicsScene> scene() override;
+
 protected:
     UBAbstractHandle();
 
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
 protected:
     int mId;

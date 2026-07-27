@@ -2,6 +2,8 @@
 
 #include "UBHorizontalHandle.h"
 
+#include "domain/UBGraphicsScene.h"
+
 UBHorizontalHandle::UBHorizontalHandle()
 {
     mId = Horizontal;
@@ -14,7 +16,14 @@ UBHorizontalHandle::UBHorizontalHandle(UBHorizontalHandle* const src):
 
 void UBHorizontalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    QPointF p = parentItem()->mapFromScene(event->scenePos());
+    auto scenePos = event->scenePos();
+
+    if (scene()->isSnapping())
+    {
+        scenePos += scene()->snap(scenePos);
+    }
+
+    QPointF p = parentItem()->mapFromScene(scenePos);
 
     this->setPos(p.x(), pos().y());
 
