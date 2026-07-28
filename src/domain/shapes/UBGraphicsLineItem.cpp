@@ -193,7 +193,7 @@ QPainterPath UBEditableGraphicsLineItem::shape() const
 {
     QPainterPath p;
 
-    if(mMultiClickState >= 1 || isSelected()){
+    if(isInEditMode() || isSelected()){
         p.addRect(boundingRect());
     }else{
         QPainterPathStroker stroker{pen()};

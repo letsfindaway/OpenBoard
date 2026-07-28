@@ -72,9 +72,7 @@ void UBAbstractGraphicsItem::setShapeStyle(const UBShapeStyle& style)
 
 void UBAbstractGraphicsItem::setStyle(Qt::PenStyle penStyle)
 {
-    Qt::BrushStyle brushStyle = Qt::NoBrush;
-    if (hasFillingProperty())
-        brushStyle = brush().style();
+    Qt::BrushStyle brushStyle = brush().style();
 
     setStyle(brushStyle, penStyle);
 }
@@ -105,11 +103,15 @@ void UBAbstractGraphicsItem::setStyle(Qt::BrushStyle brushStyle, Qt::PenStyle pe
 
 void UBAbstractGraphicsItem::setFillColor(const QColor& color)
 {
-    if(hasFillingProperty()){
-        QBrush b = brush();
-        b.setColor(color);
-        setBrush(b);
+    QBrush b = brush();
+
+    if (color != Qt::transparent && color.isValid() && b.style() == Qt::NoBrush)
+    {
+        b.setStyle(Qt::SolidPattern);
     }
+
+    b.setColor(color);
+    setBrush(b);
 }
 
 void UBAbstractGraphicsItem::setStrokeColor(const QColor& color)
@@ -250,6 +252,10 @@ void UBAbstractGraphicsItem::setStyle(QPainter *painter)
 
     if(hasFillingProperty()){
         painter->setBrush(brush());
+    }
+    else
+    {
+        painter->setBrush(QBrush{});
     }
 }
 

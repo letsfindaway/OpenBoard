@@ -576,6 +576,11 @@ Here we determines cases when items should to get mouse press event at pressing 
         return true;
     case UBGraphicsPixmapItem::Type:
     case UBGraphicsSvgItem::Type:
+#ifdef ENABLE_SHAPES
+    case UBGraphicsItemType::GraphicsShapeItemType:
+    case UBGraphicsItemType::GraphicsPathItemType:
+    case UBGraphicsItemType::GraphicsRegularPathItemType:
+#endif
         if (currentTool == UBStylusTool::Play)
             return true;
         if (item->isSelected())
@@ -583,11 +588,6 @@ Here we determines cases when items should to get mouse press event at pressing 
         else
             return false;
     case DelegateButton::Type:
-#ifdef ENABLE_SHAPES
-    case UBGraphicsItemType::GraphicsShapeItemType:
-    case UBGraphicsItemType::GraphicsPathItemType:
-    case UBGraphicsItemType::GraphicsRegularPathItemType:
-#endif
         return true;
 
     case UBGraphicsMediaItem::Type:

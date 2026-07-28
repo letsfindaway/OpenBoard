@@ -24,9 +24,6 @@ protected:
 
     virtual void drawArrows();
 
-
-    int mMultiClickState;
-
     bool mHasMoved;
 };
 

@@ -5,7 +5,6 @@
 UBAbstractEditableGraphicsPathItem::UBAbstractEditableGraphicsPathItem(QGraphicsItem *parent):
     UBAbstractGraphicsPathItem(parent)
 {
-    mMultiClickState = 0;
     mHasMoved = false;
 }
 
@@ -34,21 +33,19 @@ void UBAbstractEditableGraphicsPathItem::drawArrows()
 
 void UBAbstractEditableGraphicsPathItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    mMultiClickState++;
     mHasMoved = false;
-
-    UBAbstractGraphicsPathItem::mousePressEvent(event);
 }
 
 void UBAbstractEditableGraphicsPathItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     prepareGeometryChange();
 
-    if(!mHasMoved)
+    if (!mHasMoved)
     {
         if (!Delegate()->isLocked())
         {
-            if(mMultiClickState %2 == 1){
+            if (!isInEditMode())
+            {
                 onActivateEditionMode();
 
                 Delegate()->showFrame(false);
@@ -63,16 +60,6 @@ void UBAbstractEditableGraphicsPathItem::mouseReleaseEvent(QGraphicsSceneMouseEv
             }
         }
     }
-    else
-    {
-        if(!isInEditMode()){
-            mMultiClickState = 0;
-        }else{
-            mMultiClickState--;
-        }
-    }
-
-    UBAbstractGraphicsPathItem::mouseReleaseEvent(event);
 
     mHasMoved = false;
 }
@@ -100,7 +87,6 @@ void UBAbstractEditableGraphicsPathItem::mouseMoveEvent(QGraphicsSceneMouseEvent
 
         if(!isInEditMode()){
             Delegate()->mouseMoveEvent(event);
-            UBAbstractGraphicsPathItem::mouseMoveEvent(event);
         }
     }
 }
@@ -109,9 +95,9 @@ void UBAbstractEditableGraphicsPathItem::focusOutEvent(QFocusEvent *event)
 {
     Q_UNUSED(event)
 
-    if(mMultiClickState %2 == 1){
+    if (isInEditMode())
+    {
         prepareGeometryChange();
-        mMultiClickState = 0;
         showEditMode(false);
     }
 }
@@ -127,14 +113,13 @@ void UBAbstractEditableGraphicsPathItem::deactivateEditionMode()
 {
     prepareGeometryChange();
 
-    mMultiClickState = 0;
     showEditMode(false);
 }
 
 QPainterPath UBAbstractEditableGraphicsPathItem::shape() const
 {
     QPainterPath path;
-    if(mMultiClickState %2 == 1){
+    if(isInEditMode()){
         path.addRect(boundingRect());
         return path;
     }else{

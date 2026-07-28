@@ -23,8 +23,6 @@ protected:
 
     virtual void deactivateEditionMode() override;
 
-    int mMultiClickState;
-
     bool mHasMoved;
 };
 
