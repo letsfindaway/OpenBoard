@@ -17,7 +17,7 @@ public:
     UBShapeStyle shapeStyle() const;
     void setShapeStyle(const UBShapeStyle& style);
 
-    bool hasFillingProperty() const;
+    virtual bool hasFillingProperty() const;
 
     bool hasStrokeProperty() const;
 

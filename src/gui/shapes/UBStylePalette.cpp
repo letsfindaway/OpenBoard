@@ -76,12 +76,23 @@ UBStylePalette::~UBStylePalette()
 {
     auto settings = UBSettings::settings();
 
-    settings->setValue("Board/StyleLineColorOnLight", mStyle.lineColor(false).name(QColor::HexArgb));
-    settings->setValue("Board/StyleLineColorOnDark", mStyle.lineColor(true).name(QColor::HexArgb));
+    const auto colorToString = [](const QColor& color){
+        if (color.isValid())
+        {
+            return color.name(QColor::HexArgb);
+        }
+        else
+        {
+            return QString{"invalid"};
+        }
+    };
+
+    settings->setValue("Board/StyleLineColorOnLight", colorToString(mStyle.lineColor(false)));
+    settings->setValue("Board/StyleLineColorOnDark", colorToString(mStyle.lineColor(true)));
     settings->setValue("Board/StyleLineWidth", mStyle.lineWidth());
     settings->setValue("Board/StyleLineStyle", static_cast<int>(mStyle.lineStyle()));
-    settings->setValue("Board/StyleFillColorOnLight", mStyle.fillColor(false).name(QColor::HexArgb));
-    settings->setValue("Board/StyleFillColorOnDark", mStyle.fillColor(true).name(QColor::HexArgb));
+    settings->setValue("Board/StyleFillColorOnLight", colorToString(mStyle.fillColor(false)));
+    settings->setValue("Board/StyleFillColorOnDark", colorToString(mStyle.fillColor(true)));
 
     settings->save();
 }
@@ -451,6 +462,10 @@ QPixmap UBStylePalette::createPreview(const UBShapeStyle& style) const
     {
         const QBrush brush{style.fillColor(isDark)};
         painter.setBrush(brush);
+    }
+    else
+    {
+        painter.setBrush(QBrush{});
     }
 
     painter.drawLine(5, 50, 30, 10);

@@ -281,7 +281,7 @@ QRectF UBAbstractGraphicsItem::adjustBoundingRect(QRectF rect) const
 
 bool UBAbstractGraphicsItem::hasFillingProperty() const
 {
-    return brush() != QBrush();
+    return brush() != QBrush{} && brush().color() != Qt::transparent && brush().color() != QColor{};
 }
 
 bool UBAbstractGraphicsItem::hasStrokeProperty() const
@@ -300,6 +300,7 @@ void UBAbstractGraphicsItem::copyItemParameters(UBItem *copy) const
 
     if(!cp) return;
 
+    cp->prepareGeometryChange();
     cp->setPos(this->pos());
     cp->setTransform(this->transform());
     cp->setFlag(QGraphicsItem::ItemIsMovable, true);

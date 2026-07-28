@@ -31,7 +31,7 @@ QPainterPath UBAbstractEditableGraphicsShapeItem::shape() const
         const auto path = painterPath();
         outline = stroker.createStroke(path);
 
-        if (brush().color() != Qt::transparent)
+        if (hasFillingProperty())
         {
             outline = outline.united(path);
         }

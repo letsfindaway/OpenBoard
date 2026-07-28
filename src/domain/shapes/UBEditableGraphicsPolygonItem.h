@@ -9,7 +9,7 @@ public:
     UBEditableGraphicsPolygonItem(QGraphicsItem* parent = 0);
     ~UBEditableGraphicsPolygonItem();
 
-    virtual void addPoint(const QPointF &point);
+    virtual void addPoint(const QPointF &point) override;
     inline bool isClosed() const {return mClosed;}
     inline void setClosed(bool closed);
 
@@ -21,19 +21,20 @@ public:
     void setIsInCreationMode(bool mode);
 
     // UBItem interface
-    UBItem *deepCopy() const;
-    void copyItemParameters(UBItem *copy) const;
+    UBItem *deepCopy() const override;
+    void copyItemParameters(UBItem *copy) const override;
 
     // QGraphicsItem interface
     enum { Type = UBGraphicsItemType::GraphicsPathItemType };
-    virtual int type() const { return Type; }
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    virtual int type() const  override { return Type; }
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
-    virtual QRectF boundingRect() const;
-    virtual QPainterPath shape() const;
-    virtual QPainterPath painterPath() const;
+    virtual QRectF boundingRect() const override;
+    virtual QPainterPath shape() const override;
+    virtual QPainterPath painterPath() const override;
 
-    virtual void updateHandle(UBAbstractHandle *handle);
+    virtual void updateHandle(UBAbstractHandle *handle) override;
+    virtual bool hasFillingProperty() const override;
 
 private:
     bool mClosed;

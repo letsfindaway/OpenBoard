@@ -288,6 +288,11 @@ void UBEditableGraphicsPolygonItem::updateHandle(UBAbstractHandle *handle)
     update();
 }
 
+bool UBEditableGraphicsPolygonItem::hasFillingProperty() const
+{
+    return isClosed() && UBAbstractGraphicsItem::hasFillingProperty();
+}
+
 QPainterPath UBEditableGraphicsPolygonItem::shape() const
 {
     QPainterPath path;
@@ -308,7 +313,7 @@ QPainterPath UBEditableGraphicsPolygonItem::shape() const
 
         path = stroker.createStroke(painterPath());
 
-        if (isClosed() && brush().color() != Qt::transparent)
+        if (hasFillingProperty())
         {
             path = path.united(painterPath());
         }

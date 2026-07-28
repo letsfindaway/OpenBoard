@@ -329,6 +329,10 @@ void UBSvgShapeAdaptor::UBSvgShapeReader::getStyleFromSvg(UBAbstractGraphicsItem
     {
         style.setFillColor(QColor::fromString(onLight), QColor::fromString(onDark));
     }
+    else
+    {
+        style.setFillColor(Qt::transparent, Qt::transparent);
+    }
 
     item->setShapeStyle(style);
 }
