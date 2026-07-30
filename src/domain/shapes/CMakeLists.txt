@@ -41,6 +41,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     UBGraphicsRectItem.h
     UBHorizontalHandle.cpp
     UBHorizontalHandle.h
+    UBLineHandle.cpp
+    UBLineHandle.h
     UBShapeEditable.cpp
     UBShapeEditable.h
     UBShapeFactory.cpp

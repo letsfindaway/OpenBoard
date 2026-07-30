@@ -21,9 +21,11 @@
 
 #include "UBGraphicsLineItem.h"
 
-#include "UBFreeHandle.h"
+#include "UBLineHandle.h"
 
 #include "board/UBBoardController.h"
+#include "board/UBBoardView.h"
+#include "core/UBApplication.h"
 
 #include <cmath>
 
@@ -35,8 +37,8 @@ UBEditableGraphicsLineItem::UBEditableGraphicsLineItem(QGraphicsItem* parent)
     initializeStrokeProperty();
     initializeFillingProperty();
 
-    UBFreeHandle *startHandle = new UBFreeHandle;
-    UBFreeHandle *endHandle = new UBFreeHandle;
+    UBLineHandle *startHandle = new UBLineHandle;
+    UBLineHandle *endHandle = new UBLineHandle;
 
     endHandle->setId(1);
 
@@ -46,13 +48,16 @@ UBEditableGraphicsLineItem::UBEditableGraphicsLineItem(QGraphicsItem* parent)
     startHandle->setEditableObject(this);
     endHandle->setEditableObject(this);
 
+    startHandle->setOppositeHandle(endHandle);
+    endHandle->setOppositeHandle(startHandle);
+
     startHandle->hide();
     endHandle->hide();
 
     mHandles.push_back(startHandle);
     mHandles.push_back(endHandle);
 
-    mIsMagnetic = true;
+    mIsMagnetic = false;
 }
 
 UBEditableGraphicsLineItem::~UBEditableGraphicsLineItem()
@@ -170,6 +175,18 @@ void UBEditableGraphicsLineItem::updateHandle(UBAbstractHandle *handle)
             setPath(p);
         }
     }
+
+    const auto p1 = path().elementAt(1 - handle->getId());
+    const auto p2 = path().elementAt((handle->getId()));
+
+    QLineF line{p1, p2};
+    QLineF viewRadius{UBApplication::boardController->controlView()->mapFromScene(line.p1()),
+            UBApplication::boardController->controlView()->mapFromScene(line.p2())};
+    QPoint offset = - viewRadius.p2().toPoint();
+    viewRadius.setLength(viewRadius.length() + 60);
+    offset += viewRadius.p2().toPoint();
+
+    UBApplication::boardController->setCursorFromAngle(line.angle(), offset);
 }
 
 void UBEditableGraphicsLineItem::setLine(QPointF start, QPointF end)
@@ -189,13 +206,34 @@ void UBEditableGraphicsLineItem::onActivateEditionMode()
     mHandles.at(1)->setPos(endPoint());
 }
 
+QRectF UBEditableGraphicsLineItem::boundingRect() const
+{
+    if (isInEditMode())
+    {
+        return shape().boundingRect();
+    }
+
+    return UBEditableGraphicsPolygonItem::boundingRect();
+}
+
 QPainterPath UBEditableGraphicsLineItem::shape() const
 {
     QPainterPath p;
 
-    if(isInEditMode() || isSelected()){
+    if (isInEditMode())
+    {
+        QPainterPathStroker stroker{pen()};
+        p = stroker.createStroke(path());
+
+        p.addPath(mapFromItem(mHandles.at(0), mHandles.at(0)->shape()));
+        p.addPath(mapFromItem(mHandles.at(1), mHandles.at(1)->shape()));
+    }
+    else if (isSelected())
+    {
         p.addRect(boundingRect());
-    }else{
+    }
+    else
+    {
         QPainterPathStroker stroker{pen()};
         p = stroker.createStroke(path());
     }

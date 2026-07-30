@@ -53,6 +53,7 @@ class UBEditableGraphicsLineItem : public UBEditableGraphicsPolygonItem
 
         void onActivateEditionMode();
 
+        QRectF boundingRect() const;
         QPainterPath shape() const;
 
         void copyItemParameters(UBItem *copy) const;
