@@ -327,6 +327,8 @@ void UBAbstractGraphicsItem::copyItemParameters(UBItem *copy) const
     cp->setBrush(brush());
     cp->setPen(pen());
     cp->setShapeStyle(shapeStyle());
+    cp->setUuid(this->uuid());
+    cp->setZValue(this->zValue());
 }
 
 std::shared_ptr<UBGraphicsScene> UBAbstractGraphicsItem::scene()
