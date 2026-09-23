@@ -19,5 +19,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     UBShapesPalette.h
     UBStylePalette.cpp
     UBStylePalette.h
+    UBToolbarExtensionPalette.cpp
+    UBToolbarExtensionPalette.h
 )
 

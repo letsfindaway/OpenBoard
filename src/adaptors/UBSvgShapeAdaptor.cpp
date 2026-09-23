@@ -310,7 +310,7 @@ void UBSvgShapeAdaptor::UBSvgShapeReader::getStyleFromSvg(UBAbstractGraphicsItem
     }
 
     // ShapeStyle
-    UBShapeStyle style;
+    UBItemStyle style;
     QStringView onLight = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "line-on-light-background");
     QStringView onDark = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "line-on-dark-background");
 
@@ -334,7 +334,7 @@ void UBSvgShapeAdaptor::UBSvgShapeReader::getStyleFromSvg(UBAbstractGraphicsItem
         style.setFillColor(Qt::transparent, Qt::transparent);
     }
 
-    item->setShapeStyle(style);
+    item->setItemStyle(style);
 }
 
 UB3HEditableGraphicsEllipseItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapeEllipseFromSvg(const QColor& pDefaultPenColor) // EV-7 - ALTI/AOU - 20131231
@@ -791,9 +791,9 @@ void UBSvgShapeAdaptor::UBSvgShapeWriter::writeAbstractGraphicsItemStyle(UBAbstr
         mXmlWriter.writeAttribute("stroke-width", QString("%1").arg(item->pen().widthF()));
 
         mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri
-                                  , "line-on-light-background", item->shapeStyle().lineColor(false).name(QColor::HexArgb));
+                                  , "line-on-light-background", item->itemStyle().lineColor(false).name(QColor::HexArgb));
         mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri
-                                  , "line-on-dark-background", item->shapeStyle().lineColor(true).name(QColor::HexArgb));
+                                  , "line-on-dark-background", item->itemStyle().lineColor(true).name(QColor::HexArgb));
 
         if (item->pen().style() == Qt::DotLine){
             mXmlWriter.writeAttribute("stroke-dasharray", SVG_STROKE_DOTLINE);
@@ -834,9 +834,9 @@ void UBSvgShapeAdaptor::UBSvgShapeWriter::writeAbstractGraphicsItemStyle(UBAbstr
             }
 
             mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri
-                                      , "fill-on-light-background", item->shapeStyle().fillColor(false).name(QColor::HexArgb));
+                                      , "fill-on-light-background", item->itemStyle().fillColor(false).name(QColor::HexArgb));
             mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri
-                                      , "fill-on-dark-background", item->shapeStyle().fillColor(true).name(QColor::HexArgb));
+                                      , "fill-on-dark-background", item->itemStyle().fillColor(true).name(QColor::HexArgb));
         }
         else
         {

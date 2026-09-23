@@ -247,23 +247,6 @@ void UBBoardPaletteManager::setupPalettes()
 
     mStylusPalette->stackUnder(mZoomPalette);
 
-#ifdef ENABLE_SHAPES
-    mStylePalette = new UBStylePalette{mContainer};
-    mStylePalette->hide();
-
-    // move to top center later when container size is known
-    QTimer::singleShot(100, [this](){
-        mStylePalette->move((mContainer->width() - mStylePalette->width()) / 2, 5);
-    });
-
-    connect(mStylePalette, &UBStylePalette::styleChanged, &mBoardControler->shapeFactory(), &UBShapeFactory::setCurrentStyle);
-    mBoardControler->shapeFactory().setCurrentStyle(mStylePalette->selectedStyle());
-
-    UBApplication::mainWindow->boardToolBar->insertAction(
-                UBApplication::mainWindow->actionBackgrounds,
-                UBApplication::boardController->shapeFactory().shapeActions()->actionToggleStylePalette);
-#endif
-
     mTipPalette = new UBStartupHintsPalette(mContainer);
 
     mBackgroundsPalette = new UBBackgroundPalette(mContainer);
@@ -411,11 +394,6 @@ void UBBoardPaletteManager::purchaseLinkActivated(const QString& link)
 void UBBoardPaletteManager::connectPalettes()
 {
     connect(UBApplication::mainWindow->actionStylus, SIGNAL(toggled(bool)), this, SLOT(toggleStylusPalette(bool)));
-
-#ifdef ENABLE_SHAPES
-    connect(UBApplication::boardController->shapeFactory().shapeActions()->actionToggleStylePalette, &QAction::toggled,
-            mStylePalette, &QWidget::setVisible);
-#endif
 
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
     foreach(QObject *widget, UBApplication::mainWindow->actionZoomIn->associatedObjects())
@@ -609,13 +587,6 @@ void UBBoardPaletteManager::toggleErasePalette(bool checked)
             (mContainer->height() - mErasePalette->height()) / 5);
     }
 }
-
-#ifdef ENABLE_SHAPES
-void UBBoardPaletteManager::setShapeStyle(const UBShapeStyle& style)
-{
-    mStylePalette->updateChoice(style);
-}
-#endif
 
 void UBBoardPaletteManager::erasePaletteClosed()
 {

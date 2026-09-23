@@ -24,51 +24,55 @@
 #pragma once
 
 #include <QAction>
+#include <QGridLayout>
+#include <QLabel>
+#include <QPushButton>
 
-#include "domain/shapes/UBShapeStyle.h"
-#include "gui/UBFloatingPalette.h"
+#include "core/UB.h"
+#include "domain/UBItemStyle.h"
+#include "gui/shapes/UBToolbarExtensionPalette.h"
 
 // forward
 class UBToolbarButtonGroup;
 
-class UBStylePalette : public UBFloatingPalette
+class UBStylePalette : public UBToolbarExtensionPalette
 {
     Q_OBJECT
 
 public:
-    UBStylePalette(QWidget* parent);
+    UBStylePalette(QToolBar* toolBar, UBToolbarButtonGroup* lineColorChoice, UBToolbarButtonGroup* lineWidthChoice, QWidget* parent);
     virtual ~UBStylePalette();
 
-    UBShapeStyle selectedStyle();
+    UBItemStyle selectedStyle();
+
+    void updateSelection();
 
 public slots:
-    void updateChoice(const UBShapeStyle& style);
+    void switchMode (int tool);
+    void updateChoice(const UBItemStyle& style);
 
 signals:
-    void styleChanged(const UBShapeStyle& style);
-
-protected:
-    virtual int border() override;
-    virtual void onCloseButtonClicked() override;
+    void styleChanged(const UBItemStyle& style);
 
 private:
     void init();
     void setLineStyleIconAndConnect(UBToolbarButtonGroup* buttonGroup, int index, Qt::PenStyle style);
     void setTransparentIcon(UBToolbarButtonGroup* buttonGroup, int index);
-    QPixmap createPreview(const UBShapeStyle& style) const;
+    QPixmap createPreview(const UBItemStyle& style) const;
 
 private slots:
     void updateColorPalette();
     void updateButtonColors();
     void updatePreview();
     void colorContextChanged();
-    void applyStyle(const UBShapeStyle& style);
+    void applyStyle(const UBItemStyle& style);
     void saveStyle();
     void recallStyle();
 
 private:
-    QFormLayout* mFormLayout{nullptr};
-    QAction* mToggleStylePalette{nullptr};
+    UBStylusTool::Enum mMode{UBStylusTool::Pen};
+
+    QGridLayout* mGridLayout{nullptr};
 
     QList<QAction*> mLineColorActions{};
     QList<QAction*> mLineWidthActions{};
@@ -88,6 +92,8 @@ private:
     QPushButton* mSave{nullptr};
     QPushButton* mRecall{nullptr};
 
-    UBShapeStyle mStyle;
-    UBShapeStyle mSavedStyle;
+    UBItemStyle mStyle;
+    UBItemStyle mSavedStyle;
+
+    bool mUpdateTriggered{false};
 };

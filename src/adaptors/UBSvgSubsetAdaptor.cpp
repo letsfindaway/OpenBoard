@@ -649,6 +649,26 @@ void UBSvgSubsetAdaptor::UBSvgSubsetReader::processElement()
 
             if (!mStrokesList.contains(uuid_stripped))
                 mStrokesList.insert(uuid_stripped, strokesGroup);
+
+            auto role = mXmlReader.attributes().value(mNamespaceUri, "role");
+
+            if (!role.isNull())
+            {
+                currentStroke = new UBGraphicsStroke();
+
+                if (role.toString() == "outline")
+                {
+                    currentStroke->setRole(UBGraphicsStroke::OUTLINE);
+                }
+                else if (role.toString() == "fill")
+                {
+                    currentStroke->setRole(UBGraphicsStroke::FILL);
+                }
+                else if (role.toString() == "marker")
+                {
+                    currentStroke->setRole(UBGraphicsStroke::MARKER);
+                }
+            }
         }
         else if (name == "polygon" || name == "line")
         {
@@ -1346,6 +1366,19 @@ bool UBSvgSubsetAdaptor::UBSvgSubsetWriter::persistScene(std::shared_ptr<UBDocum
                         qDebug() << "Attributes written";
 
                         groupHoldsInfo = true;
+                    }
+
+                    if (stroke->role() == UBGraphicsStroke::OUTLINE)
+                    {
+                        mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "role", "outline");
+                    }
+                    else if (stroke->role() == UBGraphicsStroke::FILL)
+                    {
+                        mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "role", "fill");
+                    }
+                    else if (stroke->role() == UBGraphicsStroke::MARKER)
+                    {
+                        mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "role", "marker");
                     }
                 }
             }

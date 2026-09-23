@@ -21,45 +21,45 @@
  */
 
 
-#include "UBShapeStyleUndoCommand.h"
+#include "UBItemStyleUndoCommand.h"
 
 #include "board/UBBoardController.h"
 #include "core/UBApplication.h"
 #include "domain/UBGraphicsScene.h"
-#include "domain/shapes/UBAbstractGraphicsItem.h"
+#include "gui/shapes/UBStylePalette.h"
 
 
-UBShapeStyleUndoCommand::UBShapeStyleUndoCommand(std::shared_ptr<UBGraphicsScene> scene, QSet<UBAbstractGraphicsItem*> items, const UBShapeStyle& prevStyle)
+UBItemStyleUndoCommand::UBItemStyleUndoCommand(std::shared_ptr<UBGraphicsScene> scene, QSet<UBStyledItem*> items, const UBItemStyle& prevStyle)
     : mScene{scene}
     , mItems{items}
     , mPrevStyle{prevStyle}
 {
     for (const auto item : items)
     {
-        mCurrStyle[item] = item->shapeStyle();
+        mCurrStyle[item] = item->itemStyle();
     }
 }
 
-void UBShapeStyleUndoCommand::undo()
+void UBItemStyleUndoCommand::undo()
 {
     const auto isDark = mScene->isDarkBackground();
 
     for (const auto item : mItems)
     {
-        item->applyStyle(mCurrStyle.value(item), isDark);
+        item->applyItemStyle(mCurrStyle.value(item), isDark);
     }
 
-    UBApplication::boardController->shapeFactory().updateChoice();
+    UBApplication::boardController->stylePalette()->updateSelection();
 }
 
-void UBShapeStyleUndoCommand::redo()
+void UBItemStyleUndoCommand::redo()
 {
     const auto isDark = mScene->isDarkBackground();
 
     for (const auto item : mItems)
     {
-        item->applyStyle(mPrevStyle, isDark);
+        item->applyItemStyle(mPrevStyle, isDark);
     }
 
-    UBApplication::boardController->shapeFactory().updateChoice();
+    UBApplication::boardController->stylePalette()->updateSelection();
 }

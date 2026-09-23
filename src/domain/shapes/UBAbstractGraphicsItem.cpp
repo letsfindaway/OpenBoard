@@ -1,11 +1,8 @@
 #include "UBAbstractGraphicsItem.h"
-#include "board/UBBoardController.h"
-#include "core/UBApplication.h"
+
 #include "domain/UBGraphicsItemDelegate.h"
 #include "domain/UBGraphicsDelegateFrame.h"
 #include "domain/UBGraphicsScene.h"
-#include "domain/shapes/UBShapeFactory.h"
-//#include "customWidgets/UBGraphicsItemAction.h"
 
 
 UBAbstractGraphicsItem::UBAbstractGraphicsItem(QGraphicsItem *parent):
@@ -33,41 +30,41 @@ UBAbstractGraphicsItem::~UBAbstractGraphicsItem()
 
 }
 
-void UBAbstractGraphicsItem::applyStyle(const UBShapeStyle& style, bool isDark)
+void UBAbstractGraphicsItem::applyItemStyle(const UBItemStyle& style, bool isDark)
 {
     if (style.lineColor(isDark).isValid())
     {
         setStrokeColor(style.lineColor(isDark));
-        mShapeStyle.setLineColor(style.lineColor(false), style.lineColor(true));
+        mItemStyle.setLineColor(style.lineColor(false), style.lineColor(true));
     }
 
     if (style.lineWidth() > 0)
     {
         setStrokeSize(style.lineWidth());
-        mShapeStyle.setLineWidth(style.lineWidth());
+        mItemStyle.setLineWidth(style.lineWidth());
     }
 
     if (style.lineStyle() != Qt::NoPen)
     {
         setStyle(style.lineStyle());
-        mShapeStyle.setLineStyle(style.lineStyle());
+        mItemStyle.setLineStyle(style.lineStyle());
     }
 
     if (style.fillColor(isDark).isValid())
     {
         setFillColor(style.fillColor(isDark));
-        mShapeStyle.setFillColor(style.fillColor(false), style.fillColor(true));
+        mItemStyle.setFillColor(style.fillColor(false), style.fillColor(true));
     }
 }
 
-UBShapeStyle UBAbstractGraphicsItem::shapeStyle() const
+bool UBAbstractGraphicsItem::isShape() const
 {
-    return mShapeStyle;
+    return true;
 }
 
-void UBAbstractGraphicsItem::setShapeStyle(const UBShapeStyle& style)
+bool UBAbstractGraphicsItem::isMarker() const
 {
-    mShapeStyle = style;
+    return false;
 }
 
 void UBAbstractGraphicsItem::setStyle(Qt::PenStyle penStyle)
@@ -161,11 +158,9 @@ QVariant UBAbstractGraphicsItem::itemChange(GraphicsItemChange change, const QVa
     if(Delegate())
         newValue = Delegate()->itemChange(change, value);
 
-    static UBShapeFactory& shapeFactory = UBApplication::boardController->shapeFactory();
-
     if (change == GraphicsItemChange::ItemSelectedHasChanged)
     {
-        shapeFactory.selectionChanged(this, value.toBool());
+        scene()->styledItemSelectionChanged(this, value.toBool());
     }
 
     return QAbstractGraphicsShapeItem::itemChange(change, newValue);
@@ -326,7 +321,7 @@ void UBAbstractGraphicsItem::copyItemParameters(UBItem *copy) const
 
     cp->setBrush(brush());
     cp->setPen(pen());
-    cp->setShapeStyle(shapeStyle());
+    cp->setItemStyle(itemStyle());
     cp->setUuid(this->uuid());
     cp->setZValue(this->zValue());
 }

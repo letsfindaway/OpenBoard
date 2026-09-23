@@ -69,6 +69,7 @@ class UBItem;
 class UBGraphicsItem;
 class UBToolbarButtonGroup;
 class UBColorPreferencesDialog;
+class UBStylePalette;
 
 
 class UBBoardController : public UBDocumentContainer
@@ -209,6 +210,8 @@ class UBBoardController : public UBDocumentContainer
             return mInitialDocumentScene;
         }
 
+        UBStylePalette* stylePalette() const;
+
     public slots:
         void showDocumentsDialog();
         void showKeyboard(bool show);
@@ -344,6 +347,7 @@ class UBBoardController : public UBDocumentContainer
         QList<std::shared_ptr<UBDocument>> mRecentDocuments;
         QList<QAction*> mColorActions;
         UBToolbarButtonGroup* mColorChoice{nullptr};
+        UBStylePalette* mStylePalette{nullptr};
 
         QTimer *mAutosaveTimer;
 

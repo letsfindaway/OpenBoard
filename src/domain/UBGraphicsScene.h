@@ -32,6 +32,7 @@
 #include <optional>
 
 #include "domain/UBGraphicsItemUndoCommand.h"
+#include "domain/UBItemStyle.h"
 #include "frameworks/UBCoreGraphicsScene.h"
 
 #include "core/UB.h"
@@ -62,6 +63,7 @@ class UBGraphicsCache;
 class UBGraphicsGroupContainerItem;
 class UBMediaAssetItem;
 class UBSelectionFrame;
+class UBStyledItem;
 class UBBoardView;
 
 const double PI = 4.0 * atan(1.0);
@@ -373,6 +375,10 @@ public slots:
 
         void controlViewportChanged();
 
+        void styledItemSelectionChanged(UBStyledItem* item, bool selected);
+        QSet<UBStyledItem*> selectedStyledItems() const;
+        void applyStyle(const UBItemStyle& style);
+
 signals:
         void zoomChanged(qreal zoomFactor);
 
@@ -487,6 +493,8 @@ signals:
         UBSelectionFrame *mSelectionFrame;
 
         UBGraphicsCache* mGraphicsCache;
+
+        QSet<UBStyledItem*> mSelectedStyledItems{};
 };
 
 

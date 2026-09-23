@@ -21,10 +21,10 @@
  */
 
 
-#include "UBShapeStyle.h"
+#include "UBItemStyle.h"
 
 
-UBShapeStyle::UBShapeStyle(const QColor& lineColorOnLight, const QColor& lineColorOnDark, qreal lineWidth, Qt::PenStyle lineStyle,
+UBItemStyle::UBItemStyle(const QColor& lineColorOnLight, const QColor& lineColorOnDark, qreal lineWidth, Qt::PenStyle lineStyle,
                  const QColor& fillColorOnLight, const QColor& fillColorOnDark)
     : mLineColor{lineColorOnLight, lineColorOnDark}
     , mLineWidth{lineWidth}
@@ -33,47 +33,47 @@ UBShapeStyle::UBShapeStyle(const QColor& lineColorOnLight, const QColor& lineCol
 {
 }
 
-QColor UBShapeStyle::lineColor(bool isDark) const
+QColor UBItemStyle::lineColor(bool isDark) const
 {
     return mLineColor.color(isDark);
 }
 
-void UBShapeStyle::setLineColor(const QColor& lineColorOnLight, const QColor& lineColorOnDark)
+void UBItemStyle::setLineColor(const QColor& lineColorOnLight, const QColor& lineColorOnDark)
 {
     mLineColor = {lineColorOnLight, lineColorOnDark};
 }
 
-double UBShapeStyle::lineWidth() const
+double UBItemStyle::lineWidth() const
 {
     return mLineWidth;
 }
 
-void UBShapeStyle::setLineWidth(double lineWidth)
+void UBItemStyle::setLineWidth(double lineWidth)
 {
     mLineWidth = lineWidth;
 }
 
-Qt::PenStyle UBShapeStyle::lineStyle() const
+Qt::PenStyle UBItemStyle::lineStyle() const
 {
     return mLineStyle;
 }
 
-void UBShapeStyle::setLineStyle(Qt::PenStyle lineStyle)
+void UBItemStyle::setLineStyle(Qt::PenStyle lineStyle)
 {
     mLineStyle = lineStyle;
 }
 
-QColor UBShapeStyle::fillColor(bool isDark) const
+QColor UBItemStyle::fillColor(bool isDark) const
 {
     return mFillColor.color(isDark);
 }
 
-void UBShapeStyle::setFillColor(const QColor& fillColorOnLight, const QColor& fillColorOnDark)
+void UBItemStyle::setFillColor(const QColor& fillColorOnLight, const QColor& fillColorOnDark)
 {
     mFillColor = {fillColorOnLight, fillColorOnDark};
 }
 
-UBShapeStyle UBShapeStyle::intersected(const UBShapeStyle& other)
+UBItemStyle UBItemStyle::intersected(const UBItemStyle& other)
 {
     const auto lineColorOnLight = lineColor(false) == other.lineColor(false) ? lineColor(false) : QColor{};
     const auto lineColorOnDark = lineColor(true) == other.lineColor(true) ? lineColor(true) : QColor{};
@@ -82,32 +82,32 @@ UBShapeStyle UBShapeStyle::intersected(const UBShapeStyle& other)
     const auto fillColorOnLight = fillColor(false) == other.fillColor(false) ? fillColor(false) : QColor{};
     const auto fillColorOnDark = fillColor(true) == other.fillColor(true) ? fillColor(true) : QColor{};
 
-    return UBShapeStyle{lineColorOnLight, lineColorOnDark, lineWidth, lineStyle, fillColorOnLight, fillColorOnDark};
+    return UBItemStyle{lineColorOnLight, lineColorOnDark, lineWidth, lineStyle, fillColorOnLight, fillColorOnDark};
 }
 
-UBShapeStyle::ColorSet::ColorSet(const QColor& colorOnLight, const QColor& colorOnDark)
+UBItemStyle::ColorSet::ColorSet(const QColor& colorOnLight, const QColor& colorOnDark)
     : mColorOnLight{colorOnLight}
     , mColorOnDark{colorOnDark}
 {
 }
 
-QColor UBShapeStyle::ColorSet::color(bool isDark) const
+QColor UBItemStyle::ColorSet::color(bool isDark) const
 {
     return isDark ? mColorOnDark : mColorOnLight;
 }
 
-void UBShapeStyle::ColorSet::setColor(const QColor& colorOnLight, const QColor& colorOnDark)
+void UBItemStyle::ColorSet::setColor(const QColor& colorOnLight, const QColor& colorOnDark)
 {
     mColorOnLight = colorOnLight;
     mColorOnDark = colorOnDark;
 }
 
-bool UBShapeStyle::ColorSet::operator==(const UBShapeStyle::ColorSet& other) const
+bool UBItemStyle::ColorSet::operator==(const UBItemStyle::ColorSet& other) const
 {
     return mColorOnLight == other.mColorOnLight && mColorOnDark == other.mColorOnDark;
 }
 
-bool operator==(const UBShapeStyle& lhs, const UBShapeStyle& rhs)
+bool operator==(const UBItemStyle& lhs, const UBItemStyle& rhs)
 {
     return lhs.mLineColor == rhs.mLineColor && lhs.mLineWidth == rhs.mLineWidth && lhs.mLineStyle == rhs.mLineStyle &&
            lhs.mFillColor == rhs.mFillColor;

@@ -47,10 +47,6 @@ target_sources(${PROJECT_NAME} PRIVATE
     UBShapeEditable.h
     UBShapeFactory.cpp
     UBShapeFactory.h
-    UBShapeStyle.cpp
-    UBShapeStyle.h
-    UBShapeStyleUndoCommand.cpp
-    UBShapeStyleUndoCommand.h
     UBVerticalHandle.cpp
     UBVerticalHandle.h
 )

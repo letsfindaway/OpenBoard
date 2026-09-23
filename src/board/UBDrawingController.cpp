@@ -64,7 +64,9 @@ UBDrawingController::UBDrawingController(QObject * parent)
     , mLatestDrawingTool((UBStylusTool::Enum)-1)
     , mIsDesktopMode(false)
 {
-    connect(UBSettings::settings(), SIGNAL(colorContextChanged()), this, SIGNAL(colorPaletteChanged()));
+    connect(UBSettings::settings(), &UBSettings::colorContextChanged, this, [this](){
+        emit colorPaletteChanged(mStylusTool);
+    });
 
     connect(UBApplication::mainWindow->actionPen, SIGNAL(triggered(bool)), this, SLOT(penToolSelected(bool)));
     connect(UBApplication::mainWindow->actionEraser, SIGNAL(triggered(bool)), this, SLOT(eraserToolSelected(bool)));
@@ -171,7 +173,7 @@ void UBDrawingController::setStylusTool(int tool)
 
         emit stylusToolChanged(tool, previousTool);
         if (mStylusTool != UBStylusTool::Selector)
-            emit colorPaletteChanged();
+            emit colorPaletteChanged(mStylusTool);
     }
 }
 
@@ -231,10 +233,12 @@ void UBDrawingController::setLineWidthIndex(int index)
     }
     else
     {
-        UBSettings::settings()->setPenWidthIndex(index);
+        if (stylusTool() == UBStylusTool::Pen)
+        {
+            UBSettings::settings()->setPenWidthIndex(index);
+        }
 
-        if(stylusTool() != UBStylusTool::Line
-            && stylusTool() != UBStylusTool::Selector)
+        if (stylusTool() != UBStylusTool::Drawing && stylusTool() != UBStylusTool::Selector)
         {
             setStylusTool(UBStylusTool::Pen);
         }
@@ -304,7 +308,7 @@ void UBDrawingController::setColorIndex(int index)
     {
         UBSettings::settings()->setMarkerColorIndex(index);
     }
-    else
+    else if (stylusTool() == UBStylusTool::Pen)
     {
         UBSettings::settings()->setPenColorIndex(index);
     }
@@ -330,7 +334,7 @@ void UBDrawingController::setPenColor(bool onDarkBackground, const QColor& color
         UBSettings::settings()->boardPenLightBackgroundSelectedColors->setColor(pIndex, color);
     }
 
-    emit colorPaletteChanged();
+    emit colorPaletteChanged(mStylusTool);
 }
 
 
@@ -345,7 +349,7 @@ void UBDrawingController::setMarkerColor(bool onDarkBackground, const QColor& co
         UBSettings::settings()->boardMarkerLightBackgroundSelectedColors->setColor(pIndex, color);
     }
 
-    emit colorPaletteChanged();
+    emit colorPaletteChanged(mStylusTool);
 }
 
 
@@ -359,13 +363,13 @@ void UBDrawingController::setMarkerAlpha(qreal alpha)
 
     UBSettings::settings()->boardMarkerAlpha->set(alpha);
 
-    emit colorPaletteChanged();
+    emit colorPaletteChanged(mStylusTool);
 }
 
 
 void UBDrawingController::refreshColorPalette()
 {
-    emit colorPaletteChanged();
+    emit colorPaletteChanged(mStylusTool);
 }
 
 void UBDrawingController::setActiveRuler(UBAbstractDrawRuler* ruler)

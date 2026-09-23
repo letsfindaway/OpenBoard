@@ -1,21 +1,22 @@
 #pragma once
 
 #include "domain/UBItem.h"
-#include "domain/shapes/UBShapeStyle.h"
+#include "domain/UBItemStyle.h"
+#include "domain/UBStyledItem.h"
 
 
 #include <QAbstractGraphicsShapeItem>
 
-class UBAbstractGraphicsItem : public UBItem, public UBGraphicsItem, public QAbstractGraphicsShapeItem
+class UBAbstractGraphicsItem : public UBItem, public UBGraphicsItem, public QAbstractGraphicsShapeItem, public UBStyledItem
 {
 public:
     UBAbstractGraphicsItem(QGraphicsItem *parent = 0);
 
     virtual ~UBAbstractGraphicsItem();
 
-    void applyStyle(const UBShapeStyle& style, bool isDark);
-    UBShapeStyle shapeStyle() const;
-    void setShapeStyle(const UBShapeStyle& style);
+    virtual void applyItemStyle(const UBItemStyle& style, bool isDark) override;
+    virtual bool isShape() const override;
+    virtual bool isMarker() const override;
 
     virtual bool hasFillingProperty() const;
 
@@ -70,7 +71,6 @@ protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
 private:
-    UBShapeStyle mShapeStyle{};
     FillPattern mFillPatern;
     QBitmap patternPoint();
     QBitmap patternDiag();

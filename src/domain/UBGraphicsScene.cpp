@@ -44,6 +44,7 @@
 #include "gui/UBMagnifer.h"
 #include "gui/UBMainWindow.h"
 #include "gui/UBResources.h"
+#include "gui/shapes/UBStylePalette.h"
 
 #include "tools/UBGraphicsRuler.h"
 #include "tools/UBGraphicsAxes.h"
@@ -74,6 +75,7 @@
 #include "UBGraphicsItemZLevelUndoCommand.h"
 
 #include "domain/UBGraphicsGroupContainerItem.h"
+#include "domain/UBItemStyleUndoCommand.h"
 
 #include "UBGraphicsStroke.h"
 
@@ -447,6 +449,11 @@ bool UBGraphicsScene::inputDevicePress(const QPointF& scenePos, const qreal& pre
                 width = UBDrawingController::drawingController()->currentToolWidth();
             }
 
+            if (currentTool == UBStylusTool::Marker)
+            {
+                mCurrentStroke->setRole(UBGraphicsStroke::MARKER);
+            }
+
             width /= UBApplication::boardController->systemScaleFactor();
             width /= UBApplication::boardController->currentZoom();
 
@@ -789,11 +796,11 @@ bool UBGraphicsScene::inputDeviceRelease(int tool, Qt::KeyboardModifiers modifie
                 pathItem->setZValue(pStrokes->zValue());
 
                 // apply style
-                UBShapeStyle style;
+                UBItemStyle style;
                 style.setLineColor(polygon->colorOnLightBackground(), polygon->colorOnDarkBackground());
                 style.setLineStyle(Qt::SolidLine);
                 style.setLineWidth(polygon->originalWidth());
-                pathItem->applyStyle(style, isDarkBackground());
+                pathItem->applyItemStyle(style, isDarkBackground());
 
                 // exchange items
                 addItem(pathItem);
@@ -1289,7 +1296,7 @@ void UBGraphicsScene::recolorAllItems()
 
             if (shape)
             {
-                shape->applyStyle(shape->shapeStyle(), isDarkBackground());
+                shape->applyItemStyle(shape->itemStyle(), isDarkBackground());
             }
         }
 #endif
@@ -1363,7 +1370,7 @@ UBGraphicsStrokesGroup* UBGraphicsScene::shapeToStrokesGroup(UBAbstractGraphicsI
 
     // Now lets put all together in a strokes group
     UBGraphicsStrokesGroup* strokesGroup = new UBGraphicsStrokesGroup();
-    const auto shapeStyle = shapeItem->shapeStyle();
+    const auto shapeStyle = shapeItem->itemStyle();
 
     // If it is not transparent, create one polygon for the fill area
     if (shapeStyle.fillColor(isDarkBackground()) != QColor{Qt::transparent}
@@ -1371,6 +1378,7 @@ UBGraphicsStrokesGroup* UBGraphicsScene::shapeToStrokesGroup(UBAbstractGraphicsI
                 || dynamic_cast<UBEditableGraphicsPolygonItem*>(shapeItem)->isClosed()))
     {
         UBGraphicsStroke* stroke = new UBGraphicsStroke{shared_from_this()};
+        stroke->setRole(UBGraphicsStroke::FILL);
         painterPath.setFillRule(Qt::WindingFill);
         UBGraphicsPolygonItem* polygonItem = new UBGraphicsPolygonItem{painterPath.toFillPolygon()};
         polygonItem->setColor(shapeStyle.fillColor(isDarkBackground()));
@@ -1398,6 +1406,7 @@ UBGraphicsStrokesGroup* UBGraphicsScene::shapeToStrokesGroup(UBAbstractGraphicsI
     if (!fillPolygons.isEmpty())
     {
         UBGraphicsStroke* stroke = new UBGraphicsStroke{shared_from_this()};
+        stroke->setRole(UBGraphicsStroke::OUTLINE);
 
         for (const auto fillPolygon : fillPolygons)
         {
@@ -2606,6 +2615,31 @@ void UBGraphicsScene::controlViewportChanged()
             widgetItem->updatePosition();
         }
     }
+}
+
+void UBGraphicsScene::styledItemSelectionChanged(UBStyledItem* item, bool selected)
+{
+    if (selected)
+    {
+        mSelectedStyledItems << item;
+    }
+    else
+    {
+        mSelectedStyledItems.remove(item);
+    }
+
+    UBApplication::boardController->stylePalette()->updateSelection();
+}
+
+QSet<UBStyledItem*> UBGraphicsScene::selectedStyledItems() const
+{
+    return mSelectedStyledItems;
+}
+
+void UBGraphicsScene::applyStyle(const UBItemStyle& style)
+{
+    UBItemStyleUndoCommand *uc = new UBItemStyleUndoCommand(shared_from_this(), mSelectedStyledItems, style);
+    UBApplication::undoStack->push(uc);
 }
 
 void UBGraphicsScene::addCompass(QPointF center)

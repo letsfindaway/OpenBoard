@@ -32,7 +32,6 @@
 
 #include <QtGui>
 
-#include "domain/shapes/UBShapeStyle.h"
 #include "gui/UBLeftPalette.h"
 #include "gui/UBRightPalette.h"
 #include "gui/UBCachePropertiesWidget.h"
@@ -57,7 +56,6 @@ class UBStartupHintsPalette;
 class UBPageNavigationWidget;
 
 class UBShapesPalette;
-class UBStylePalette;
 
 class UBBoardPaletteManager : public QObject
 {
@@ -99,9 +97,6 @@ class UBBoardPaletteManager : public QObject
         void slot_changeDesktopMode(bool);
 
         void toggleErasePalette(bool ckecked);
-#ifdef ENABLE_SHAPES
-        void setShapeStyle(const UBShapeStyle& style);
-#endif
 
     private:
 
@@ -130,7 +125,6 @@ class UBBoardPaletteManager : public QObject
 
 #ifdef ENABLE_SHAPES
         UBShapesPalette* mShapesPalette{nullptr};
-        UBStylePalette* mStylePalette{nullptr};
 #endif
 
         QUrl mItemUrl;

@@ -78,7 +78,8 @@ QMenu::separator
    border: 1px dotted palette(dark);
 }
 
-QToolBar
+QToolBar,
+UBToolbarExtensionPalette
 {
     spacing: 0px;
     background-color: palette(midlight);

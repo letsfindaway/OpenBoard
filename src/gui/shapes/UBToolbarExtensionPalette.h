@@ -23,30 +23,27 @@
 
 #pragma once
 
-#include "domain/UBUndoCommand.h"
-#include "domain/shapes/UBShapeStyle.h"
+#include <QToolBar>
+#include <QWidget>
 
-#include <QSet>
-
-// forward
-class UBAbstractGraphicsItem;
-class UBGraphicsScene;
-
-class UBShapeStyleUndoCommand : public UBUndoCommand
+class UBToolbarExtensionPalette : public QWidget
 {
-public:
-    UBShapeStyleUndoCommand(std::shared_ptr<UBGraphicsScene> scene, QSet<UBAbstractGraphicsItem*> items, const UBShapeStyle& prevStyle);
+    Q_OBJECT
 
-    virtual int getType() const { return UBUndoType::undotype_SHAPESTYLE; }
+public:
+    explicit UBToolbarExtensionPalette(QToolBar *toolbar = nullptr, QWidget* parent = nullptr);
+
+    void setSpan(QWidget* from, QWidget* to);
 
 protected:
-    virtual void undo();
-    virtual void redo();
+    virtual void paintEvent(QPaintEvent* event) override;
+
+private slots:
+    void updatePosition(QVariant atTop);
 
 private:
-    std::shared_ptr<UBGraphicsScene> mScene;
-    QSet<UBAbstractGraphicsItem*> mItems{nullptr};
-    UBShapeStyle mPrevStyle{};
-    QMap<UBAbstractGraphicsItem*,UBShapeStyle> mCurrStyle{};
+    QToolBar* mToolBar{nullptr};
+    QWidget* mFromWidget{nullptr};
+    bool mToolbarAtTop{true};
 };
 

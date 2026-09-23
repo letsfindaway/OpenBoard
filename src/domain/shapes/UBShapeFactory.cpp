@@ -18,7 +18,6 @@
 
 #include "domain/UBGraphicsItemUndoCommand.h"
 #include "domain/UBGraphicsScene.h"
-#include "domain/shapes/UBShapeStyleUndoCommand.h"
 
 UBShapeFactory::UBShapeFactory()
 {
@@ -660,7 +659,7 @@ void UBShapeFactory::onMouseRelease(QMouseEvent *event)
 
     if (mCurrentShape)
     {
-        mCurrentShape->applyStyle(mShapeStyle, mBoardView->scene()->isDarkBackground());
+        mCurrentShape->applyItemStyle(mShapeStyle, mBoardView->scene()->isDarkBackground());
     }
 
     if (!mCursorMoved && mCurrentShape && mShapeType != Polygon)
@@ -797,45 +796,7 @@ void UBShapeFactory::setThickness(int thickness)
     }
 }
 
-void UBShapeFactory::selectionChanged(UBAbstractGraphicsItem* item, bool selected)
-{
-    if (selected)
-    {
-        mSelectedShapes << item;
-    }
-    else
-    {
-        mSelectedShapes.remove(item);
-    }
-
-    updateChoice();
-}
-
-void UBShapeFactory::updateChoice()
-{
-    // compute common style of selected shapes
-    if (!mSelectedShapes.isEmpty())
-    {
-        UBShapeStyle commonStyle = (*mSelectedShapes.begin())->shapeStyle();
-
-        for (const auto shape : mSelectedShapes)
-        {
-            commonStyle = commonStyle.intersected(shape->shapeStyle());
-        }
-
-        UBApplication::boardController->paletteManager()->setShapeStyle(commonStyle);
-    }
-}
-
-void UBShapeFactory::applyStyle(const UBShapeStyle& style)
-{
-    const auto scene = mBoardView->scene();
-
-    UBShapeStyleUndoCommand *uc = new UBShapeStyleUndoCommand(scene, mSelectedShapes, style);
-    UBApplication::undoStack->push(uc);
-}
-
-void UBShapeFactory::setCurrentStyle(const UBShapeStyle& style)
+void UBShapeFactory::setCurrentStyle(const UBItemStyle& style)
 {
     mShapeStyle = style;
 }

@@ -5,7 +5,7 @@
 #include <QGraphicsItem>
 
 #include "UBAbstractGraphicsPathItem.h"
-#include "UBShapeStyle.h"
+#include "domain/UBItemStyle.h"
 
 #include "ui_shapeActions.h"
 
@@ -98,15 +98,12 @@ public slots:
 
     void setThickness(int thickness);
 
-    void selectionChanged(UBAbstractGraphicsItem* item, bool selected);
-    void updateChoice();
-    void applyStyle(const UBShapeStyle& style);
-    void setCurrentStyle(const UBShapeStyle& style);
+    void setCurrentStyle(const UBItemStyle& style);
 
 private:
     UBAbstractGraphicsItem* mCurrentShape{nullptr};
     UBBoardView* mBoardView{nullptr};
-    UBShapeStyle mShapeStyle{};
+    UBItemStyle mShapeStyle{};
 
     bool mIsCreating{false};
     bool mIsPress{false};
