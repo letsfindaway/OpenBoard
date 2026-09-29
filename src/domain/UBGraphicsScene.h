@@ -394,9 +394,7 @@ signals:
 
         void initPolygonItem(UBGraphicsPolygonItem*);
 
-#ifdef ENABLE_SHAPES
         UBGraphicsStrokesGroup* shapeToStrokesGroup(UBAbstractGraphicsItem* shapeItem);
-#endif
 
         void drawEraser(const QPointF& pEndPoint, bool pressed = true);
         void redrawEraser(bool pressed);

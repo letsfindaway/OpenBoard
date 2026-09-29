@@ -529,13 +529,13 @@ void UBBoardView::handleItemsSelection(QGraphicsItem *item)
                 mCornerPoints << item->mapToScene(bounds.topRight());
                 mCornerPoints << item->mapToScene(bounds.bottomLeft());
                 mCornerPoints << item->mapToScene(bounds.bottomRight());
-#ifdef ENABLE_SHAPES
+
+                // add center point for symmetrical shapes
                 if (item->type() == UBGraphicsItemType::GraphicsShapeItemType
                         || item->type() == UBGraphicsItemType::GraphicsRegularPathItemType)
                 {
                     mCornerPoints << item->mapToScene(bounds.center());
                 }
-#endif
             }
         }
     }
@@ -576,11 +576,9 @@ Here we determines cases when items should to get mouse press event at pressing 
         return true;
     case UBGraphicsPixmapItem::Type:
     case UBGraphicsSvgItem::Type:
-#ifdef ENABLE_SHAPES
     case UBGraphicsItemType::GraphicsShapeItemType:
     case UBGraphicsItemType::GraphicsPathItemType:
     case UBGraphicsItemType::GraphicsRegularPathItemType:
-#endif
         if (currentTool == UBStylusTool::Play)
             return true;
         if (item->isSelected())
@@ -709,11 +707,9 @@ bool UBBoardView::itemShouldBeMoved(QGraphicsItem *item)
 
     case UBGraphicsSvgItem::Type:
     case UBGraphicsPixmapItem::Type:
-#ifdef ENABLE_SHAPES
     case UBGraphicsItemType::GraphicsShapeItemType:
     case UBGraphicsItemType::GraphicsPathItemType:
     case UBGraphicsItemType::GraphicsRegularPathItemType:
-#endif
         if (currentTool == UBStylusTool::Play || !item->isSelected())
             return true;
         if (item->isSelected())
@@ -909,7 +905,6 @@ void UBBoardView::handleItemMouseMove(QMouseEvent *event)
             mLastPressedMousePos = scenePos;
         }
 
-#ifdef ENABLE_SHAPES
         switch (movingItem->type())
         {
         case UBGraphicsItemType::GraphicsShapeItemType:
@@ -920,7 +915,6 @@ void UBBoardView::handleItemMouseMove(QMouseEvent *event)
         default:
             break;
         }
-#endif
 
         mWidgetMoved = true;
         event->accept();
@@ -1128,9 +1122,7 @@ void UBBoardView::longPressEvent()
 
 void UBBoardView::mousePressEvent (QMouseEvent *event)
 {
-#ifdef ENABLE_SHAPES
     emit mousePress(event);
-#endif
 
     if (!bIsControl && !bIsDesktop) {
         event->ignore();
@@ -1225,11 +1217,9 @@ void UBBoardView::mousePressEvent (QMouseEvent *event)
             event->accept ();
             break;
 
-#if ENABLE_SHAPES
         case UBStylusTool::Drawing:
             event->accept ();
             break;
-#endif
 
         default:
             if (UBDrawingController::drawingController()->activeRuler() == nullptr) {
@@ -1279,9 +1269,7 @@ void UBBoardView::mousePressEvent (QMouseEvent *event)
 
 void UBBoardView::mouseMoveEvent (QMouseEvent *event)
 {
-#ifdef ENABLE_SHAPES
     emit mouseMove(event);
-#endif
     //    static QTime lastCallTime;
     //    if (!lastCallTime.isNull()) {
     //        qDebug() << "time interval is " << lastCallTime.msecsTo(QTime::currentTime());
@@ -1370,9 +1358,7 @@ void UBBoardView::mouseMoveEvent (QMouseEvent *event)
                             || item->type() == UBGraphicsTextItem::Type
                             || item->type() == UBGraphicsStrokesGroup::Type
                             || item->type() == UBGraphicsGroupContainerItem::Type
-#ifdef ENABLE_SHAPES
                             || UBShapeFactory::isShape(item)
-#endif
                             )
                     {
 
@@ -1425,9 +1411,7 @@ void UBBoardView::movingItemDestroyed(QObject*)
 
 void UBBoardView::mouseReleaseEvent (QMouseEvent *event)
 {
-#ifdef ENABLE_SHAPES
     emit mouseRelease(event);
-#endif
 
     UBStylusTool::Enum currentTool = (UBStylusTool::Enum)UBDrawingController::drawingController ()->stylusTool ();
 
@@ -2066,10 +2050,7 @@ void UBBoardView::setToolCursor (int tool)
         controlViewport->setCursor (UBResources::resources ()->textCursor);
         break;
     case UBStylusTool::Capture:
-#ifdef ENABLE_SHAPES
-    case UBStylusTool::ChangeFill:
     case UBStylusTool::Drawing:
-#endif
         controlViewport->setCursor (UBResources::resources ()->penCursor);
         break;
     default:

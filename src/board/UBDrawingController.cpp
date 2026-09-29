@@ -164,14 +164,13 @@ void UBDrawingController::setStylusTool(int tool)
             UBApplication::boardController->controlView()->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
         }
 
-#ifdef ENABLE_SHAPES
         if (mStylusTool != UBStylusTool::Drawing)
         {
             UBApplication::boardController->shapeFactory().desactivate();
         }
-#endif
 
         emit stylusToolChanged(tool, previousTool);
+
         if (mStylusTool != UBStylusTool::Selector)
             emit colorPaletteChanged(mStylusTool);
     }
@@ -194,11 +193,7 @@ bool UBDrawingController::isSnappingTool() const
 {
     return (mStylusTool == UBStylusTool::Selector)
             || (mStylusTool == UBStylusTool::Play)
-#ifdef ENABLE_SHAPES
             || (mStylusTool == UBStylusTool::Drawing);
-#else
-            || (mStylusTool == UBStylusTool::Line);
-#endif
 }
 
 

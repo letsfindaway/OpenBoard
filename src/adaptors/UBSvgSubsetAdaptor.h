@@ -85,19 +85,6 @@ class UBSvgSubsetAdaptor
             UBSvgSubsetReader* reader = nullptr;
         };
 
-        static QByteArray loadSceneAsText(std::shared_ptr<UBDocumentProxy> proxy, const int pageId);
-        static std::shared_ptr<UBGraphicsScene> loadScene(std::shared_ptr<UBDocumentProxy> proxy, const QByteArray& pArray);
-        static std::shared_ptr<UBSvgReaderContext> prepareLoadingScene(std::shared_ptr<UBDocumentProxy> proxy, const int pageId, std::optional<QByteArray> xmlContent = {});
-
-        static void persistScene(std::shared_ptr<UBDocumentProxy> proxy, std::shared_ptr<UBGraphicsScene> pScene, const int pageId);
-
-        static QUuid sceneUuid(std::shared_ptr<UBDocumentProxy> proxy, const int pageId);
-        static QUuid sceneUuid(const QString& xmlContent);
-        static QVersionNumber sceneVersion(const QString& xmlContent);
-        static void setSceneUuid(std::shared_ptr<UBDocumentProxy> proxy, const int pageId, QUuid pUuid);
-        static void replicateScene(const QString& sourcePath, const QString& targetPath, QUuid uuid);
-
-#ifdef ENABLE_SHAPES
         class UBSvgReaderExtension
         {
         public:
@@ -117,8 +104,19 @@ class UBSvgSubsetAdaptor
             virtual UBSvgWriterExtension* createSvgWriterExtension(QXmlStreamWriter& xmlWriter) = 0;
         };
 
+        static QByteArray loadSceneAsText(std::shared_ptr<UBDocumentProxy> proxy, const int pageId);
+        static std::shared_ptr<UBGraphicsScene> loadScene(std::shared_ptr<UBDocumentProxy> proxy, const QByteArray& pArray);
+        static std::shared_ptr<UBSvgReaderContext> prepareLoadingScene(std::shared_ptr<UBDocumentProxy> proxy, const int pageId, std::optional<QByteArray> xmlContent = {});
+
+        static void persistScene(std::shared_ptr<UBDocumentProxy> proxy, std::shared_ptr<UBGraphicsScene> pScene, const int pageId);
+
+        static QUuid sceneUuid(std::shared_ptr<UBDocumentProxy> proxy, const int pageId);
+        static QUuid sceneUuid(const QString& xmlContent);
+        static QVersionNumber sceneVersion(const QString& xmlContent);
+        static void setSceneUuid(std::shared_ptr<UBDocumentProxy> proxy, const int pageId, QUuid pUuid);
+        static void replicateScene(const QString& sourcePath, const QString& targetPath, QUuid uuid);
+
         static void registerAdapterExtension(UBSvgAdaptorExtension* extension);
-#endif
 
         static const QString nsSvg;
         static const QString nsXLink;
@@ -140,16 +138,12 @@ class UBSvgSubsetAdaptor
 
         static const QString sFormerUniboardDocumentNamespaceUri;
 
-#ifdef ENABLE_SHAPES
     public:
-#endif
         static QString toSvgTransform(const QTransform& matrix);
         static QTransform fromSvgTransform(const QString& transform);
 
-#ifdef ENABLE_SHAPES
     private:
         static UBSvgAdaptorExtension* sAdaptorExtension;
-#endif
 
         class UBSvgSubsetReader
         {
@@ -231,9 +225,7 @@ class UBSvgSubsetAdaptor
                 UBGraphicsWidgetItem *currentWidget = nullptr;
                 bool mMustFinalize = false;
 
-#ifdef ENABLE_SHAPES
                 std::unique_ptr<UBSvgReaderExtension> mReaderExtension{};
-#endif
         };
 
         class UBSvgSubsetWriter
@@ -317,9 +309,7 @@ class UBSvgSubsetAdaptor
                 QString mDocumentPath;
                 int mPageId;
 
-#ifdef ENABLE_SHAPES
                 std::unique_ptr<UBSvgWriterExtension> mWriterExtension{};
-#endif
         };
 };
 

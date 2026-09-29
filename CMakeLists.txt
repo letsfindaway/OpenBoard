@@ -38,7 +38,6 @@ project(openboard
 )
 
 add_compile_definitions(UBVERSION="${VERSION}")
-add_compile_definitions(ENABLE_SHAPES)
 
 
 # ==========================================================================
@@ -55,13 +54,7 @@ set(QAPPLICATION_CLASS QApplication CACHE STRING "Inheritance class for SingleAp
 # Non-source file locations
 # ==========================================================================
 
-get_property(OUTVAR DIRECTORY PROPERTY COMPILE_DEFINITIONS)
-if(ENABLE_SHAPES IN_LIST OUTVAR)
-    set(OPENBOARD_QRC_FILE      resources/OpenBoard.qrc resources/shapes.qrc)
-else()
-    set(OPENBOARD_QRC_FILE      resources/OpenBoard.qrc)
-endif()
-
+set(OPENBOARD_QRC_FILE      resources/OpenBoard.qrc resources/shapes.qrc)
 set(OPENBOARD_FORMS_DIR     resources/forms src/web/simplebrowser)
 set(OPENBOARD_TS_DIR        resources/i18n)
 set(OPENBOARD_FONT_DIR      resources/customizations resources/fonts)

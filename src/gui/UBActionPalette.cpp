@@ -30,9 +30,7 @@
 
 #include "UBActionPalette.h"
 
-#ifdef ENABLE_SHAPES
 #include "gui/shapes/UBAbstractSubPalette.h"
-#endif
 
 #include "core/memcheck.h"
 
@@ -96,18 +94,11 @@ void UBActionPalette::setActions(QList<QAction*> actions)
     actionChanged();
 }
 
-#ifdef ENABLE_SHAPES
 UBActionPaletteButton* UBActionPalette::createPaletteButton(QAction* action, QWidget *parent, UBAbstractSubPalette* subPalette)
 {
     UBActionPaletteButton* button = subPalette
             ? new UBActionSubPaletteButton(action, parent, subPalette)
             : new UBActionPaletteButton(action, parent);
-#else
-UBActionPaletteButton* UBActionPalette::createPaletteButton(QAction* action, QWidget *parent)
-{
-    UBActionPaletteButton* button = new UBActionPaletteButton(action, parent);
-#endif
-
 
     button->setIconSize(mButtonSize);
     button->setToolButtonStyle(mToolButtonStyle);
@@ -158,7 +149,6 @@ void UBActionPalette::addAction(QAction* action)
     mActions << action;
 }
 
-#ifdef ENABLE_SHAPES
 void UBActionPalette::attachSubPalette(QAction* action, UBAbstractSubPalette* subPalette, bool sameActionGroup)
 {
     mSubPalette = subPalette;
@@ -235,7 +225,6 @@ void UBActionPalette::attachSubPalette(QAction* action, UBAbstractSubPalette* su
         }
     }
 }
-#endif
 
 void UBActionPalette::buttonClicked()
 {
@@ -256,12 +245,10 @@ UBActionPalette::~UBActionPalette()
     qDeleteAll(mButtons.begin(), mButtons.end());
     mButtons.clear();
 
-#ifdef ENABLE_SHAPES
     if (mSubPalette)
     {
         delete mSubPalette;
     }
-#endif
 }
 
 

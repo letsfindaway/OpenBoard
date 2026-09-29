@@ -75,10 +75,7 @@
 #include "core/UBPersistenceManager.h"
 #include "core/memcheck.h"
 
-#ifdef ENABLE_SHAPES
 #include "gui/shapes/UBShapesPalette.h"
-#include "gui/shapes/UBStylePalette.h"
-#endif
 
 
 inline constexpr int longpress_interval = 350;
@@ -965,12 +962,10 @@ void UBBoardPaletteManager::changeStylusPaletteOrientation(QVariant var)
     connect(mStylusPalette, SIGNAL(stylusToolDoubleClicked(int)), UBApplication::boardController, SLOT(stylusToolDoubleClicked(int)));
     mStylusPalette->setVisible(bVisible); // always show stylus palette at startup
 
-#ifdef ENABLE_SHAPES
     // attach subpalette to line action
     mShapesPalette = new UBShapesPalette{bVertical ? Qt::Horizontal : Qt::Vertical, mContainer};
     mShapesPalette->setAutoClose(true);
     mStylusPalette->attachSubPalette(UBApplication::mainWindow->actionLine, mShapesPalette, true); // TODO add parameter to include subactions in main action group
-#endif
 }
 
 

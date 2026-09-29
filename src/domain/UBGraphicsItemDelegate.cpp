@@ -650,7 +650,6 @@ void UBGraphicsItemDelegate::showHide(bool show)
     emit showOnDisplayChanged(show);
 }
 
-#ifdef ENABLE_SHAPES
 void UBGraphicsItemDelegate::showFrame(bool show)
 {
     if (!mFrame)
@@ -658,21 +657,27 @@ void UBGraphicsItemDelegate::showFrame(bool show)
         createControls();
     }
 
-    if(!show){
+    if(!show)
+    {
         mFrame->hide();
         mFrame->setEnabled(false);
-        for(int i = 0; i < mButtons.size(); i++){
+
+        for(int i = 0; i < mButtons.size(); i++)
+        {
             mButtons.at(i)->hide();
         }
-    }else{
+    }
+    else
+    {
         mFrame->show();
         mFrame->setEnabled(true);
-        for(int i = 0; i < mButtons.size(); i++){
+
+        for(int i = 0; i < mButtons.size(); i++)
+        {
             mButtons.at(i)->show();
         }
     }
 }
-#endif
 
 void UBGraphicsItemDelegate::showOnDisplay(bool show)
 {

@@ -109,7 +109,4 @@ if(CMAKE_SYSTEM_NAME STREQUAL Linux)
     )
 endif()
 
-get_property(OUTVAR DIRECTORY PROPERTY COMPILE_DEFINITIONS)
-if(ENABLE_SHAPES IN_LIST OUTVAR)
-    add_subdirectory(shapes)
-endif()
+add_subdirectory(shapes)

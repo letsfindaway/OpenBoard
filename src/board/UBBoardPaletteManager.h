@@ -123,9 +123,7 @@ class UBBoardPaletteManager : public QObject
         UBActionPalette* mErasePalette;
         UBActionPalette* mPagePalette;
 
-#ifdef ENABLE_SHAPES
         UBShapesPalette* mShapesPalette{nullptr};
-#endif
 
         QUrl mItemUrl;
         QPixmap mPixmap;

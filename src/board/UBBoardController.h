@@ -37,13 +37,10 @@
 #include <QPointer>
 #include <QUndoCommand>
 
-#include "core/UB.h"
 #include "core/UBApplicationController.h"
 #include "document/UBDocumentContainer.h"
 
-#ifdef ENABLE_SHAPES
 #include "domain/shapes/UBShapeFactory.h"
-#endif
 
 class UBMainWindow;
 class UBApplication;
@@ -184,9 +181,7 @@ class UBBoardController : public UBDocumentContainer
             return mPaletteManager;
         }
 
-#ifdef ENABLE_SHAPES
         UBShapeFactory& shapeFactory();
-#endif
 
         void notifyCache(bool visible);
         void notifyPageChanged();
@@ -351,9 +346,7 @@ class UBBoardController : public UBDocumentContainer
 
         QTimer *mAutosaveTimer;
 
-#ifdef ENABLE_SHAPES
         UBShapeFactory mShapeFactory;
-#endif
 
     private slots:
         void stylusToolDoubleClicked(int tool);

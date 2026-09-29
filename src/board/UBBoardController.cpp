@@ -78,6 +78,7 @@
 #include "gui/UBThumbnailScene.h"
 #include "gui/UBToolWidget.h"
 #include "gui/UBToolbarButtonGroup.h"
+#include "gui/shapes/UBStylePalette.h"
 
 #include "podcast/UBPodcastController.h"
 
@@ -88,10 +89,6 @@
 
 #include "core/memcheck.h"
 
-#ifdef ENABLE_SHAPES
-#include "gui/shapes/UBToolbarExtensionPalette.h"
-#include "gui/shapes/UBStylePalette.h"
-#endif
 
 UBBoardController::UBBoardController(UBMainWindow* mainWindow)
     : UBDocumentContainer(mainWindow->centralWidget())
@@ -172,11 +169,9 @@ void UBBoardController::init()
 
     undoRedoStateChange(true);
 
-#ifdef ENABLE_SHAPES
     mShapeFactory.init();
     connect(mStylePalette, &UBStylePalette::styleChanged, &mShapeFactory, &UBShapeFactory::setCurrentStyle);
     mShapeFactory.setCurrentStyle(mStylePalette->selectedStyle());
-#endif
 }
 
 
@@ -2206,12 +2201,10 @@ void UBBoardController::setPageSize(QSize newSize)
     }
 }
 
-#ifdef ENABLE_SHAPES
 UBShapeFactory& UBBoardController::shapeFactory()
 {
     return mShapeFactory;
 }
-#endif
 
 void UBBoardController::notifyCache(bool visible)
 {

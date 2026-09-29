@@ -61,9 +61,7 @@ class UBActionPalette : public UBFloatingPalette
         void groupActions();
         virtual void addAction(QAction* action);
 
-#ifdef ENABLE_SHAPES
         void attachSubPalette(QAction* action, UBAbstractSubPalette* subPalette, bool sameActionGroup = false);
-#endif
 
         void setClosable(bool closable);
         void setAutoClose(bool autoClose)
@@ -113,22 +111,16 @@ class UBActionPalette : public UBFloatingPalette
         bool mAutoClose;
         QSize mButtonSize;
         QPoint mMousePos;
-#ifdef ENABLE_SHAPES
         UBActionPaletteButton *createPaletteButton(QAction* action, QWidget *parent, UBAbstractSubPalette* subPalette = nullptr);
-#else
-        UBActionPaletteButton *createPaletteButton(QAction* action, QWidget *parent);
-#endif
         QAction* removePaletteButton(UBActionPaletteButton* button);
 
     protected slots:
         void buttonClicked();
         void actionChanged();
 
-#ifdef ENABLE_SHAPES
     private:
         QPointer<UBAbstractSubPalette> mSubPalette{nullptr};
         UBActionSubPaletteButton* mSubPaletteButton{nullptr};
-#endif
 };
 
 
@@ -148,7 +140,6 @@ class UBActionPaletteButton : public QToolButton
         virtual bool hitButton(const QPoint &pos) const;
 };
 
-#ifdef ENABLE_SHAPES
 class UBActionSubPaletteButton : public UBActionPaletteButton
 {
     Q_OBJECT
@@ -170,7 +161,5 @@ private:
     QRectF mArrowRect{};
     std::unique_ptr<QPoint> mPressedPos;    // use a pointer to be able to modify the value in const function hitButton
 };
-
-#endif
 
 #endif /* UBACTIONPALETTE_H_ */

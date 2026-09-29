@@ -73,15 +73,11 @@
 #include "UBGraphicsStrokesGroup.h"
 #include "UBSelectionFrame.h"
 #include "UBGraphicsItemZLevelUndoCommand.h"
+#include "UBGraphicsStroke.h"
 
 #include "domain/UBGraphicsGroupContainerItem.h"
 #include "domain/UBItemStyleUndoCommand.h"
-
-#include "UBGraphicsStroke.h"
-
-#ifdef ENABLE_SHAPES
 #include "domain/shapes/UBGraphicsLineItem.h"
-#endif
 
 #include "core/memcheck.h"
 
@@ -781,7 +777,6 @@ bool UBGraphicsScene::inputDeviceRelease(int tool, Qt::KeyboardModifiers modifie
                 mCurrentStroke = 0;
             }
 
-#ifdef ENABLE_SHAPES
             // convert to line shape if it is a nominal line
             if (mCurrentStroke
                     && mCurrentStroke->polygons().size() == 1
@@ -811,7 +806,6 @@ bool UBGraphicsScene::inputDeviceRelease(int tool, Qt::KeyboardModifiers modifie
                 delete pStrokes;
                 mCurrentStroke = nullptr;
             }
-#endif
 
             mCurrentPolygon = 0;
         }
@@ -1095,7 +1089,6 @@ void UBGraphicsScene::eraseLineTo(const QPointF &pEndPoint, const qreal &pWidth)
 
     for(int i=0; i<collidItems.size(); i++)
     {
-#ifdef ENABLE_SHAPES
         UBAbstractGraphicsItem* shapeItem = dynamic_cast<UBAbstractGraphicsItem*>(collidItems[i]);
 
         if (shapeItem && eraserPath.intersects(shapeItem->sceneTransform().map(shapeItem->shape())))
@@ -1103,7 +1096,7 @@ void UBGraphicsScene::eraseLineTo(const QPointF &pEndPoint, const qreal &pWidth)
             // replace shape by equivalent strokes group
             collidItems[i] = shapeToStrokesGroup(shapeItem);
         }
-#endif
+
         UBGraphicsPolygonItem *pi = qgraphicsitem_cast<UBGraphicsPolygonItem*>(collidItems[i]);
         if(pi == NULL)
             continue;
@@ -1289,7 +1282,6 @@ void UBGraphicsScene::recolorAllItems()
             UBGraphicsTextItem *textItem = static_cast<UBGraphicsTextItem*>(item);
             textItem->recolor();
         }
-#ifdef ENABLE_SHAPES
         else
         {
             auto shape = dynamic_cast<UBAbstractGraphicsItem*>(item);
@@ -1299,7 +1291,6 @@ void UBGraphicsScene::recolorAllItems()
                 shape->applyItemStyle(shape->itemStyle(), isDarkBackground());
             }
         }
-#endif
     }
 
     foreach(QGraphicsView* view, views())
@@ -1360,7 +1351,6 @@ void UBGraphicsScene::initPolygonItem(UBGraphicsPolygonItem* polygonItem)
     polygonItem->setData(UBGraphicsItemData::ItemLayerType, QVariant(UBItemLayerType::Graphic));
 }
 
-#ifdef ENABLE_SHAPES
 UBGraphicsStrokesGroup* UBGraphicsScene::shapeToStrokesGroup(UBAbstractGraphicsItem* shapeItem)
 {
     // Convert a shape to a strokes group to allow use of the eraser
@@ -1448,7 +1438,6 @@ UBGraphicsStrokesGroup* UBGraphicsScene::shapeToStrokesGroup(UBAbstractGraphicsI
 
     return strokesGroup;
 }
-#endif
 
 UBGraphicsPolygonItem* UBGraphicsScene::arcToPolygonItem(const QLineF& pStartRadius, qreal pSpanAngle, qreal pWidth)
 {
@@ -2211,12 +2200,10 @@ void UBGraphicsScene::deselectAllItems()
         if(textItem)
             textItem->activateTextEditor(false);
 
-#ifdef ENABLE_SHAPES
         if (UBShapeFactory::isShape(gi))
         {
             UBShapeFactory::desactivateEditionMode(gi);
         }
-#endif
     }
 }
 
@@ -2230,12 +2217,10 @@ void UBGraphicsScene::deselectAllItemsExcept(QGraphicsItem* item)
             if(textItem)
                 textItem->activateTextEditor(false);
 
-#ifdef ENABLE_SHAPES
             if (UBShapeFactory::isShape(eachItem))
             {
                 UBShapeFactory::desactivateEditionMode(eachItem);
             }
-#endif
         }
     }
 }
@@ -2755,7 +2740,6 @@ QPointF UBGraphicsScene::snap(const QRectF& rect, Qt::Corner* corner) const
 
 QRectF UBGraphicsScene::itemRect(const QGraphicsItem* item)
 {
-#ifdef ENABLE_SHAPES
     const auto shape = dynamic_cast<const UBAbstractGraphicsItem*>(item);
 
     if (shape)
@@ -2763,7 +2747,7 @@ QRectF UBGraphicsScene::itemRect(const QGraphicsItem* item)
         // use the provided painter path to calculate the item rectangle
         return shape->painterPath().boundingRect();
     }
-#endif
+
     // compute an item's rectangle in item coordinates
     // taking into account the shape of the item and
     // the nature of nominal lines

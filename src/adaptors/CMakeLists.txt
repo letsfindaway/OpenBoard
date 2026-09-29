@@ -25,6 +25,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     UBMetadataDcSubsetAdaptor.h
     UBPageMapper.cpp
     UBPageMapper.h
+    UBSvgShapeAdaptor.cpp
+    UBSvgShapeAdaptor.h
     UBSvgSubsetAdaptor.cpp
     UBSvgSubsetAdaptor.h
     UBThumbnailAdaptor.cpp
@@ -32,11 +34,3 @@ target_sources(${PROJECT_NAME} PRIVATE
     UBWidgetUpgradeAdaptor.cpp
     UBWidgetUpgradeAdaptor.h
 )
-
-get_property(OUTVAR DIRECTORY PROPERTY COMPILE_DEFINITIONS)
-if(ENABLE_SHAPES IN_LIST OUTVAR)
-    target_sources(openboard PRIVATE
-        UBSvgShapeAdaptor.cpp
-        UBSvgShapeAdaptor.h
-    )
-endif()
