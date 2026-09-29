@@ -26,6 +26,7 @@
 #include "board/UBBoardController.h"
 #include "core/UBApplication.h"
 #include "domain/UBGraphicsScene.h"
+#include "domain/UBStyledItem.h"
 #include "gui/shapes/UBStylePalette.h"
 
 

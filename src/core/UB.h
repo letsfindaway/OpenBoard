@@ -73,7 +73,6 @@ struct UBStylusTool
         Line,
         Text,
         Capture,
-        ChangeFill,
         Drawing
     };
 };
@@ -176,7 +175,6 @@ struct UBGraphicsItemType
         GraphicsShapeItemType,                          //65557
         GraphicsPathItemType,                           //65558
         GraphicsRegularPathItemType,                    //65559
-        GraphicsFreehandItemType,
         UserTypesCount,                                 //65560
         AxesItemType,                                   //65561
         SelectionFrameType                              // this line must be the last line in this enum because it is types counter.

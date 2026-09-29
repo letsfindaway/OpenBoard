@@ -1,10 +1,32 @@
+/*
+ * Copyright (C) 2015-2026 Département de l'Instruction Publique (DIP-SEM)
+ * and contributors.
+ *
+ * This file is part of OpenBoard.
+ *
+ * OpenBoard is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3 of the License,
+ * with a specific linking exception for the OpenSSL project's
+ * "OpenSSL" library (or with modified versions of it that use the
+ * same license as the "OpenSSL" library).
+ *
+ * OpenBoard is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OpenBoard. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
 #pragma once
 
 #include <QObject>
 #include <QColor>
 #include <QGraphicsItem>
 
-#include "UBAbstractGraphicsPathItem.h"
 #include "domain/UBItemStyle.h"
 
 #include "ui_shapeActions.h"
@@ -36,37 +58,10 @@ public:
         Rectangle,
         Square,
         Line,
-        Pen,
         RegularPolygon,
         Polygon,
         None
     };
-
-    enum FillType
-    {
-        Transparent,
-        Full,
-        Dense,
-        Diag,
-        Gradient
-    };
-
-    QColor strokeColor();
-    QColor fillFirstColor();
-    QColor fillSecondColor();
-
-    void returnToCreationMode(QGraphicsItem* item);
-    void applyCurrentStyle(UBAbstractGraphicsItem *shape);
-    void setFillingFirstColor(QColor color);
-    void setFillingSecondColor(QColor color);
-    void setGradientFillingProperty(UBAbstractGraphicsItem* shape);
-    void updateFillingPropertyOnSelectedItems();
-
-    FillType fillType();
-    void setFillType(FillType fillType);
-
-    void setStartArrowType(UBAbstractGraphicsPathItem::ArrowType arrowType);
-    void setEndArrowType(UBAbstractGraphicsPathItem::ArrowType arrowType);
 
     QRectF reverseRect(const QRectF &rect);
 
@@ -81,22 +76,12 @@ public slots:
     void createSquare(bool create);
     void createLine(bool create);
 
-    void createPen(bool create);
-
-    void prepareChangeFill();
-    void changeFillColor(const QPointF& pos);
-
     void onMouseMove(QMouseEvent *event);
     void onMousePress(QMouseEvent *event);
     void onMouseRelease(QMouseEvent *event);
 
     void desactivate();
     void terminateShape();
-
-    void setStrokeStyle(Qt::PenStyle penStyle);
-    void setStrokeColor(QColor color);
-
-    void setThickness(int thickness);
 
     void setCurrentStyle(const UBItemStyle& style);
 
@@ -109,27 +94,13 @@ private:
     bool mIsPress{false};
     bool mIsRegularShape{true};
 
-    bool mFirstClickForFreeHand{true};
-
     ShapeType mShapeType{None};
 
-    QColor mCurrentStrokeColor{Qt::black};
-    QColor mCurrentFillFirstColor{Qt::transparent};
-    QColor mCurrentFillSecondColor{Qt::transparent};
-
-    Qt::BrushStyle mCurrentBrushStyle{Qt::SolidPattern};
-    Qt::PenStyle mCurrentPenStyle{Qt::SolidLine};
-
-    int mThickness{3};
     UBDrawingController *mDrawingController{nullptr};
 
     int mNVertices{0};
 
-    FillType mFillType{Transparent};
     QRectF mBoundingRect{};
-
-    UBAbstractGraphicsPathItem::ArrowType mStartArrowType{UBAbstractGraphicsPathItem::ArrowType_None};
-    UBAbstractGraphicsPathItem::ArrowType mEndArrowType{UBAbstractGraphicsPathItem::ArrowType_None};
 
     bool mCursorMoved{false};
 

@@ -34,7 +34,8 @@ UBToolbarExtensionPalette::UBToolbarExtensionPalette(QToolBar* toolBar, QWidget*
     : QWidget{parent, Qt::WindowStaysOnTopHint}
     , mToolBar{toolBar}
 {
-    connect(UBSettings::settings()->appToolBarPositionedAtTop, &UBSetting::changed, this, &UBToolbarExtensionPalette::updatePosition);
+    connect(UBSettings::settings()->appToolBarPositionedAtTop, &UBSetting::changed, this,
+            &UBToolbarExtensionPalette::updatePosition);
 }
 
 void UBToolbarExtensionPalette::setSpan(QWidget* from, QWidget* to)

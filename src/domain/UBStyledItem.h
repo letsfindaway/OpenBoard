@@ -46,4 +46,3 @@ public:
 protected:
     UBItemStyle mItemStyle;
 };
-

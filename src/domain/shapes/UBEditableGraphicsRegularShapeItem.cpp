@@ -1,3 +1,26 @@
+/*
+ * Copyright (C) 2015-2026 Département de l'Instruction Publique (DIP-SEM)
+ * and contributors.
+ *
+ * This file is part of OpenBoard.
+ *
+ * OpenBoard is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3 of the License,
+ * with a specific linking exception for the OpenSSL project's
+ * "OpenSSL" library (or with modified versions of it that use the
+ * same license as the "OpenSSL" library).
+ *
+ * OpenBoard is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OpenBoard. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
 #include "UBEditableGraphicsRegularShapeItem.h"
 
 #include <cmath>
@@ -247,15 +270,6 @@ void UBEditableGraphicsRegularShapeItem::updateHandle(UBAbstractHandle *handle)
         }
 
         return;
-    }
-
-    if(hasGradient()){
-        QLinearGradient g(path().boundingRect().topLeft(), path().boundingRect().topRight());
-
-        g.setColorAt(0, brush().gradient()->stops().at(0).second);
-        g.setColorAt(1, brush().gradient()->stops().at(1).second);
-
-        setBrush(g);
     }
 
     auto bounds = QRectF{0, 0, 2. * mRadius, 2. * mRadius};

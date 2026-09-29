@@ -26,7 +26,6 @@
 
 UBStyledItem::UBStyledItem()
 {
-
 }
 
 UBItemStyle UBStyledItem::itemStyle() const

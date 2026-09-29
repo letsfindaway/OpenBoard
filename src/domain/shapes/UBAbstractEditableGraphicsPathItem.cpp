@@ -1,6 +1,27 @@
-#include "UBAbstractEditableGraphicsPathItem.h"
+/*
+ * Copyright (C) 2015-2026 Département de l'Instruction Publique (DIP-SEM)
+ * and contributors.
+ *
+ * This file is part of OpenBoard.
+ *
+ * OpenBoard is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3 of the License,
+ * with a specific linking exception for the OpenSSL project's
+ * "OpenSSL" library (or with modified versions of it that use the
+ * same license as the "OpenSSL" library).
+ *
+ * OpenBoard is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OpenBoard. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-// #include "UBFreeHandle.h"
+
+#include "UBAbstractEditableGraphicsPathItem.h"
 
 UBAbstractEditableGraphicsPathItem::UBAbstractEditableGraphicsPathItem(QGraphicsItem *parent):
     UBAbstractGraphicsPathItem(parent)
@@ -11,24 +32,6 @@ UBAbstractEditableGraphicsPathItem::UBAbstractEditableGraphicsPathItem(QGraphics
 void UBAbstractEditableGraphicsPathItem::onActivateEditionMode()
 {
     //NOOP
-}
-
-void UBAbstractEditableGraphicsPathItem::drawArrows()
-{
-    UBAbstractGraphicsPathItem::drawArrows();
-
-    // Draw Arrows UNDER (z-order) Handles, if handles are shown.
-    if (isInEditMode())
-    {
-        if (startArrowGraphicsItem()){
-            startArrowGraphicsItem()->stackBefore(mHandles.first());
-        }
-
-        if (endArrowGraphicsItem()){
-            endArrowGraphicsItem()->stackBefore(mHandles.last());
-            endArrowGraphicsItem()->stackBefore(mHandles.first());
-        }
-    }
 }
 
 void UBAbstractEditableGraphicsPathItem::mousePressEvent(QGraphicsSceneMouseEvent *event)

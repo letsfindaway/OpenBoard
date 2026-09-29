@@ -1,3 +1,26 @@
+/*
+ * Copyright (C) 2015-2026 Département de l'Instruction Publique (DIP-SEM)
+ * and contributors.
+ *
+ * This file is part of OpenBoard.
+ *
+ * OpenBoard is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3 of the License,
+ * with a specific linking exception for the OpenSSL project's
+ * "OpenSSL" library (or with modified versions of it that use the
+ * same license as the "OpenSSL" library).
+ *
+ * OpenBoard is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OpenBoard. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
 #include "UBAbstractGraphicsItem.h"
 
 #include "domain/UBGraphicsItemDelegate.h"
@@ -129,28 +152,6 @@ void UBAbstractGraphicsItem::setStrokeSize(int size)
     }
 }
 
-void UBAbstractGraphicsItem::setFillPattern(UBAbstractGraphicsItem::FillPattern pattern)
-{
-    mFillPatern = pattern;
-
-    if (hasFillingProperty())
-    {
-        QBrush b = brush();
-        switch (pattern) {
-        case FillPattern_Diag1:
-            b.setTexture(patternDiag());
-            break;
-        case FillPattern_Dot1:
-            b.setTexture(patternPoint());
-            break;
-        default:
-            break;
-        }
-
-        setBrush(b);
-    }
-}
-
 QVariant UBAbstractGraphicsItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     QVariant newValue = value;
@@ -164,76 +165,6 @@ QVariant UBAbstractGraphicsItem::itemChange(GraphicsItemChange change, const QVa
     }
 
     return QAbstractGraphicsShapeItem::itemChange(change, newValue);
-}
-
-QBitmap UBAbstractGraphicsItem::patternPoint()
-{
-    int taillePattern = 10;
-    QImage img(taillePattern, taillePattern, QImage::Format_Mono);
-
-    img.setColor(0, 0);
-    img.setColor(1, 1);
-
-    // Initialize background
-    for(int y=0; y<taillePattern; y++)
-        for(int x=0; x<taillePattern; x++){
-            img.setPixel(x, y, 0);
-        }
-
-    // The dot :
-    img.setPixel(4, 3, 1);
-    img.setPixel(5, 3, 1);
-    img.setPixel(6, 3, 1);
-    img.setPixel(3, 4, 1);
-    img.setPixel(4, 4, 1);
-    img.setPixel(5, 4, 1);
-    img.setPixel(6, 4, 1);
-    img.setPixel(7, 4, 1);
-    img.setPixel(3, 5, 1);
-    img.setPixel(4, 5, 1);
-    img.setPixel(5, 5, 1);
-    img.setPixel(6, 5, 1);
-    img.setPixel(7, 5, 1);
-    img.setPixel(3, 6, 1);
-    img.setPixel(4, 6, 1);
-    img.setPixel(5, 6, 1);
-    img.setPixel(6, 6, 1);
-    img.setPixel(7, 6, 1);
-    img.setPixel(4, 7, 1);
-    img.setPixel(5, 7, 1);
-    img.setPixel(6, 7, 1);
-
-    QBitmap bitmap = QBitmap::fromImage(img);
-
-    return bitmap;
-}
-
-QBitmap UBAbstractGraphicsItem::patternDiag()
-{
-    int taillePattern = 20;
-    QImage img(taillePattern, taillePattern, QImage::Format_Mono);
-
-    img.setColor(0, 0);
-    img.setColor(1, 1);
-
-    // Initialize background :
-    for(int y=0; y<taillePattern; y++)
-        for(int x=0; x<taillePattern; x++){
-            img.setPixel(x, y, 0);
-        }
-
-    // The diagonal :
-    for(int y=0; y<taillePattern; y++){
-        img.setPixel(taillePattern-1-y, y, 1);
-        if (y<taillePattern-1){ // except for last line
-            img.setPixel(taillePattern-2-y, y, 1);
-        }
-    }
-    img.setPixel(taillePattern-1, taillePattern-1, 1);
-
-    QBitmap bitmap = QBitmap::fromImage(img);
-
-    return bitmap;
 }
 
 void UBAbstractGraphicsItem::setStyle(QPainter *painter)
@@ -290,11 +221,6 @@ bool UBAbstractGraphicsItem::hasStrokeProperty() const
     return true || pen() != QPen();
 }
 
-bool UBAbstractGraphicsItem::hasGradient() const
-{
-    return brush().gradient() != NULL;
-}
-
 void UBAbstractGraphicsItem::copyItemParameters(UBItem *copy) const
 {
     UBAbstractGraphicsItem *cp = dynamic_cast<UBAbstractGraphicsItem*>(copy);
@@ -308,16 +234,6 @@ void UBAbstractGraphicsItem::copyItemParameters(UBItem *copy) const
     cp->setFlag(QGraphicsItem::ItemIsSelectable, true);
     cp->setData(UBGraphicsItemData::ItemLayerType, this->data(UBGraphicsItemData::ItemLayerType));
     cp->setData(UBGraphicsItemData::ItemLocked, this->data(UBGraphicsItemData::ItemLocked));
-
-    // if(Delegate()->action()){
-    //     if(Delegate()->action()->linkType() == eLinkToAudio){
-    //         UBGraphicsItemPlayAudioAction* audioAction = dynamic_cast<UBGraphicsItemPlayAudioAction*>(Delegate()->action());
-    //         UBGraphicsItemPlayAudioAction* action = new UBGraphicsItemPlayAudioAction(audioAction->fullPath());
-    //         cp->Delegate()->setAction(action);
-    //     }
-    //     else
-    //         cp->Delegate()->setAction(Delegate()->action());
-    // }
 
     cp->setBrush(brush());
     cp->setPen(pen());

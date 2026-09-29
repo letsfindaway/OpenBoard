@@ -31,7 +31,7 @@ class UBToolbarExtensionPalette : public QWidget
     Q_OBJECT
 
 public:
-    explicit UBToolbarExtensionPalette(QToolBar *toolbar = nullptr, QWidget* parent = nullptr);
+    explicit UBToolbarExtensionPalette(QToolBar* toolbar = nullptr, QWidget* parent = nullptr);
 
     void setSpan(QWidget* from, QWidget* to);
 
@@ -46,4 +46,3 @@ private:
     QWidget* mFromWidget{nullptr};
     bool mToolbarAtTop{true};
 };
-

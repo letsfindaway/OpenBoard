@@ -17,8 +17,6 @@ target_sources(${PROJECT_NAME} PRIVATE
     UBAbstractHandle.h
     UBAbstractHandlesBuilder.cpp
     UBAbstractHandlesBuilder.h
-    UBAlignObjectManager.cpp
-    UBAlignObjectManager.h
     UBDiagonalHandle.cpp
     UBDiagonalHandle.h
     UBEditable.cpp
@@ -33,8 +31,6 @@ target_sources(${PROJECT_NAME} PRIVATE
     UBFreeHandle.h
     UBGraphicsEllipseItem.cpp
     UBGraphicsEllipseItem.h
-    UBGraphicsFreehandItem.cpp
-    UBGraphicsFreehandItem.h
     UBGraphicsLineItem.cpp
     UBGraphicsLineItem.h
     UBGraphicsRectItem.cpp

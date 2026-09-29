@@ -1,3 +1,26 @@
+/*
+ * Copyright (C) 2015-2026 Département de l'Instruction Publique (DIP-SEM)
+ * and contributors.
+ *
+ * This file is part of OpenBoard.
+ *
+ * OpenBoard is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3 of the License,
+ * with a specific linking exception for the OpenSSL project's
+ * "OpenSSL" library (or with modified versions of it that use the
+ * same license as the "OpenSSL" library).
+ *
+ * OpenBoard is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OpenBoard. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
 #pragma once
 
 #include "domain/UBItem.h"
@@ -22,8 +45,6 @@ public:
 
     bool hasStrokeProperty() const;
 
-    bool hasGradient() const;
-
     void setStyle(Qt::PenStyle penStyle);
 
     void setStyle(Qt::BrushStyle brushStyle);
@@ -36,22 +57,12 @@ public:
 
     void setStrokeSize(int size);
 
-    enum FillPattern{   // Warning : those values are persisted. Do NOT change this order. Only add new values at the end of enum.
-        FillPattern_None,
-        FillPattern_Diag1,
-        FillPattern_Dot1
-    };
-
-    FillPattern fillPattern() const {return mFillPatern;}
-    void setFillPattern(FillPattern pattern);
-
     // get the path of the shape in local coordinates
     // Note: shape() in contrast, returns the path of the outline of the shape, including pen width
     virtual QPainterPath painterPath() const = 0;
 
-    void initializeFillingProperty();
-
     void initializeStrokeProperty();
+    void initializeFillingProperty();
 
     //disambiguation from UBGraphicsItem and QabstractGraphicsShapeItem
     virtual int type() const  override = 0;
@@ -69,10 +80,5 @@ protected:
     QRectF adjustBoundingRect(QRectF rect) const;
 
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
-
-private:
-    FillPattern mFillPatern;
-    QBitmap patternPoint();
-    QBitmap patternDiag();
 };
 

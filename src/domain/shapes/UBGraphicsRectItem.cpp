@@ -1,23 +1,25 @@
 /*
- * Copyright (C) 2010-2013 Groupement d'Intérêt Public pour l'Education Numérique en Afrique (GIP ENA)
+ * Copyright (C) 2015-2026 Département de l'Instruction Publique (DIP-SEM)
+ * and contributors.
  *
- * This file is part of Open-Sankoré.
+ * This file is part of OpenBoard.
  *
- * Open-Sankoré is free software: you can redistribute it and/or modify
+ * OpenBoard is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 of the License,
  * with a specific linking exception for the OpenSSL project's
  * "OpenSSL" library (or with modified versions of it that use the
  * same license as the "OpenSSL" library).
  *
- * Open-Sankoré is distributed in the hope that it will be useful,
+ * OpenBoard is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Open-Sankoré.  If not, see <http://www.gnu.org/licenses/>.
+ * along with OpenBoard. If not, see <http://www.gnu.org/licenses/>.
  */
+
 
 #include "UBGraphicsRectItem.h"
 
@@ -145,15 +147,6 @@ void UB3HEditableGraphicsRectItem::updateHandle(UBAbstractHandle *handle)
     getHandle(HandleId::Vertical)->setPos(mWidth/2, mHeight);
     getHandle(HandleId::Diagonal)->setPos(mWidth, mHeight);
     getHandle(HandleId::Stretch)->setPos(mWidth, 0);
-
-    if(hasGradient()){
-        QLinearGradient g(QPointF(), QPointF(mWidth, 0));
-
-        g.setColorAt(0, brush().gradient()->stops().at(0).second);
-        g.setColorAt(1, brush().gradient()->stops().at(1).second);
-
-        setBrush(g);
-    }
 }
 
 QRectF UB3HEditableGraphicsRectItem::boundingRect() const
@@ -184,15 +177,6 @@ void UB3HEditableGraphicsRectItem::setRect(QRectF rect)
 
     mWidth = rect.width();
     mHeight = rect.height();
-
-    if(hasGradient()){
-        QLinearGradient g(QPointF(), QPointF(mWidth, 0));
-
-        g.setColorAt(0, brush().gradient()->stops().at(0).second);
-        g.setColorAt(1, brush().gradient()->stops().at(1).second);
-
-        setBrush(g);
-    }
 }
 
 QRectF UB3HEditableGraphicsRectItem::rect() const

@@ -30,7 +30,7 @@ class UBItemStyle
 public:
     UBItemStyle() = default;
     UBItemStyle(const QColor& lineColorOnLight, const QColor& lineColorOnDark, qreal lineWidth, Qt::PenStyle lineStyle,
-            const QColor& fillColorOnLight, const QColor& fillColorOnDark);
+                const QColor& fillColorOnLight, const QColor& fillColorOnDark);
 
     QColor lineColor(bool isDark) const;
     void setLineColor(const QColor& lineColorOnLight, const QColor& lineColorOnDark);

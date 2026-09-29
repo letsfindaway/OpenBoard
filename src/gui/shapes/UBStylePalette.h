@@ -40,7 +40,8 @@ class UBStylePalette : public UBToolbarExtensionPalette
     Q_OBJECT
 
 public:
-    UBStylePalette(QToolBar* toolBar, UBToolbarButtonGroup* lineColorChoice, UBToolbarButtonGroup* lineWidthChoice, QWidget* parent);
+    UBStylePalette(QToolBar* toolBar, UBToolbarButtonGroup* lineColorChoice, UBToolbarButtonGroup* lineWidthChoice,
+                   QWidget* parent);
     virtual ~UBStylePalette();
 
     UBItemStyle selectedStyle();
@@ -48,7 +49,7 @@ public:
     void updateSelection();
 
 public slots:
-    void switchMode (int tool);
+    void switchMode(int tool);
     void updateChoice(const UBItemStyle& style);
 
 signals:

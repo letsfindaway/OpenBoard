@@ -30,7 +30,6 @@ public:
 
     private:
         void baseAttributesFromSvg(QGraphicsItem* item);
-        void linearGradientFromSvg();
         void getStyleFromSvg(UBAbstractGraphicsItem *item, const QColor &pDefaultPenColor);
         UB3HEditableGraphicsEllipseItem* shapeEllipseFromSvg(const QColor& pDefaultPenColor);
         UB1HEditableGraphicsCircleItem* shapeCircleFromSvg(const QColor &pDefaultPenColor);
@@ -41,7 +40,6 @@ public:
 
     private:
         QXmlStreamReader& mXmlReader;
-        QMap<QString,QLinearGradient> mGradientMap;
     };
 
     class UBSvgShapeWriter : public UBSvgSubsetAdaptor::UBSvgWriterExtension
@@ -58,7 +56,6 @@ public:
         void shapePathToSvg(UBAbstractGraphicsPathItem *item);
         void shapeSquareToSvg(UB1HEditableGraphicsSquareItem *item);
         void shapeCircleToSvg(UB1HEditableGraphicsCircleItem *item);
-        void writeAbstractGraphicsItemGradient(UBAbstractGraphicsItem *item);
         void writeAbstractGraphicsItemStyle(UBAbstractGraphicsItem *item);
 
     private:

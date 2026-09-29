@@ -1,3 +1,26 @@
+/*
+ * Copyright (C) 2015-2026 Département de l'Instruction Publique (DIP-SEM)
+ * and contributors.
+ *
+ * This file is part of OpenBoard.
+ *
+ * OpenBoard is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3 of the License,
+ * with a specific linking exception for the OpenSSL project's
+ * "OpenSSL" library (or with modified versions of it that use the
+ * same license as the "OpenSSL" library).
+ *
+ * OpenBoard is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OpenBoard. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
 #include "UBShapeFactory.h"
 
 #include "UBGraphicsEllipseItem.h"
@@ -5,16 +28,17 @@
 #include "UBGraphicsLineItem.h"
 #include "UBEditableGraphicsRegularShapeItem.h"
 #include "UBEditableGraphicsPolygonItem.h"
-#include "UBGraphicsFreehandItem.h"
 #include "UB1HEditableGraphicsCircleItem.h"
 #include "UB1HEditableGraphicsSquareItem.h"
 
 #include "adaptors/UBSvgShapeAdaptor.h"
-#include "board/UBBoardPaletteManager.h"
-#include "core/UBApplication.h"
+
 #include "board/UBBoardController.h"
+#include "board/UBBoardPaletteManager.h"
 #include "board/UBBoardView.h"
 #include "board/UBDrawingController.h"
+
+#include "core/UBApplication.h"
 
 #include "domain/UBGraphicsItemUndoCommand.h"
 #include "domain/UBGraphicsScene.h"
@@ -26,145 +50,6 @@ UBShapeFactory::UBShapeFactory()
     mShapeActions->setupUi(actionWidget);
 
     UBSvgShapeAdaptor::registerExtension();
-}
-
-void UBShapeFactory::prepareChangeFill()
-{
-   mDrawingController->setStylusTool(UBStylusTool::ChangeFill);
-   mIsRegularShape = false;
-   mIsCreating = false;
-   mShapeType = None;
-}
-
-void UBShapeFactory::changeFillColor(const QPointF& pos)
-{
-    std::shared_ptr<UBGraphicsScene> scene = mBoardView->scene();
-    QGraphicsItem* item = scene->itemAt(pos, QTransform());
-    UBAbstractGraphicsItem* shape = dynamic_cast<UBAbstractGraphicsItem*>(item);
-
-    applyCurrentStyle(shape);
-
-    // Because filling with Bucket doesn't need selection of any item on the board,
-    // we have to explicitly set Scene as Modified.
-    // (because that's Selection of Item that usually set Scene changed)
-    scene->setModified(true);
-}
-
-void UBShapeFactory::applyCurrentStyle(UBAbstractGraphicsItem* shape)
-{
-    if (shape)
-    {
-        if (mFillType == Diag){
-            if (shape->hasFillingProperty()){
-                shape->setStyle(Qt::TexturePattern);
-                shape->setFillPattern(UBAbstractGraphicsItem::FillPattern_Diag1);
-                shape->setFillColor(mCurrentFillFirstColor);
-            }
-        }
-        else if (mFillType == Dense){
-            if (shape->hasFillingProperty()){
-                shape->setStyle(Qt::TexturePattern);
-                shape->setFillPattern(UBAbstractGraphicsItem::FillPattern_Dot1);
-                shape->setFillColor(mCurrentFillFirstColor);
-            }
-        }
-        else if (mFillType == Gradient){
-            if (shape->hasFillingProperty())
-                setGradientFillingProperty(shape);
-        }
-        else{
-            if (shape->hasFillingProperty()){
-                shape->setStyle(mCurrentBrushStyle);
-                shape->setFillColor(mCurrentFillFirstColor);
-            }
-        }
-    }
-}
-
-void UBShapeFactory::returnToCreationMode(QGraphicsItem* item)
-{
-    mDrawingController->setStylusTool(UBStylusTool::Drawing);
-    // UBApplication::mainWindow->actionPolygon->trigger();
-
-    UBEditableGraphicsPolygonItem* polygon = dynamic_cast<UBEditableGraphicsPolygonItem*>(item);
-    if (polygon)
-    {
-        mCurrentShape = polygon;
-        mShapeType = Polygon;
-        mIsRegularShape = false;
-        mIsCreating = true;
-        applyCurrentStyle(polygon);
-
-        if (polygon->isClosed())
-            polygon->reopen();            
-        else
-            polygon->setOpened(false);
-
-        polygon->setIsInCreationMode(true);
-    }
-
-    item->setSelected(false);
-    item->update();
-}
-
-void UBShapeFactory::setGradientFillingProperty(UBAbstractGraphicsItem* shape)
-{
-    QRectF rect = shape->boundingRect();
-
-    QLinearGradient gradient(rect.topLeft(), rect.topRight());
-    gradient.setColorAt(0, mCurrentFillFirstColor);
-    gradient.setColorAt(1, mCurrentFillSecondColor);
-    shape->setBrush(gradient);
-}
-
-UBShapeFactory::FillType UBShapeFactory::fillType()
-{
-    return mFillType;
-}
-
-void UBShapeFactory::setFillType(FillType fillType)
-{
-    mFillType = fillType;
-}
-
-void UBShapeFactory::setStartArrowType(UBAbstractGraphicsPathItem::ArrowType arrowType)
-{
-    mStartArrowType = arrowType;
-
-    auto scene = mBoardView->scene();
-
-    QList<QGraphicsItem*> items = scene->selectedItems();
-
-    for(int i = 0; i < items.size(); i++){
-        UBAbstractGraphicsPathItem * abstractGraphicsPathItem = dynamic_cast<UBAbstractGraphicsPathItem*>(items.at(i));
-
-        if(abstractGraphicsPathItem)
-        {
-            abstractGraphicsPathItem->setStartArrowType(arrowType);
-        }
-
-        items.at(i)->update();
-    }
-}
-
-void UBShapeFactory::setEndArrowType(UBAbstractGraphicsPathItem::ArrowType arrowType)
-{
-    mEndArrowType = arrowType;
-
-    auto scene = mBoardView->scene();
-
-    QList<QGraphicsItem*> items = scene->selectedItems();
-
-    for(int i = 0; i < items.size(); i++){
-        UBAbstractGraphicsPathItem * abstractGraphicsPathItem = dynamic_cast<UBAbstractGraphicsPathItem*>(items.at(i));
-
-        if(abstractGraphicsPathItem)
-        {
-            abstractGraphicsPathItem->setEndArrowType(arrowType);
-        }
-
-        items.at(i)->update();
-    }
 }
 
 void UBShapeFactory::init()
@@ -203,9 +88,6 @@ UBAbstractGraphicsItem* UBShapeFactory::instanciateCurrentShape()
     case Line:
         mCurrentShape = new UBEditableGraphicsLineItem();
         break;
-    case Pen:
-        mCurrentShape = new UBGraphicsFreehandItem();
-        break;
     case Polygon:
         mCurrentShape = new UBEditableGraphicsPolygonItem();
         break;
@@ -216,59 +98,7 @@ UBAbstractGraphicsItem* UBShapeFactory::instanciateCurrentShape()
         break;
     }
 
-    mCurrentShape->setStyle(mCurrentBrushStyle, mCurrentPenStyle);
-
-    if(mCurrentPenStyle == Qt::CustomDashLine){
-        QPen p = mCurrentShape->pen();
-        p.setCapStyle(Qt::RoundCap);
-        p.setDashPattern(mDotDashes);
-        mCurrentShape->setPen(p);
-    }
-
-    if (mFillType == Diag)    {
-        if (mCurrentShape->hasFillingProperty()){
-            mCurrentShape->setStyle(Qt::TexturePattern);
-            mCurrentShape->setFillPattern(UBAbstractGraphicsItem::FillPattern_Diag1);
-            mCurrentShape->setFillColor(mCurrentFillFirstColor);
-        }
-    }
-    else if (mFillType == Dense){
-        if (mCurrentShape->hasFillingProperty()){
-            mCurrentShape->setStyle(Qt::TexturePattern);
-            mCurrentShape->setFillPattern(UBAbstractGraphicsItem::FillPattern_Dot1);
-            mCurrentShape->setFillColor(mCurrentFillFirstColor);
-        }
-    }
-    else if (mFillType == Gradient){
-        if (mCurrentShape->hasFillingProperty()){
-            QRectF rect = mCurrentShape->boundingRect();
-
-            QLinearGradient gradient(rect.topLeft(), rect.topRight());
-
-            gradient.setColorAt(0, mCurrentFillFirstColor);
-
-            gradient.setColorAt(1, mCurrentFillSecondColor);
-
-            mCurrentShape->setBrush(gradient);
-        }
-    }
-    else{
-        if (mCurrentShape->hasFillingProperty()){
-            mCurrentShape->setStyle(mCurrentBrushStyle);
-            mCurrentShape->setFillColor(mCurrentFillFirstColor);
-        }
-    }
-
-    mCurrentShape->setStrokeColor(mCurrentStrokeColor);
-
-    mCurrentShape->setStrokeSize(mThickness);
-
-    UBAbstractGraphicsPathItem * abstractGraphicsPathItem  = dynamic_cast<UBAbstractGraphicsPathItem*>(mCurrentShape);
-    if (abstractGraphicsPathItem)
-    {
-        abstractGraphicsPathItem->setStartArrowType(mStartArrowType);
-        abstractGraphicsPathItem->setEndArrowType(mEndArrowType);
-    }
+    mCurrentShape->applyItemStyle(mShapeStyle, UBApplication::boardController->activeScene()->isDarkBackground());
 
     return mCurrentShape;
 }
@@ -323,17 +153,6 @@ void UBShapeFactory::createLine(bool create)
         mIsRegularShape = true;
         mIsCreating = true;
         mShapeType = Line;
-    }
-}
-
-void UBShapeFactory::createPen(bool create)
-{
-    if(create)
-    {
-        mDrawingController->setStylusTool(UBStylusTool::Drawing);
-        mIsRegularShape = false;
-        mIsCreating = true;
-        mShapeType = Pen;
     }
 }
 
@@ -442,30 +261,10 @@ void UBShapeFactory::onMouseMove(QMouseEvent *event)
                 UBApplication::boardController->setCursorFromAngle(angle, offset);
             }
         }else{
-            if(mShapeType == Pen){
-                UBGraphicsFreehandItem *freeHand = dynamic_cast<UBGraphicsFreehandItem*>(mCurrentShape);
-                if (freeHand)
-                {
-                    QPointF point = event->pos() - freeHand->path().currentPosition();
-
-                    if(point.manhattanLength() > 3){
-                        freeHand->addPoint(cursorPosition);
-                    }
-
-                    mBoundingRect = freeHand->boundingRect();
-                }
-            }else if (mShapeType == RegularPolygon){
+            if (mShapeType == RegularPolygon){
                 UBEditableGraphicsRegularShapeItem* regularPathItem = dynamic_cast<UBEditableGraphicsRegularShapeItem*>(mCurrentShape);
                 regularPathItem->updatePath(cursorPosition);
                 mBoundingRect = regularPathItem->boundingRect();
-            }
-        }
-        if (mCurrentShape)
-        {
-            if (mFillType == Gradient)
-            {
-                if (mCurrentShape->hasFillingProperty())
-                    setGradientFillingProperty(mCurrentShape);
             }
         }
     }
@@ -484,7 +283,8 @@ void UBShapeFactory::onMousePress(QMouseEvent *event)
             cursorPosition += mBoardView->scene()->snap(cursorPosition);
         }
 
-        if(mIsRegularShape){
+        if(mIsRegularShape)
+        {
             if (mShapeType == Ellipse)
             {
                 UB3HEditableGraphicsEllipseItem* ellipse = dynamic_cast<UB3HEditableGraphicsEllipseItem*>(instanciateCurrentShape());
@@ -524,7 +324,9 @@ void UBShapeFactory::onMousePress(QMouseEvent *event)
 
                 mBoardView->scene()->addItem(line);
             }
-        }else{
+        }
+        else
+        {
             if (mShapeType == RegularPolygon)
             {
                 UBEditableGraphicsRegularShapeItem* regularPathItem = dynamic_cast<UBEditableGraphicsRegularShapeItem*>(instanciateCurrentShape());
@@ -535,50 +337,32 @@ void UBShapeFactory::onMousePress(QMouseEvent *event)
             }
             else //Polygon
             {
-                if(mShapeType == Pen){
-                    if(mFirstClickForFreeHand){
-                        UBGraphicsFreehandItem* pathItem = dynamic_cast<UBGraphicsFreehandItem*>(instanciateCurrentShape());
+                UBEditableGraphicsPolygonItem* pathItem = dynamic_cast<UBEditableGraphicsPolygonItem*>(mCurrentShape);
+                if (mCurrentShape == NULL || pathItem == NULL)
+                {
+                    pathItem = dynamic_cast<UBEditableGraphicsPolygonItem*>(instanciateCurrentShape());
+                    mBoardView->scene()->addItem(pathItem);
+                }
+
+                pathItem->addPoint(cursorPosition);
 
 
-                        pathItem->addPoint(cursorPosition);
-
-                        mFirstClickForFreeHand = false;
-
-                        mBoardView->scene()->addItem(pathItem);
-                    }
-                }else{
-                    UBEditableGraphicsPolygonItem* pathItem = dynamic_cast<UBEditableGraphicsPolygonItem*>(mCurrentShape);
-                    if (mCurrentShape == NULL || pathItem == NULL)
+                if (pathItem->isClosed() || pathItem->isOpened())
+                {
+                    if (pathItem->path().elementCount() < 2)
                     {
-                        pathItem = dynamic_cast<UBEditableGraphicsPolygonItem*>(instanciateCurrentShape());
-                        mBoardView->scene()->addItem(pathItem);
+                        mBoardView->scene()->removeItem(pathItem);
+                        delete mCurrentShape;
+                        mCurrentShape = NULL;
                     }
-
-                    pathItem->addPoint(cursorPosition);
-
-
-                    if (pathItem->isClosed() || pathItem->isOpened())
+                    else
                     {
-                        if (pathItem->path().elementCount() < 2)
-                        {
-                            mBoardView->scene()->removeItem(pathItem);
-                            delete mCurrentShape;
-                            mCurrentShape = NULL;
-                        }
-                        else
-                        {
-                            terminateShape();
-                        }
+                        terminateShape();
                     }
                 }
             }
         }
     }
-    else if (mDrawingController->stylusTool() == UBStylusTool::ChangeFill && event->button() == Qt::LeftButton)
-    {
-        changeFillColor(event->scenePosition());
-    }
-
 }
 
 void UBShapeFactory::onMouseRelease(QMouseEvent *event)
@@ -586,7 +370,7 @@ void UBShapeFactory::onMouseRelease(QMouseEvent *event)
     Q_UNUSED(event);
     mIsPress = false;
 
-    UBEditableGraphicsLineItem* line= dynamic_cast<UBEditableGraphicsLineItem*>(mCurrentShape);
+    UBEditableGraphicsLineItem* line = dynamic_cast<UBEditableGraphicsLineItem*>(mCurrentShape);
     if (line)
     {
         if (line->startPoint() == line->endPoint())
@@ -635,27 +419,6 @@ void UBShapeFactory::onMouseRelease(QMouseEvent *event)
         QPointF startPoint = shape->correctStartPoint();
         shape->setStartPoint(startPoint);
     }
-    else if(mShapeType == Pen)
-    {
-        UBGraphicsFreehandItem* freehand = dynamic_cast<UBGraphicsFreehandItem*>(mCurrentShape);
-
-        if (freehand)
-        {
-            if (freehand->path().elementCount() > 2)
-            {
-                QGraphicsEllipseItem poigneeDepart(freehand->mStartEndPoint[0].x()-10, freehand->mStartEndPoint[0].y()-10, 20, 20);
-                if (poigneeDepart.contains(freehand->mStartEndPoint[1]))
-                {
-                    freehand->addPoint(freehand->mStartEndPoint[0]);
-                    freehand->setClosed(true);
-                    applyCurrentStyle(mCurrentShape);
-                }
-                freehand->setIsInCreationMode(false);
-            }
-        }
-
-        mFirstClickForFreeHand = true;
-    }
 
     if (mCurrentShape)
     {
@@ -670,7 +433,6 @@ void UBShapeFactory::onMouseRelease(QMouseEvent *event)
     }
 
     if (mShapeType != Polygon)
-        // mCurrentShape = NULL;
         terminateShape();
 }
 
@@ -739,156 +501,19 @@ void UBShapeFactory::terminateShape()
     }
 
     // Ends the current shape :
-    mCurrentShape = NULL;
+    mCurrentShape = nullptr;
 }
 
 bool UBShapeFactory::isShape(QGraphicsItem *item)
 {
     return item->type() == UBGraphicsItemType::GraphicsShapeItemType
             || item->type() == UBGraphicsItemType::GraphicsPathItemType
-            || item->type() == UBGraphicsItemType::GraphicsRegularPathItemType
-            || item->type() == UBGraphicsItemType::GraphicsFreehandItemType;
-}
-
-void UBShapeFactory::setStrokeStyle(Qt::PenStyle penStyle)
-{
-    mCurrentPenStyle = penStyle;
-
-    auto scene = mBoardView->scene();
-
-    QList<QGraphicsItem*> items = scene->selectedItems();
-
-    for(int i = 0; i < items.size(); i++){
-        UBAbstractGraphicsItem * shape = dynamic_cast<UBAbstractGraphicsItem*>(items.at(i));
-
-        if(shape)
-        {
-            if(penStyle == Qt::CustomDashLine){
-                QPen p = shape->pen();
-                p.setCapStyle(Qt::RoundCap);
-                p.setDashPattern(mDotDashes);
-                shape->setPen(p);
-            }else{
-                shape->setStyle(mCurrentPenStyle);
-            }
-        }
-
-        items.at(i)->update();
-    }
-}
-
-void UBShapeFactory::setThickness(int thickness)
-{
-    mThickness = thickness;
-
-    auto scene = mBoardView->scene();
-
-    QList<QGraphicsItem*> items = scene->selectedItems();
-
-    for(int i = 0; i < items.size(); i++){
-        UBAbstractGraphicsItem * shape = dynamic_cast<UBAbstractGraphicsItem*>(items.at(i));
-
-        if(shape){
-            shape->setStrokeSize(mThickness);
-        }
-
-        items.at(i)->update();
-    }
+            || item->type() == UBGraphicsItemType::GraphicsRegularPathItemType;
 }
 
 void UBShapeFactory::setCurrentStyle(const UBItemStyle& style)
 {
     mShapeStyle = style;
-}
-
-void UBShapeFactory::setStrokeColor(QColor color)
-{
-    mCurrentStrokeColor = color;
-
-    auto scene = mBoardView->scene();
-
-    QList<QGraphicsItem*> items = scene->selectedItems();
-
-    for(int i = 0; i < items.size(); i++){
-        UBAbstractGraphicsItem * shape = dynamic_cast<UBAbstractGraphicsItem*>(items.at(i));
-
-        if(shape)
-        {
-            shape->setStrokeColor(mCurrentStrokeColor);
-        }
-
-        items.at(i)->update();
-    }
-}
-
-QColor UBShapeFactory::strokeColor()
-{
-    return mCurrentStrokeColor;
-}
-
-
-void UBShapeFactory::setFillingFirstColor(QColor color)
-{
-    mCurrentFillFirstColor = color;
-
-    updateFillingPropertyOnSelectedItems();
-}
-
-void UBShapeFactory::setFillingSecondColor(QColor color)
-{
-    mCurrentFillSecondColor = color;
-
-    updateFillingPropertyOnSelectedItems();
-}
-
-void UBShapeFactory::updateFillingPropertyOnSelectedItems()
-{
-    auto scene = mBoardView->scene();
-
-     QList<QGraphicsItem*> items = scene->selectedItems();
-
-     for(int i = 0; i < items.size(); i++)
-     {
-         UBAbstractGraphicsItem * shape = dynamic_cast<UBAbstractGraphicsItem*>(items.at(i));
-
-         if(shape)
-         {
-             if(shape->hasFillingProperty()){
-                 if (mFillType == Gradient)
-                 {
-                     setGradientFillingProperty(shape);
-                 }
-                 else if (mFillType == Diag)
-                 {
-                     shape->setStyle(Qt::TexturePattern);
-                     shape->setFillPattern(UBAbstractGraphicsItem::FillPattern_Diag1);
-                     shape->setFillColor(mCurrentFillFirstColor);
-                 }
-                 else if (mFillType == Dense)
-                 {
-                     shape->setStyle(Qt::TexturePattern);
-                     shape->setFillPattern(UBAbstractGraphicsItem::FillPattern_Dot1);
-                     shape->setFillColor(mCurrentFillFirstColor);
-                 }
-                 else
-                 {
-                     shape->setStyle(mCurrentBrushStyle);
-                     shape->setFillColor(mCurrentFillFirstColor);
-                 }
-             }
-         }
-         items.at(i)->update();
-     }
-}
-
-QColor UBShapeFactory::fillFirstColor()
-{
-    return mCurrentFillFirstColor;
-}
-
-QColor UBShapeFactory::fillSecondColor()
-{
-    return mCurrentFillSecondColor;
 }
 
 void UBShapeFactory::desactivateEditionMode(QGraphicsItem *item)

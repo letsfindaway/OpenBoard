@@ -28,17 +28,19 @@
 #include "core/UBApplication.h"
 #include "core/UBSettings.h"
 #include "domain/UBGraphicsScene.h"
+#include "domain/UBStyledItem.h"
 #include "gui/UBBackgroundManager.h"
 #include "gui/UBMainWindow.h"
 #include "gui/UBToolbarButtonGroup.h"
 
 
-UBStylePalette::UBStylePalette(QToolBar* toolBar, UBToolbarButtonGroup* lineColorChoice, UBToolbarButtonGroup* lineWidthChoice, QWidget* parent)
-      : UBToolbarExtensionPalette(toolBar, parent)
-      , mLineColorChoice{lineColorChoice}
-      , mLineWidthChoice{lineWidthChoice}
-      , mLineColorActions{lineColorChoice->buttonActions()}
-      , mLineWidthActions{lineWidthChoice->buttonActions()}
+UBStylePalette::UBStylePalette(QToolBar* toolBar, UBToolbarButtonGroup* lineColorChoice,
+                               UBToolbarButtonGroup* lineWidthChoice, QWidget* parent)
+    : UBToolbarExtensionPalette(toolBar, parent)
+    , mLineColorChoice{lineColorChoice}
+    , mLineWidthChoice{lineWidthChoice}
+    , mLineColorActions{lineColorChoice->buttonActions()}
+    , mLineWidthActions{lineWidthChoice->buttonActions()}
 {
     init();
 
@@ -46,26 +48,33 @@ UBStylePalette::UBStylePalette(QToolBar* toolBar, UBToolbarButtonGroup* lineColo
             &UBStylePalette::updateColorPalette);
     connect(UBApplication::boardController, &UBBoardController::activeSceneChanged, this,
             &UBStylePalette::updateColorPalette);
-    connect(UBDrawingController::drawingController(), &UBDrawingController::stylusToolChanged, this, &UBStylePalette::switchMode);
+    connect(UBDrawingController::drawingController(), &UBDrawingController::stylusToolChanged, this,
+            &UBStylePalette::switchMode);
 
     connect(UBSettings::settings(), &UBSettings::colorContextChanged, this, &UBStylePalette::colorContextChanged);
 
     connect(this, &UBStylePalette::styleChanged, this, &UBStylePalette::updatePreview);
-    connect(this, &UBStylePalette::styleChanged, this, [](UBItemStyle style){
-        if (UBApplication::boardController->activeScene())
-        {
-            UBApplication::boardController->activeScene()->applyStyle(style);
-        }
-    });
+    connect(this, &UBStylePalette::styleChanged, this,
+            [](UBItemStyle style)
+            {
+                if (UBApplication::boardController->activeScene())
+                {
+                    UBApplication::boardController->activeScene()->applyStyle(style);
+                }
+            });
 
     auto settings = UBSettings::settings();
 
-    const auto lineColorOnLight = QColor::fromString(settings->value("Board/StyleLineColorOnLight", "black").toString());
+    const auto lineColorOnLight =
+        QColor::fromString(settings->value("Board/StyleLineColorOnLight", "black").toString());
     const auto lineColorOnDark = QColor::fromString(settings->value("Board/StyleLineColorOnDark", "white").toString());
     const auto lineWidth = settings->value("Board/StyleLineWidth", 3.).toDouble();
-    const auto lineStyle = settings->value("Board/StyleLineStyle", static_cast<int>(Qt::SolidLine)).value<Qt::PenStyle>();
-    const auto fillColorOnLight = QColor::fromString(settings->value("Board/StyleFillColorOnLight", "transparent").toString());
-    const auto fillColorOnDark = QColor::fromString(settings->value("Board/StyleFillColorOnDark", "transparent").toString());
+    const auto lineStyle =
+        settings->value("Board/StyleLineStyle", static_cast<int>(Qt::SolidLine)).value<Qt::PenStyle>();
+    const auto fillColorOnLight =
+        QColor::fromString(settings->value("Board/StyleFillColorOnLight", "transparent").toString());
+    const auto fillColorOnDark =
+        QColor::fromString(settings->value("Board/StyleFillColorOnDark", "transparent").toString());
 
     mStyle = UBItemStyle{lineColorOnLight, lineColorOnDark, lineWidth, lineStyle, fillColorOnLight, fillColorOnDark};
     updateChoice(mStyle);
@@ -75,7 +84,8 @@ UBStylePalette::~UBStylePalette()
 {
     auto settings = UBSettings::settings();
 
-    const auto colorToString = [](const QColor& color){
+    const auto colorToString = [](const QColor& color)
+    {
         if (color.isValid())
         {
             return color.name(QColor::HexArgb);
@@ -110,42 +120,46 @@ void UBStylePalette::updateSelection()
 
     mUpdateTriggered = true;
 
-    QTimer::singleShot(0, this, [this](){
-        // compute common style of selected styled items
-        const auto selectedItems = UBApplication::boardController->activeScene()->selectedStyledItems();
-        bool selectionContainsShape{false};
-        bool selectionOnlyContainsMarker{true};
-
-        if (!selectedItems.isEmpty())
+    QTimer::singleShot(
+        0, this,
+        [this]()
         {
-            UBItemStyle commonStyle = (*selectedItems.begin())->itemStyle();
+            // compute common style of selected styled items
+            const auto selectedItems = UBApplication::boardController->activeScene()->selectedStyledItems();
+            bool selectionContainsShape{false};
+            bool selectionOnlyContainsMarker{true};
 
-            for (const auto item : selectedItems)
+            if (!selectedItems.isEmpty())
             {
-                commonStyle = commonStyle.intersected(item->itemStyle());
-                selectionContainsShape |= item->isShape();
-                selectionOnlyContainsMarker &= item->isMarker();
+                UBItemStyle commonStyle = (*selectedItems.begin())->itemStyle();
+
+                for (const auto item : selectedItems)
+                {
+                    commonStyle = commonStyle.intersected(item->itemStyle());
+                    selectionContainsShape |= item->isShape();
+                    selectionOnlyContainsMarker &= item->isMarker();
+                }
+
+                mLineColorChoice->colorPaletteChanged(selectionOnlyContainsMarker ? UBStylusTool::Marker
+                                                                                  : UBStylusTool::Pen);
+                updateChoice(commonStyle);
+
+                if (selectionOnlyContainsMarker)
+                {
+                    mLineColorChoice->setLabel(tr("Marker Color"));
+                }
+                else
+                {
+                    mLineColorChoice->setLabel(tr("Line Color"));
+                }
+
+                mLineColorChoice->update();
             }
 
-            mLineColorChoice->colorPaletteChanged(selectionOnlyContainsMarker ? UBStylusTool::Marker : UBStylusTool::Pen);
-            updateChoice(commonStyle);
-
-            if (selectionOnlyContainsMarker)
-            {
-                mLineColorChoice->setLabel(tr("Marker Color"));
-            }
-            else
-            {
-                mLineColorChoice->setLabel(tr("Line Color"));
-            }
-
-            mLineColorChoice->update();
-        }
-
-        setVisible(selectionContainsShape);
-        mLineWidthChoice->setEnabled(selectionContainsShape || mLineWidthChoice->currentIndex() >= 0);
-        mUpdateTriggered = false;
-    });
+            setVisible(selectionContainsShape);
+            mLineWidthChoice->setEnabled(selectionContainsShape || mLineWidthChoice->currentIndex() >= 0);
+            mUpdateTriggered = false;
+        });
 }
 
 void UBStylePalette::switchMode(int tool)
@@ -211,10 +225,9 @@ void UBStylePalette::updateChoice(const UBItemStyle& style)
 
     QList<bool> matchWidth;
 
-    matchWidth
-            << qFuzzyCompare(width, settings->boardPenFineWidth->get().toDouble())
-            << qFuzzyCompare(width, settings->boardPenMediumWidth->get().toDouble())
-            << qFuzzyCompare(width, settings->boardPenStrongWidth->get().toDouble());
+    matchWidth << qFuzzyCompare(width, settings->boardPenFineWidth->get().toDouble())
+               << qFuzzyCompare(width, settings->boardPenMediumWidth->get().toDouble())
+               << qFuzzyCompare(width, settings->boardPenStrongWidth->get().toDouble());
 
     mLineWidthChoice->setCurrentIndex(matchWidth.indexOf(true));
 
@@ -230,8 +243,9 @@ void UBStylePalette::updateChoice(const UBItemStyle& style)
         {
             const auto color = action->property("color").value<QVariantList>();
             // convert to strings to avoid mismatch caused by rounding errors
-            const auto match = color.at(0).value<QColor>().name(QColor::HexArgb) == style.fillColor(false).name(QColor::HexArgb) &&
-                               color.at(1).value<QColor>().name(QColor::HexArgb) == style.fillColor(true).name(QColor::HexArgb);
+            const auto match =
+                color.at(0).value<QColor>().name(QColor::HexArgb) == style.fillColor(false).name(QColor::HexArgb) &&
+                color.at(1).value<QColor>().name(QColor::HexArgb) == style.fillColor(true).name(QColor::HexArgb);
             action->setChecked(match);
         }
     }
@@ -255,8 +269,7 @@ void UBStylePalette::init()
                         const auto color = sender()->property("color").value<QVariantList>();
 
                         auto newStyle = mStyle;
-                        newStyle.setLineColor(color.at(0).value<QColor>(),
-                                              color.at(1).value<QColor>());
+                        newStyle.setLineColor(color.at(0).value<QColor>(), color.at(1).value<QColor>());
                         applyStyle(newStyle);
                     });
         }
@@ -349,8 +362,7 @@ void UBStylePalette::init()
                 {
                     auto color = sender()->property("color").value<QVariantList>();
                     auto newStyle = mStyle;
-                    newStyle.setFillColor(color.at(0).value<QColor>(),
-                                          color.at(1).value<QColor>());
+                    newStyle.setFillColor(color.at(0).value<QColor>(), color.at(1).value<QColor>());
                     applyStyle(newStyle);
                 });
     }
@@ -538,7 +550,8 @@ void UBStylePalette::updateButtonColors()
     const auto solidColorsOnLight = settings->penColors(false);
     const auto solidColorsOnDark = settings->penColors(true);
 
-    mLineColorChoice->colorPaletteChanged(static_cast<UBStylusTool::Enum>(UBDrawingController::drawingController()->stylusTool()));
+    mLineColorChoice->colorPaletteChanged(
+        static_cast<UBStylusTool::Enum>(UBDrawingController::drawingController()->stylusTool()));
     mSolidFillColorChoice->colorPaletteChanged(UBStylusTool::Pen);
     mTransparentFillColorChoice->colorPaletteChanged(UBStylusTool::Marker);
 

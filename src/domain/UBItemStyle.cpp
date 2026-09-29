@@ -24,8 +24,8 @@
 #include "UBItemStyle.h"
 
 
-UBItemStyle::UBItemStyle(const QColor& lineColorOnLight, const QColor& lineColorOnDark, qreal lineWidth, Qt::PenStyle lineStyle,
-                 const QColor& fillColorOnLight, const QColor& fillColorOnDark)
+UBItemStyle::UBItemStyle(const QColor& lineColorOnLight, const QColor& lineColorOnDark, qreal lineWidth,
+                         Qt::PenStyle lineStyle, const QColor& fillColorOnLight, const QColor& fillColorOnDark)
     : mLineColor{lineColorOnLight, lineColorOnDark}
     , mLineWidth{lineWidth}
     , mLineStyle{lineStyle}
@@ -78,7 +78,7 @@ UBItemStyle UBItemStyle::intersected(const UBItemStyle& other)
     const auto lineColorOnLight = lineColor(false) == other.lineColor(false) ? lineColor(false) : QColor{};
     const auto lineColorOnDark = lineColor(true) == other.lineColor(true) ? lineColor(true) : QColor{};
     const auto lineWidth = qFuzzyCompare(this->lineWidth(), other.lineWidth()) ? this->lineWidth() : 0;
-    const auto lineStyle = this->lineStyle() == other.lineStyle() ? this->lineStyle() :  Qt::NoPen;
+    const auto lineStyle = this->lineStyle() == other.lineStyle() ? this->lineStyle() : Qt::NoPen;
     const auto fillColorOnLight = fillColor(false) == other.fillColor(false) ? fillColor(false) : QColor{};
     const auto fillColorOnDark = fillColor(true) == other.fillColor(true) ? fillColor(true) : QColor{};
 
