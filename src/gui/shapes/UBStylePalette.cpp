@@ -156,7 +156,7 @@ void UBStylePalette::updateSelection()
                 mLineColorChoice->update();
             }
 
-            setVisible(selectionContainsShape);
+            setVisible(selectionContainsShape || mMode == UBStylusTool::Drawing);
             mLineWidthChoice->setEnabled(selectionContainsShape || mLineWidthChoice->currentIndex() >= 0);
             mUpdateTriggered = false;
         });
@@ -250,7 +250,7 @@ void UBStylePalette::updateChoice(const UBItemStyle& style)
         }
     }
 
-    updatePreview();
+    updatePreview(style);
 }
 
 void UBStylePalette::init()
@@ -537,7 +537,7 @@ QPixmap UBStylePalette::createPreview(const UBItemStyle& style) const
 void UBStylePalette::updateColorPalette()
 {
     updateButtonColors();
-    updatePreview();
+    updatePreview(mStyle);
     mSavedPreviewLabel->setPixmap(createPreview(mSavedStyle));
 }
 
@@ -562,9 +562,9 @@ void UBStylePalette::updateButtonColors()
     mTransparentFillColorChoice->setSelectableCount(transparentIndex + 1); // + 1 for transparent fill
 }
 
-void UBStylePalette::updatePreview()
+void UBStylePalette::updatePreview(const UBItemStyle& style)
 {
-    const auto previewPixmap = createPreview(mStyle);
+    const auto previewPixmap = createPreview(style);
     mCurrentPreviewLabel->setPixmap(previewPixmap);
 }
 

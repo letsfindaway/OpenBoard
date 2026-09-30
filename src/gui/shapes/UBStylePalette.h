@@ -64,7 +64,7 @@ private:
 private slots:
     void updateColorPalette();
     void updateButtonColors();
-    void updatePreview();
+    void updatePreview(const UBItemStyle& style);
     void colorContextChanged();
     void applyStyle(const UBItemStyle& style);
     void saveStyle();
