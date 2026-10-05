@@ -403,11 +403,7 @@ void UBBoardController::setupToolbar()
 
     // Setup style palette as toolbar extension
     mStylePalette = new UBStylePalette(mMainWindow->boardToolBar, mColorChoice, lineWidthChoice, mMainWindow);
-
-    QTimer::singleShot(300, [this](){
-        // defer positioning until toolbar is completely rendered
-        mStylePalette->setSpan(mColorChoice, mColorChoice);
-    });
+    mStylePalette->setSpan(mColorChoice, mColorChoice);
 
     //-----------------------------------------------------------//
     // Setup eraser width choice widget

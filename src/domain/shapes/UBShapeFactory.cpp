@@ -364,9 +364,7 @@ void UBShapeFactory::onMousePress(QMouseEvent* event)
                 {
                     if (pathItem->path().elementCount() < 2)
                     {
-                        mBoardView->scene()->removeItem(pathItem);
-                        delete mCurrentShape;
-                        mCurrentShape = NULL;
+                        discardCurrentShape();
                     }
                     else
                     {
@@ -384,13 +382,12 @@ void UBShapeFactory::onMouseRelease(QMouseEvent* event)
     mIsPress = false;
 
     UBEditableGraphicsLineItem* line = dynamic_cast<UBEditableGraphicsLineItem*>(mCurrentShape);
+
     if (line)
     {
         if (line->startPoint() == line->endPoint())
         {
-            mBoardView->scene()->removeItem(line);
-            delete mCurrentShape;
-            mCurrentShape = nullptr;
+            discardCurrentShape();
         }
     }
     else if (mShapeType == Rectangle)
@@ -440,9 +437,7 @@ void UBShapeFactory::onMouseRelease(QMouseEvent* event)
 
     if (!mCursorMoved && mCurrentShape && mShapeType != Polygon)
     {
-        mBoardView->scene()->removeItem(mCurrentShape);
-        delete mCurrentShape;
-        mCurrentShape = nullptr;
+        discardCurrentShape();
     }
 
     if (mShapeType != Polygon)
@@ -491,6 +486,15 @@ void UBShapeFactory::desactivate()
     mIsCreating = false;
     mCurrentShape = NULL;
     mShapeType = None;
+}
+
+void UBShapeFactory::discardCurrentShape()
+{
+    // the scene keeps removed items for a later deletion: unregister the shape before deleting it here
+    mBoardView->scene()->removeItem(mCurrentShape);
+    mBoardView->scene()->removeItemFromDeletion(mCurrentShape);
+    delete mCurrentShape;
+    mCurrentShape = nullptr;
 }
 
 void UBShapeFactory::terminateShape()

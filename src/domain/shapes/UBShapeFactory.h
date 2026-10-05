@@ -82,6 +82,7 @@ public slots:
 
     void desactivate();
     void terminateShape();
+    void discardCurrentShape();
 
     void setCurrentStyle(const UBItemStyle& style);
 

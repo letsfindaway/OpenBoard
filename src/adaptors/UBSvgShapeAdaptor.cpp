@@ -112,7 +112,7 @@ void UBSvgShapeAdaptor::UBSvgShapeReader::readerExtension(std::shared_ptr<UBGrap
             scene->addItem(item);
         }
     }
-    else if (mXmlReader.name() == "polyline")
+    else if (name == "polyline")
     {
         QStringView s = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri,
                                                       "shapePath"); // EV-7 - ALTI/AOU - 20140102

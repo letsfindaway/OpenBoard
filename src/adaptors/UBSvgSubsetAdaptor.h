@@ -88,18 +88,21 @@ class UBSvgSubsetAdaptor
         class UBSvgReaderExtension
         {
         public:
+            virtual ~UBSvgReaderExtension() = default;
             virtual void readerExtension(std::shared_ptr<UBGraphicsScene> scene) = 0;
         };
 
         class UBSvgWriterExtension
         {
         public:
+            virtual ~UBSvgWriterExtension() = default;
             virtual void writerExtension(QGraphicsItem* item) = 0;
         };
 
         class UBSvgAdaptorExtension
         {
         public:
+            virtual ~UBSvgAdaptorExtension() = default;
             virtual UBSvgReaderExtension* createSvgReaderExtension(QXmlStreamReader& xmlReader) = 0;
             virtual UBSvgWriterExtension* createSvgWriterExtension(QXmlStreamWriter& xmlWriter) = 0;
         };

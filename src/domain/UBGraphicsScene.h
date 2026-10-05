@@ -33,6 +33,7 @@
 
 #include "domain/UBGraphicsItemUndoCommand.h"
 #include "domain/UBItemStyle.h"
+#include "domain/UBStyledItem.h"
 #include "frameworks/UBCoreGraphicsScene.h"
 
 #include "core/UB.h"
@@ -63,7 +64,6 @@ class UBGraphicsCache;
 class UBGraphicsGroupContainerItem;
 class UBMediaAssetItem;
 class UBSelectionFrame;
-class UBStyledItem;
 class UBBoardView;
 
 const double PI = 4.0 * atan(1.0);

@@ -89,9 +89,28 @@ void UBToolbarExtensionPalette::paintEvent(QPaintEvent* event)
     }
 }
 
+void UBToolbarExtensionPalette::showEvent(QShowEvent* event)
+{
+    // toolbar and main window may not have had their final geometry when the span was set
+    updatePosition(UBSettings::settings()->appToolBarPositionedAtTop->get());
+    QWidget::showEvent(event);
+}
+
+void UBToolbarExtensionPalette::resizeEvent(QResizeEvent* event)
+{
+    // with the toolbar at the bottom, the position depends on the height of the palette
+    updatePosition(UBSettings::settings()->appToolBarPositionedAtTop->get());
+    QWidget::resizeEvent(event);
+}
+
 void UBToolbarExtensionPalette::updatePosition(QVariant atTop)
 {
     mToolbarAtTop = atTop.toBool();
+
+    if (!mFromWidget)
+    {
+        return;
+    }
 
     QPoint pos{mFromWidget->pos().x(), mToolBar->height() - topOverlap};
 
