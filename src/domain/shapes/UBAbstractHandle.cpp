@@ -23,7 +23,7 @@
 
 #include "UBAbstractHandle.h"
 
-#include "UBEditable.h"
+#include "UBAbstractEditable.h"
 #include "domain/UBGraphicsScene.h"
 
 UBAbstractHandle::UBAbstractHandle()
@@ -33,8 +33,8 @@ UBAbstractHandle::UBAbstractHandle()
     mRadius = 7;
     mEditableObject = 0;
 
-    //setUuid(QUuid::createUuid());
-    setData(UBGraphicsItemData::itemLayerType, QVariant(itemLayerType::ObjectItem)); //Necessary to set if we want z value to be assigned correctly
+    setData(UBGraphicsItemData::itemLayerType,
+            QVariant(itemLayerType::ObjectItem)); // Necessary to set if we want z value to be assigned correctly
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, false);
     setFlag(QGraphicsItem::ItemIsSelectable, false);
     setFlag(QGraphicsItem::ItemIsMovable, true);
@@ -53,34 +53,36 @@ UBAbstractHandle::UBAbstractHandle(UBAbstractHandle* const src)
     setData(UBGraphicsItemData::itemLayerType, src->data(UBGraphicsItemData::itemLayerType));
 }
 
-void UBAbstractHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void UBAbstractHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     QGraphicsItem::mouseMoveEvent(event);
 
-    if(mEditableObject){
+    if (mEditableObject)
+    {
         mEditableObject->updateHandle(this);
         mEditableObject->setModified();
     }
 }
 
-void UBAbstractHandle::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void UBAbstractHandle::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     mClick = true;
     QGraphicsItem::mousePressEvent(event);
 
-    if(mEditableObject){
+    if (mEditableObject)
+    {
         mEditableObject->focusHandle(this);
     }
 }
 
-void UBAbstractHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void UBAbstractHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     mClick = false;
     QGraphicsItem::mouseReleaseEvent(event);
 }
 
 
-void UBAbstractHandle::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void UBAbstractHandle::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     QBrush brush(Qt::white);
 
@@ -92,12 +94,13 @@ void UBAbstractHandle::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     pen.setWidth(2.);
     painter->setPen(pen);
 
-    painter->drawEllipse(-mRadius, -mRadius, mRadius*2, mRadius*2);
+    painter->drawEllipse(-mRadius, -mRadius, mRadius * 2, mRadius * 2);
 }
 
 QRectF UBAbstractHandle::boundingRect() const
 {
-    int d = mRadius*2, x = -mRadius;
+    int d = mRadius * 2;
+    int x = -mRadius;
     int y = x;
 
     return QRectF(x, y, d, d);

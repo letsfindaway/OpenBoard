@@ -21,66 +21,40 @@
  */
 
 
-#ifndef UBABSTRACTSUBPALETTE_H
-#define UBABSTRACTSUBPALETTE_H
+#pragma once
 
 #include "gui/UBActionPalette.h"
+
 #include <QAction>
 
 class UBAbstractSubPalette : public UBActionPalette
 {
-    public :
-        UBAbstractSubPalette(QWidget *parent = 0, Qt::Orientation orient = Qt::Vertical);
-        UBAbstractSubPalette(Qt::Orientation orient, QWidget *parent = 0 );
+public:
+    UBAbstractSubPalette(QWidget* parent = nullptr, Qt::Orientation orient = Qt::Vertical);
+    UBAbstractSubPalette(Qt::Orientation orient, QWidget* parent = nullptr);
 
-        virtual void togglePalette();
-        QAction* mainAction() { return actions().at(mMainAction); }
+    virtual void togglePalette();
+    QAction* mainAction();
 
-        UBActionPaletteButton * actionPaletteButtonParent() const {return mActionPaletteButtonParent;}
-        void setActionPaletteButtonParent(UBActionPaletteButton * button){mActionPaletteButtonParent = button;}
+    UBActionPaletteButton* actionPaletteButtonParent() const;
+    void setActionPaletteButtonParent(UBActionPaletteButton* button);
 
-        virtual void triggerAction(QAction * action);
+    virtual void triggerAction(QAction* action);
 
-    protected :
-        int mMainAction;
-
-        UBActionPaletteButton * mActionPaletteButtonParent; // button that opened this subPalette.
-
-        // QWidget interface
 protected:
-        virtual void focusOutEvent(QFocusEvent *);
-        virtual void mouseMoveEvent(QMouseEvent *);
+    int mMainAction;
 
-        // EV-7 - CFA - 20140127 : ...
-        //unable to use Uniboard.css for custom classes, even with overiding paintEvent as Qt recommands...
-        //use .css and setObjectName should be preferable, but no more time, and not enough knowledge...
-        static const QString styleSheetLeftGroupedButton;
-        static const QString styleSheetCenterGroupedButton;
-        static const QString styleSheetRightGroupedButton;
-};
-
-class UBColorPickerButton : public QToolButton
-{
-    public:
-        UBColorPickerButton(QWidget * parent = 0);
-
-        QColor color() const {return mColor;}
-        void setColor(QColor color) {mColor = color;}
-
-        static const int iconSize = 32;
+    UBActionPaletteButton* mActionPaletteButtonParent; // button that opened this subPalette.
 
     // QWidget interface
-    protected:
-        virtual void paintEvent(QPaintEvent * pe);
+protected:
+    virtual void focusOutEvent(QFocusEvent*) override;
+    virtual void mouseMoveEvent(QMouseEvent*) override;
 
-    private:
-        QColor mColor;
-
-        static const int margin_left = 2;
-        static const int margin_top = 5;
-        static const int width = 20;
-        static const int height = 16;
+    // EV-7 - CFA - 20140127 : ...
+    // unable to use Uniboard.css for custom classes, even with overiding paintEvent as Qt recommands...
+    // use .css and setObjectName should be preferable, but no more time, and not enough knowledge...
+    static const QString styleSheetLeftGroupedButton;
+    static const QString styleSheetCenterGroupedButton;
+    static const QString styleSheetRightGroupedButton;
 };
-
-
-#endif // UBABSTRACTSUBPALETTE_H

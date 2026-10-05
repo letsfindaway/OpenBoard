@@ -21,7 +21,7 @@
  */
 
 
-#include "UBEditable.h"
+#include "UBAbstractEditable.h"
 
 #include "UBHorizontalHandle.h"
 
@@ -40,10 +40,11 @@ UBHorizontalHandle::UBHorizontalHandle(UBHorizontalHandle* const src):
 void UBHorizontalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     auto scenePos = event->scenePos();
+    std::shared_ptr<UBGraphicsScene> scenePtr = scene();
 
-    if (scene()->isSnapping())
+    if (scenePtr->isSnapping())
     {
-        scenePos += scene()->snap(scenePos);
+        scenePos += scenePtr->snap(scenePos);
     }
 
     QPointF p = parentItem()->mapFromScene(scenePos);

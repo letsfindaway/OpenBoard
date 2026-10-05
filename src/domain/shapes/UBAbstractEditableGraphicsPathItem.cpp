@@ -23,23 +23,23 @@
 
 #include "UBAbstractEditableGraphicsPathItem.h"
 
-UBAbstractEditableGraphicsPathItem::UBAbstractEditableGraphicsPathItem(QGraphicsItem *parent):
-    UBAbstractGraphicsPathItem(parent)
+UBAbstractEditableGraphicsPathItem::UBAbstractEditableGraphicsPathItem(QGraphicsItem* parent)
+    : UBAbstractGraphicsPathItem(parent)
 {
     mHasMoved = false;
 }
 
 void UBAbstractEditableGraphicsPathItem::onActivateEditionMode()
 {
-    //NOOP
+    // NOOP
 }
 
-void UBAbstractEditableGraphicsPathItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void UBAbstractEditableGraphicsPathItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     mHasMoved = false;
 }
 
-void UBAbstractEditableGraphicsPathItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void UBAbstractEditableGraphicsPathItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     prepareGeometryChange();
 
@@ -73,7 +73,8 @@ QRectF UBAbstractEditableGraphicsPathItem::boundingRect() const
 
     rect = UBAbstractGraphicsPathItem::adjustBoundingRect(rect);
 
-    if(isInEditMode()){
+    if (isInEditMode())
+    {
         qreal r = mHandles.first()->radius();
 
         rect.adjust(-r, -r, r, r);
@@ -82,19 +83,20 @@ QRectF UBAbstractEditableGraphicsPathItem::boundingRect() const
     return rect;
 }
 
-void UBAbstractEditableGraphicsPathItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void UBAbstractEditableGraphicsPathItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if (!Delegate()->isLocked())
     {
         mHasMoved = true;
 
-        if(!isInEditMode()){
+        if (!isInEditMode())
+        {
             Delegate()->mouseMoveEvent(event);
         }
     }
 }
 
-void UBAbstractEditableGraphicsPathItem::focusOutEvent(QFocusEvent *event)
+void UBAbstractEditableGraphicsPathItem::focusOutEvent(QFocusEvent* event)
 {
     Q_UNUSED(event)
 
@@ -105,7 +107,7 @@ void UBAbstractEditableGraphicsPathItem::focusOutEvent(QFocusEvent *event)
     }
 }
 
-void UBAbstractEditableGraphicsPathItem::focusHandle(UBAbstractHandle *handle)
+void UBAbstractEditableGraphicsPathItem::focusHandle(UBAbstractHandle* handle)
 {
     Q_UNUSED(handle)
 
@@ -122,10 +124,14 @@ void UBAbstractEditableGraphicsPathItem::deactivateEditionMode()
 QPainterPath UBAbstractEditableGraphicsPathItem::shape() const
 {
     QPainterPath path;
-    if(isInEditMode()){
+
+    if (isInEditMode())
+    {
         path.addRect(boundingRect());
         return path;
-    }else{
+    }
+    else
+    {
         return this->path();
     }
 }

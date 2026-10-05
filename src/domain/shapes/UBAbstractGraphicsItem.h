@@ -30,11 +30,14 @@
 
 #include <QAbstractGraphicsShapeItem>
 
-class UBAbstractGraphicsItem : public UBItem, public UBGraphicsItem, public QAbstractGraphicsShapeItem, public UBStyledItem
+class UBAbstractGraphicsItem
+    : public UBItem
+    , public UBGraphicsItem
+    , public QAbstractGraphicsShapeItem
+    , public UBStyledItem
 {
 public:
-    UBAbstractGraphicsItem(QGraphicsItem *parent = 0);
-
+    UBAbstractGraphicsItem(QGraphicsItem* parent = nullptr);
     virtual ~UBAbstractGraphicsItem();
 
     virtual void applyItemStyle(const UBItemStyle& style, bool isDark) override;
@@ -47,15 +50,13 @@ public:
 
     void setStyle(Qt::PenStyle penStyle);
 
-    void setStyle(Qt::BrushStyle brushStyle);
-
     void setStyle(Qt::BrushStyle brushStyle, Qt::PenStyle penStyle);
 
     void setFillColor(const QColor& color);
 
     void setStrokeColor(const QColor& color);
 
-    void setStrokeSize(int size);
+    void setStrokeWidth(double width);
 
     // get the path of the shape in local coordinates
     // Note: shape() in contrast, returns the path of the outline of the shape, including pen width
@@ -64,21 +65,23 @@ public:
     void initializeStrokeProperty();
     void initializeFillingProperty();
 
-    //disambiguation from UBGraphicsItem and QabstractGraphicsShapeItem
-    virtual int type() const  override = 0;
+    // disambiguation from UBGraphicsItem and QabstractGraphicsShapeItem
+    virtual int type() const override = 0;
 
-    //must be define, because the delegate use it
-    virtual QRectF boundingRect() const  override { return QRect(); }
+    // must be defined, because the delegate use it
+    virtual QRectF boundingRect() const override
+    {
+        return QRect();
+    }
 
-    virtual void copyItemParameters(UBItem *copy) const  override;
+    virtual void copyItemParameters(UBItem* copy) const override;
 
     virtual std::shared_ptr<UBGraphicsScene> scene() override;
 
 protected:
-    void setStyle(QPainter *painter);
+    void setStyle(QPainter* painter);
 
     QRectF adjustBoundingRect(QRectF rect) const;
 
-    QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+    QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 };
-

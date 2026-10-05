@@ -35,17 +35,19 @@ public:
     UBEditShapeUndoCommand(UBAbstractGraphicsItem* item);
     virtual ~UBEditShapeUndoCommand();
 
-    virtual int getType() const { return UBUndoType::undotype_EDITSHAPE; }
+    virtual int getType() const override
+    {
+        return UBUndoType::undotype_EDITSHAPE;
+    }
 
     void recordEditedItem();
 
 protected:
-    virtual void undo();
-    virtual void redo();
+    virtual void undo() override;
+    virtual void redo() override;
 
 private:
     UBAbstractGraphicsItem* mItem{nullptr};
     UBAbstractGraphicsItem* mItemBefore{nullptr};
     UBAbstractGraphicsItem* mItemAfter{nullptr};
 };
-

@@ -23,19 +23,45 @@
 
 #pragma once
 
-#include "UBAbstractHandle.h"
+#include "UBEditableGraphicsPolygonItem.h"
 
-class UBFreeHandle : public UBAbstractHandle
+class UBEditableGraphicsLineItem : public UBEditableGraphicsPolygonItem
 {
 public:
-    UBFreeHandle();
-    UBFreeHandle(UBFreeHandle* const src);
+    UBEditableGraphicsLineItem(QGraphicsItem* parent = nullptr);
+    virtual ~UBEditableGraphicsLineItem();
 
-    UBItem* deepCopy() const override;
+    enum
+    {
+        Type = UBGraphicsItemType::GraphicsShapeItemType
+    };
+
+    virtual int type() const override
+    {
+        return Type;
+    }
+
+    virtual UBItem* deepCopy() const override;
+
+    QPointF startPoint() const;
+    QPointF endPoint() const;
+
+    void setStartPoint(QPointF pos);
+    void setEndPoint(QPointF pos);
+
+    // QGraphicsItem interface
+    virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+
+    void updateHandle(UBAbstractHandle* handle) override;
+
+    void setLine(QPointF start, QPointF end);
+
+    void onActivateEditionMode() override;
+
+    QRectF boundingRect() const override;
+    QPainterPath shape() const override;
+
     void copyItemParameters(UBItem* copy) const override;
 
-protected:
-    void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
-    void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
+    virtual void addPoint(const QPointF& point) override;
 };

@@ -23,7 +23,7 @@
 
 #include "UBDiagonalHandle.h"
 
-#include "UBEditable.h"
+#include "UBAbstractEditable.h"
 #include "domain/UBGraphicsScene.h"
 
 UBDiagonalHandle::UBDiagonalHandle()
@@ -31,18 +31,19 @@ UBDiagonalHandle::UBDiagonalHandle()
     mId = Diagonal;
 }
 
-UBDiagonalHandle::UBDiagonalHandle(UBDiagonalHandle* const src):
-    UBAbstractHandle(src)
+UBDiagonalHandle::UBDiagonalHandle(UBDiagonalHandle* const src)
+    : UBAbstractHandle(src)
 {
 }
 
-void UBDiagonalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void UBDiagonalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     auto scenePos = event->scenePos();
+    const std::shared_ptr<UBGraphicsScene> scenePtr = scene();
 
-    if (scene()->isSnapping())
+    if (scenePtr->isSnapping())
     {
-        scenePos += scene()->snap(scenePos);
+        scenePos += scenePtr->snap(scenePos);
     }
 
     QPointF p = parentItem()->mapFromScene(scenePos);
@@ -53,28 +54,28 @@ void UBDiagonalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     mEditableObject->setModified();
 }
 
-void UBDiagonalHandle::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void UBDiagonalHandle::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     UBAbstractHandle::mousePressEvent(event);
 }
 
-void UBDiagonalHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void UBDiagonalHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     UBAbstractHandle::mouseReleaseEvent(event);
 }
 
-UBItem *UBDiagonalHandle::deepCopy() const
+UBItem* UBDiagonalHandle::deepCopy() const
 {
-    UBDiagonalHandle * copy = new UBDiagonalHandle();
+    UBDiagonalHandle* copy = new UBDiagonalHandle();
 
     copyItemParameters(copy);
 
     return copy;
 }
 
-void UBDiagonalHandle::copyItemParameters(UBItem *copy) const
+void UBDiagonalHandle::copyItemParameters(UBItem* copy) const
 {
-    UBDiagonalHandle *cp = dynamic_cast<UBDiagonalHandle*>(copy);
+    UBDiagonalHandle* cp = dynamic_cast<UBDiagonalHandle*>(copy);
     if (cp)
     {
         cp->setTransform(this->transform());

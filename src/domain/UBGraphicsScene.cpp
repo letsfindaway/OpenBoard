@@ -77,7 +77,7 @@
 
 #include "domain/UBGraphicsGroupContainerItem.h"
 #include "domain/UBItemStyleUndoCommand.h"
-#include "domain/shapes/UBGraphicsLineItem.h"
+#include "domain/shapes/UBEditableGraphicsLineItem.h"
 
 #include "core/memcheck.h"
 

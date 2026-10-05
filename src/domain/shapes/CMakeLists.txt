@@ -5,10 +5,18 @@ target_sources(${PROJECT_NAME} PRIVATE
     UB1HEditableGraphicsCircleItem.h
     UB1HEditableGraphicsSquareItem.cpp
     UB1HEditableGraphicsSquareItem.h
-    UB3HandlesEditable.cpp
-    UB3HandlesEditable.h
+    UB3HEditablesGraphicsBasicShapeItem.cpp
+    UB3HEditablesGraphicsBasicShapeItem.h
+    UB3HEditableGraphicsEllipseItem.cpp
+    UB3HEditableGraphicsEllipseItem.h
+    UB3HEditableGraphicsRectItem.cpp
+    UB3HEditableGraphicsRectItem.h
+    UBAbstractEditable.cpp
+    UBAbstractEditable.h
     UBAbstractEditableGraphicsPathItem.cpp
     UBAbstractEditableGraphicsPathItem.h
+    UBAbstractEditableGraphicsShapeItem.cpp
+    UBAbstractEditableGraphicsShapeItem.h
     UBAbstractGraphicsItem.cpp
     UBAbstractGraphicsItem.h
     UBAbstractGraphicsPathItem.cpp
@@ -19,8 +27,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     UBAbstractHandlesBuilder.h
     UBDiagonalHandle.cpp
     UBDiagonalHandle.h
-    UBEditable.cpp
-    UBEditable.h
+    UBEditableGraphicsLineItem.cpp
+    UBEditableGraphicsLineItem.h
     UBEditableGraphicsPolygonItem.cpp
     UBEditableGraphicsPolygonItem.h
     UBEditableGraphicsRegularShapeItem.cpp
@@ -29,18 +37,10 @@ target_sources(${PROJECT_NAME} PRIVATE
     UBEditShapeUndoCommand.h
     UBFreeHandle.cpp
     UBFreeHandle.h
-    UBGraphicsEllipseItem.cpp
-    UBGraphicsEllipseItem.h
-    UBGraphicsLineItem.cpp
-    UBGraphicsLineItem.h
-    UBGraphicsRectItem.cpp
-    UBGraphicsRectItem.h
     UBHorizontalHandle.cpp
     UBHorizontalHandle.h
     UBLineHandle.cpp
     UBLineHandle.h
-    UBShapeEditable.cpp
-    UBShapeEditable.h
     UBShapeFactory.cpp
     UBShapeFactory.h
     UBVerticalHandle.cpp

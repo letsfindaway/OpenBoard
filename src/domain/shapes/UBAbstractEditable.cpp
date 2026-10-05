@@ -21,26 +21,23 @@
  */
 
 
-#include "UBEditable.h"
-
-#include "domain/shapes/UBEditShapeUndoCommand.h"
+#include "UBAbstractEditable.h"
 
 #include "core/UBApplication.h"
-#include "board/UBBoardController.h"
-#include "domain/UBGraphicsScene.h"
+
 #include "domain/shapes/UBAbstractGraphicsItem.h"
+#include "domain/shapes/UBEditShapeUndoCommand.h"
+
 
 UBAbstractEditable::UBAbstractEditable()
 {
-    mEditMode = false;
 }
 
 UBAbstractEditable::~UBAbstractEditable()
 {
-
 }
 
-void UBAbstractEditable::addHandle(UBAbstractHandle *handle)
+void UBAbstractEditable::addHandle(UBAbstractHandle* handle)
 {
     mHandles.push_back(handle);
 }
@@ -60,12 +57,17 @@ UBAbstractHandle* UBAbstractEditable::getHandle(HandleId id) const
 
 void UBAbstractEditable::showEditMode(bool show)
 {
-    if(!show){
-        for(int i = 0; i < mHandles.size(); i++){
+    if (!show)
+    {
+        for (int i = 0; i < mHandles.size(); i++)
+        {
             mHandles.at(i)->hide();
         }
-    }else{
-        for(int i = 0; i < mHandles.size(); i++){
+    }
+    else
+    {
+        for (int i = 0; i < mHandles.size(); i++)
+        {
             mHandles.at(i)->show();
         }
     }
@@ -98,7 +100,7 @@ void UBAbstractEditable::showEditMode(bool show)
 
 void UBAbstractEditable::deactivateEditionMode()
 {
-    //nop
+    // nop
 }
 
 bool UBAbstractEditable::isInEditMode() const

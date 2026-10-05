@@ -21,7 +21,7 @@
  */
 
 
-#include "UBGraphicsRectItem.h"
+#include "UB3HEditableGraphicsRectItem.h"
 
 UB3HEditableGraphicsRectItem::UB3HEditableGraphicsRectItem(QGraphicsItem* parent)
     : UB3HEditablesGraphicsBasicShapeItem(parent)
@@ -36,10 +36,9 @@ UB3HEditableGraphicsRectItem::UB3HEditableGraphicsRectItem(QGraphicsItem* parent
 
 UB3HEditableGraphicsRectItem::~UB3HEditableGraphicsRectItem()
 {
-
 }
 
-UBItem *UB3HEditableGraphicsRectItem::deepCopy() const
+UBItem* UB3HEditableGraphicsRectItem::deepCopy() const
 {
     UB3HEditableGraphicsRectItem* copy = new UB3HEditableGraphicsRectItem();
 
@@ -48,18 +47,18 @@ UBItem *UB3HEditableGraphicsRectItem::deepCopy() const
     return copy;
 }
 
-void UB3HEditableGraphicsRectItem::copyItemParameters(UBItem *copy) const
+void UB3HEditableGraphicsRectItem::copyItemParameters(UBItem* copy) const
 {
     UB3HEditablesGraphicsBasicShapeItem::copyItemParameters(copy);
 
-    UB3HEditableGraphicsRectItem *cp = dynamic_cast<UB3HEditableGraphicsRectItem*>(copy);
+    UB3HEditableGraphicsRectItem* cp = dynamic_cast<UB3HEditableGraphicsRectItem*>(copy);
     if (cp)
     {
         cp->setRect(this->rect());
     }
 }
 
-void UB3HEditableGraphicsRectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void UB3HEditableGraphicsRectItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget)
     Q_UNUSED(option)
@@ -80,45 +79,56 @@ QPainterPath UB3HEditableGraphicsRectItem::painterPath() const
 
 void UB3HEditableGraphicsRectItem::onActivateEditionMode()
 {
-    getHandle(HandleId::Horizontal)->setPos(mWidth, mHeight/2);
-    getHandle(HandleId::Vertical)->setPos(mWidth/2, mHeight);
+    getHandle(HandleId::Horizontal)->setPos(mWidth, mHeight / 2);
+    getHandle(HandleId::Vertical)->setPos(mWidth / 2, mHeight);
     getHandle(HandleId::Diagonal)->setPos(mWidth, mHeight);
     getHandle(HandleId::Stretch)->setPos(mWidth, 0);
 }
 
-void UB3HEditableGraphicsRectItem::updateHandle(UBAbstractHandle *handle)
+void UB3HEditableGraphicsRectItem::updateHandle(UBAbstractHandle* handle)
 {
     prepareGeometryChange();
 
     qreal maxSize = handle->radius() * 4;
 
-    if(handle->getId() == HandleId::Vertical){
-        //it's the vertical handle
-        if(handle->pos().y() >= maxSize){
+    if (handle->getId() == HandleId::Vertical)
+    {
+        // it's the vertical handle
+        if (handle->pos().y() >= maxSize)
+        {
             mHeight = handle->pos().y();
         }
-    }else if(handle->getId() == HandleId::Horizontal){
-        //it's the horizontal handle
-        if(handle->pos().x() > maxSize){
+    }
+    else if (handle->getId() == HandleId::Horizontal)
+    {
+        // it's the horizontal handle
+        if (handle->pos().x() > maxSize)
+        {
             mWidth = handle->pos().x();
         }
-    }else if(handle->getId() == HandleId::Diagonal){
-        //it's the diagonal handle
-        if(handle->pos().x() >= maxSize && handle->pos().y() >= maxSize){
+    }
+    else if (handle->getId() == HandleId::Diagonal)
+    {
+        // it's the diagonal handle
+        if (handle->pos().x() >= maxSize && handle->pos().y() >= maxSize)
+        {
             float ratio = mHeight / mWidth;
 
-            if(mWidth > mHeight){
+            if (mWidth > mHeight)
+            {
                 mWidth = handle->pos().x();
                 mHeight = ratio * mWidth;
-            }else{
+            }
+            else
+            {
                 mHeight = handle->pos().y();
-                mWidth = 1/ratio * mHeight;
+                mWidth = 1 / ratio * mHeight;
             }
         }
     }
     else if (handle->getId() == HandleId::Stretch)
     {
-        //it's the stretch handle
+        // it's the stretch handle
         if (handle->pos().x() >= maxSize)
         {
             double ratio = mHeight / mWidth;
@@ -143,8 +153,8 @@ void UB3HEditableGraphicsRectItem::updateHandle(UBAbstractHandle *handle)
         }
     }
 
-    getHandle(HandleId::Horizontal)->setPos(mWidth, mHeight/2);
-    getHandle(HandleId::Vertical)->setPos(mWidth/2, mHeight);
+    getHandle(HandleId::Horizontal)->setPos(mWidth, mHeight / 2);
+    getHandle(HandleId::Vertical)->setPos(mWidth / 2, mHeight);
     getHandle(HandleId::Diagonal)->setPos(mWidth, mHeight);
     getHandle(HandleId::Stretch)->setPos(mWidth, 0);
 }
@@ -161,7 +171,8 @@ QRectF UB3HEditableGraphicsRectItem::boundingRect() const
 
     rect = adjustBoundingRect(rect);
 
-    if(isInEditMode()){
+    if (isInEditMode())
+    {
         qreal r = mHandles.at(0)->radius();
         rect.adjust(-r, -r, r, r);
     }

@@ -21,44 +21,40 @@
  */
 
 
-#ifndef UB1HEDITABLEGRAPHICSCIRCLEITEM_H
-#define UB1HEDITABLEGRAPHICSCIRCLEITEM_H
+#pragma once
 
 #include "UB1HEditableGraphicsBasicShapeItem.h"
 
 class UB1HEditableGraphicsCircleItem : public UB1HEditableGraphicsBasicShapeItem
 {
 public:
-    UB1HEditableGraphicsCircleItem(QGraphicsItem *parent = 0);
-
+    UB1HEditableGraphicsCircleItem(QGraphicsItem* parent = nullptr);
     virtual ~UB1HEditableGraphicsCircleItem();
 
-    enum { Type = UBGraphicsItemType::GraphicsShapeItemType };
+    enum
+    {
+        Type = UBGraphicsItemType::GraphicsShapeItemType
+    };
 
-    virtual int type() const { return Type; }
+    virtual int type() const override
+    {
+        return Type;
+    }
 
-    virtual UBItem* deepCopy() const;
-
-    virtual void copyItemParameters(UBItem *copy) const;
+    virtual UBItem* deepCopy() const override;
+    virtual void copyItemParameters(UBItem* copy) const override;
 
     QPointF center() const;
 
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-
-    void updateHandle(UBAbstractHandle *handle);
-
-    virtual QRectF boundingRect() const;
-
-    virtual QPainterPath painterPath() const;
-
-    virtual void onActivateEditionMode();
+    virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+    virtual void updateHandle(UBAbstractHandle* handle) override;
+    virtual QRectF boundingRect() const override;
+    virtual QPainterPath painterPath() const override;
+    virtual void onActivateEditionMode() override;
 
     void setRadius(qreal radius);
-
     void setRect(QRectF rect);
-
     QRectF rect() const;
-
     qreal radius() const;
 
 private:
@@ -66,5 +62,3 @@ private:
     bool wIsNeg;
     bool hIsNeg;
 };
-
-#endif // UB1HEDITABLEGRAPHICSCIRCLEITEM_H

@@ -22,14 +22,11 @@
 
 
 #include "UBAbstractGraphicsPathItem.h"
-#include <QBrush>
-#include <QTransform>
-#include <QtCore/qmath.h>
 
-UBAbstractGraphicsPathItem::UBAbstractGraphicsPathItem(QGraphicsItem *parent):
-    UBAbstractGraphicsItem(parent)
+
+UBAbstractGraphicsPathItem::UBAbstractGraphicsPathItem(QGraphicsItem* parent)
+    : UBAbstractGraphicsItem(parent)
 {
-
 }
 
 QRectF UBAbstractGraphicsPathItem::boundingRect() const
@@ -46,13 +43,14 @@ QPainterPath UBAbstractGraphicsPathItem::shape() const
     return path();
 }
 
-void UBAbstractGraphicsPathItem::copyItemParameters(UBItem *copy) const
+void UBAbstractGraphicsPathItem::copyItemParameters(UBItem* copy) const
 {
     UBAbstractGraphicsItem::copyItemParameters(copy);
 
     UBAbstractGraphicsPathItem* cp = dynamic_cast<UBAbstractGraphicsPathItem*>(copy);
 
-    if(!cp) return;
+    if (!cp)
+        return;
 
     cp->setPath(path());
 }

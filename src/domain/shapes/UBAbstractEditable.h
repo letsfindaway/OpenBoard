@@ -21,31 +21,46 @@
  */
 
 
-#include "UB3HandlesEditable.h"
+#pragma once
 
-#include "UBAbstractHandlesBuilder.h"
+#include <QVector>
 
-UB3HEditablesGraphicsBasicShapeItem::UB3HEditablesGraphicsBasicShapeItem(QGraphicsItem *parent):
-    UBAbstractEditableGraphicsShapeItem(parent)
+#include "UBAbstractHandle.h"
+
+// forward
+class UBEditShapeUndoCommand;
+
+
+class UBAbstractEditable
 {
-    UB3HandlesBuilder::buildHandles(mHandles);
+public:
+    explicit UBAbstractEditable();
+    virtual ~UBAbstractEditable();
 
-    for(int i = 0; i < mHandles.size(); i++){
-        mHandles.at(i)->setEditableObject(this);
-        mHandles.at(i)->setParentItem(this);
+    void addHandle(UBAbstractHandle* mhandle);
+
+    UBAbstractHandle* getHandle(HandleId id) const;
+
+    void showEditMode(bool show);
+
+    virtual void updateHandle(UBAbstractHandle* handle) = 0;
+
+    virtual void deactivateEditionMode();
+
+    virtual void focusHandle(UBAbstractHandle* handle)
+    {
+        Q_UNUSED(handle)
     }
-}
 
-QRectF UB3HEditablesGraphicsBasicShapeItem::adjustBoundingRect(QRectF rect) const
-{
-    rect = UBAbstractEditableGraphicsShapeItem::adjustBoundingRect(rect);
+    bool isInEditMode() const;
 
-    if(isInEditMode()){
-        qreal r = getHandle(HandleId::Horizontal)->radius();
+    void setModified();
 
-        rect.adjust(-r, -r, r, r);
-    }
+protected:
+    QVector<UBAbstractHandle*> mHandles;
 
-    return rect;
-}
-
+private:
+    bool mEditMode{false};
+    bool mModified{false};
+    UBEditShapeUndoCommand* mUndoCommand{nullptr};
+};

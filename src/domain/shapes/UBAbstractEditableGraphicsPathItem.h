@@ -21,31 +21,30 @@
  */
 
 
-#ifndef UBABSTRACTEDITABLEGRAPHICSPATHITEM_H
-#define UBABSTRACTEDITABLEGRAPHICSPATHITEM_H
+#pragma once
 
-#include "UBEditable.h"
 #include "UBAbstractGraphicsPathItem.h"
+#include "UBAbstractEditable.h"
 
-class UBAbstractEditableGraphicsPathItem : public UBAbstractEditable, public UBAbstractGraphicsPathItem
+class UBAbstractEditableGraphicsPathItem
+    : public UBAbstractEditable
+    , public UBAbstractGraphicsPathItem
 {
 public:
-    UBAbstractEditableGraphicsPathItem(QGraphicsItem *parent = 0);
+    UBAbstractEditableGraphicsPathItem(QGraphicsItem* parent = nullptr);
 
-    virtual QRectF boundingRect() const;
-
-    virtual QPainterPath shape() const;
+    virtual QRectF boundingRect() const override;
+    virtual QPainterPath shape() const override;
 
 protected:
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    virtual void focusOutEvent(QFocusEvent *event);
-    virtual void focusHandle(UBAbstractHandle *handle);
-    virtual void deactivateEditionMode();
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
+    virtual void focusOutEvent(QFocusEvent* event) override;
+    virtual void focusHandle(UBAbstractHandle* handle) override;
+    virtual void deactivateEditionMode() override;
+
     virtual void onActivateEditionMode();
 
     bool mHasMoved;
 };
-
-#endif // UBABSTRACTEDITABLEGRAPHICSPATHITEM_H

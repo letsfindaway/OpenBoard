@@ -21,7 +21,7 @@
  */
 
 
-#include "UBGraphicsLineItem.h"
+#include "UBEditableGraphicsLineItem.h"
 
 #include "UBLineHandle.h"
 
@@ -29,18 +29,16 @@
 #include "board/UBBoardView.h"
 #include "core/UBApplication.h"
 
-#include <cmath>
 
 UBEditableGraphicsLineItem::UBEditableGraphicsLineItem(QGraphicsItem* parent)
     : UBEditableGraphicsPolygonItem(parent)
 {
     // Line has Stroke and Fill capabilities :
-    // Delegate()->setCanReturnInCreationMode(false);
     initializeStrokeProperty();
     initializeFillingProperty();
 
-    UBLineHandle *startHandle = new UBLineHandle;
-    UBLineHandle *endHandle = new UBLineHandle;
+    UBLineHandle* startHandle = new UBLineHandle;
+    UBLineHandle* endHandle = new UBLineHandle;
 
     endHandle->setId(1);
 
@@ -58,16 +56,13 @@ UBEditableGraphicsLineItem::UBEditableGraphicsLineItem(QGraphicsItem* parent)
 
     mHandles.push_back(startHandle);
     mHandles.push_back(endHandle);
-
-    mIsMagnetic = false;
 }
 
 UBEditableGraphicsLineItem::~UBEditableGraphicsLineItem()
 {
-
 }
 
-UBItem *UBEditableGraphicsLineItem::deepCopy() const
+UBItem* UBEditableGraphicsLineItem::deepCopy() const
 {
     UBEditableGraphicsLineItem* copy = new UBEditableGraphicsLineItem();
 
@@ -76,7 +71,7 @@ UBItem *UBEditableGraphicsLineItem::deepCopy() const
     return copy;
 }
 
-void UBEditableGraphicsLineItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void UBEditableGraphicsLineItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget)
     Q_UNUSED(option)
@@ -93,13 +88,13 @@ QPointF UBEditableGraphicsLineItem::startPoint() const
 
 QPointF UBEditableGraphicsLineItem::endPoint() const
 {
-    if(path().elementCount() == 2)
+    if (path().elementCount() == 2)
         return path().elementAt(1);
     else
         return path().elementAt(0);
 }
 
-void UBEditableGraphicsLineItem::copyItemParameters(UBItem *copy) const
+void UBEditableGraphicsLineItem::copyItemParameters(UBItem* copy) const
 {
     UBAbstractEditableGraphicsPathItem::copyItemParameters(copy);
 }
@@ -109,71 +104,58 @@ void UBEditableGraphicsLineItem::setStartPoint(QPointF pos)
 {
     prepareGeometryChange();
 
-    if(mIsMagnetic){
-        forcePointPosition(pos, Start);
-    }else{
-        QPainterPath p;
+    QPainterPath p;
 
-        p.moveTo(this->pos());
+    p.moveTo(this->pos());
 
-        if(path().elementCount() == 2)
-            p.lineTo(path().elementAt(1));
+    if (path().elementCount() == 2)
+        p.lineTo(path().elementAt(1));
 
-        setPath(p);
+    setPath(p);
 
-        this->setPos(pos);
+    this->setPos(pos);
 
-        mHandles.at(0)->setPos(pos);
-    }
+    mHandles.at(0)->setPos(pos);
 }
 
 void UBEditableGraphicsLineItem::setEndPoint(QPointF pos)
 {
     prepareGeometryChange();
 
-    if(mIsMagnetic){
-        forcePointPosition(pos, End);
-    }else{
+    QPainterPath p;
+
+    p.moveTo(path().elementAt(0));
+
+    p.lineTo(pos);
+
+    setPath(p);
+
+    mHandles.at(1)->setPos(pos);
+}
+
+void UBEditableGraphicsLineItem::updateHandle(UBAbstractHandle* handle)
+{
+    prepareGeometryChange();
+
+    if (handle->getId() == 0)
+    {
+        QPainterPath p;
+
+        p.moveTo(handle->pos());
+
+        p.lineTo(path().elementAt(1));
+
+        setPath(p);
+    }
+    else if (handle->getId() == 1)
+    {
         QPainterPath p;
 
         p.moveTo(path().elementAt(0));
 
-        p.lineTo(pos);
+        p.lineTo(handle->pos());
 
         setPath(p);
-
-        mHandles.at(1)->setPos(pos);
-    }
-}
-
-void UBEditableGraphicsLineItem::updateHandle(UBAbstractHandle *handle)
-{
-    prepareGeometryChange();
-
-    if(handle->getId() == 0){
-        if(mIsMagnetic){
-            forcePointPosition(handle->pos(), Start);
-        }else{
-            QPainterPath p;
-
-            p.moveTo(handle->pos());
-
-            p.lineTo(path().elementAt(1));
-
-            setPath(p);
-        }
-    }else if(handle->getId() == 1){
-        if(mIsMagnetic){
-            forcePointPosition(handle->pos(), End);
-        }else{
-            QPainterPath p;
-
-            p.moveTo(path().elementAt(0));
-
-            p.lineTo(handle->pos());
-
-            setPath(p);
-        }
     }
 
     const auto p1 = path().elementAt(1 - handle->getId());
@@ -181,8 +163,8 @@ void UBEditableGraphicsLineItem::updateHandle(UBAbstractHandle *handle)
 
     QLineF line{p1, p2};
     QLineF viewRadius{UBApplication::boardController->controlView()->mapFromScene(line.p1()),
-            UBApplication::boardController->controlView()->mapFromScene(line.p2())};
-    QPoint offset = - viewRadius.p2().toPoint();
+                      UBApplication::boardController->controlView()->mapFromScene(line.p2())};
+    QPoint offset = -viewRadius.p2().toPoint();
     viewRadius.setLength(viewRadius.length() + 60);
     offset += viewRadius.p2().toPoint();
 
@@ -241,17 +223,20 @@ QPainterPath UBEditableGraphicsLineItem::shape() const
     return p;
 }
 
-void UBEditableGraphicsLineItem::addPoint(const QPointF &point)
+void UBEditableGraphicsLineItem::addPoint(const QPointF& point)
 {
     prepareGeometryChange();
 
     QPainterPath p(mapFromScene(point));
 
-    if(path().elementCount() == 0){
+    if (path().elementCount() == 0)
+    {
         mHandles.at(0)->setPos(point);
         p.moveTo(point);
-    }else{
-        //In the other cases we have just to change the last point
+    }
+    else
+    {
+        // In the other cases we have just to change the last point
         p.moveTo(path().elementAt(0));
         p.lineTo(point);
 
@@ -259,73 +244,4 @@ void UBEditableGraphicsLineItem::addPoint(const QPointF &point)
     }
 
     setPath(p);
-}
-
-void UBEditableGraphicsLineItem::setMagnetic(bool isMagnetic)
-{
-    mIsMagnetic = isMagnetic;
-}
-
-bool UBEditableGraphicsLineItem::isMagnetic() const
-{
-    return mIsMagnetic;
-}
-
-void UBEditableGraphicsLineItem::forcePointPosition(const QPointF& pos, PointPosition pointPosition, int amplitude)
-{
-    QLineF line;
-
-    int angles[] = {0, 45, 90, 135, 180, 225, 270, 315};
-
-    int size = sizeof(angles) / sizeof(int);
-
-    if(pointPosition == Start){
-        line.setP1(pos);
-        line.setP2(path().elementAt(1));
-    }else{
-        line.setP1(path().elementAt(0));
-        line.setP2(pos);
-    }
-
-    int angle = line.angle();
-
-    const float PI_2 = 4*atan(1.f)*2;
-
-    //for each angle we compute the left and right angle
-    //then compute the distance between both
-    for(int i = 0; i < size; i++){
-        //use the modulo operator to force the angle to stay in [0, 360]
-        int leftAmplitude = (angles[i] + amplitude) % 360;
-        int rightAmplitude = (angles[i] - amplitude + 360) % 360;
-
-        int leftDist = (leftAmplitude - angle + 360) % 360;
-        int rightDist = (angle - rightAmplitude + 360) % 360;
-
-        if(leftDist <= amplitude || rightDist <= amplitude){
-            if(pointPosition == End){
-                line.setAngle(angles[i]);
-            }else{
-                //compute the position of p1 by hand
-                float angleInRadians = angles[i]*PI_2/360;
-
-                qreal l = line.length();
-
-                const qreal dx = -cos(angleInRadians)*l;
-                const qreal dy = sin(angleInRadians)*l;
-
-                line.setP1(QPointF(dx + line.p2().x(), dy + line.p2().y()));
-            }
-            break;
-        }
-    }
-
-    QPainterPath p;
-
-    p.moveTo(line.p1());
-    p.lineTo(line.p2());
-
-    setPath(p);
-
-    mHandles.at(0)->setPos(line.p1().x(), line.p1().y());
-    mHandles.at(1)->setPos(line.p2().x(), line.p2().y());
 }

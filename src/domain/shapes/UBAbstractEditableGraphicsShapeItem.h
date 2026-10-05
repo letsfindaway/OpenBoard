@@ -21,51 +21,31 @@
  */
 
 
-#ifndef UBEDITABLE_H
-#define UBEDITABLE_H
+#pragma once
 
-#include <QVector>
+#include "UBAbstractEditable.h"
+#include "UBAbstractGraphicsItem.h"
 
-#include "UBAbstractHandle.h"
-
-// forward
-class UBEditShapeUndoCommand;
-
-
-class UBAbstractEditable
+class UBAbstractEditableGraphicsShapeItem
+    : public UBAbstractGraphicsItem
+    , public UBAbstractEditable
 {
 public:
-    explicit UBAbstractEditable();
-
-    virtual ~UBAbstractEditable();
-
-    void addHandle(UBAbstractHandle *mhandle);
-
-    UBAbstractHandle* getHandle(HandleId id) const;
-
-    void showEditMode(bool show);
-
-    virtual void updateHandle(UBAbstractHandle *handle) = 0;
-
-    virtual void onBackgroundSceneClick(){ }
-
-    virtual void deactivateEditionMode();
-
-    virtual void focusHandle(UBAbstractHandle *handle){
-        Q_UNUSED(handle)
-    }
-
-    bool isInEditMode() const;
-
-    void setModified();
+    UBAbstractEditableGraphicsShapeItem(QGraphicsItem* parent = nullptr);
+    virtual ~UBAbstractEditableGraphicsShapeItem() = default;
 
 protected:
-    QVector<UBAbstractHandle*> mHandles;
+    virtual QPainterPath shape() const override;
 
-private:
-    bool mEditMode;
-    bool mModified{false};
-    UBEditShapeUndoCommand* mUndoCommand{nullptr};
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
+    virtual void focusOutEvent(QFocusEvent* event) override;
+    virtual void paintCenterMark(QPainter* painter);
+
+    virtual void onActivateEditionMode();
+
+    virtual void deactivateEditionMode() override;
+
+    bool mHasMoved;
 };
-
-#endif // UBEDITABLE_H

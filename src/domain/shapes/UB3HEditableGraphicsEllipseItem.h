@@ -21,52 +21,52 @@
  */
 
 
-#ifndef UBGRAPHICSELLIPSEITEM_H
-#define UBGRAPHICSELLIPSEITEM_H
+#pragma once
 
 #include <QGraphicsEllipseItem>
 
-#include "UB3HandlesEditable.h"
+#include "UB3HEditablesGraphicsBasicShapeItem.h"
 
 class UB3HEditableGraphicsEllipseItem : public UB3HEditablesGraphicsBasicShapeItem
 {
 public:
-    UB3HEditableGraphicsEllipseItem(QGraphicsItem* parent = 0);
+    UB3HEditableGraphicsEllipseItem(QGraphicsItem* parent = nullptr);
     virtual ~UB3HEditableGraphicsEllipseItem();
 
-    enum { Type = UBGraphicsItemType::GraphicsShapeItemType };
-    virtual int type() const { return Type; }
+    enum
+    {
+        Type = UBGraphicsItemType::GraphicsShapeItemType
+    };
 
-    virtual UBItem* deepCopy() const;
+    virtual int type() const override
+    {
+        return Type;
+    }
 
-    virtual void copyItemParameters(UBItem *copy) const;
+    virtual UBItem* deepCopy() const override;
+
+    virtual void copyItemParameters(UBItem* copy) const override;
 
     QPointF center() const;
 
     // QGraphicsItem interface
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
-    void updateHandle(UBAbstractHandle *handle);
-    virtual QRectF boundingRect() const;
-    virtual QPainterPath painterPath() const;
+    void updateHandle(UBAbstractHandle* handle) override;
+    virtual QRectF boundingRect() const override;
+    virtual QPainterPath painterPath() const override;
 
-    virtual void onActivateEditionMode();
+    virtual void onActivateEditionMode() override;
 
     void setRadiusX(qreal radius);
-
     void setRadiusY(qreal radius);
-
     void setRect(QRectF rect);
 
     QRectF rect() const;
-
     qreal radiusX() const;
-
     qreal radiusY() const;
 
 private:
     qreal mRadiusX;
     qreal mRadiusY;
 };
-
-#endif // UBGRAPHICSELLIPSEITEM_H

@@ -21,32 +21,32 @@
  */
 
 
-#ifndef UBSHAPEEDITABLE_H
-#define UBSHAPEEDITABLE_H
+#include "UB3HEditablesGraphicsBasicShapeItem.h"
 
-#include "UBAbstractGraphicsItem.h"
-#include "UBEditable.h"
+#include "UBAbstractHandlesBuilder.h"
 
-class UBAbstractEditableGraphicsShapeItem : public UBAbstractGraphicsItem, public UBAbstractEditable
+UB3HEditablesGraphicsBasicShapeItem::UB3HEditablesGraphicsBasicShapeItem(QGraphicsItem* parent)
+    : UBAbstractEditableGraphicsShapeItem(parent)
 {
-public:
-    UBAbstractEditableGraphicsShapeItem(QGraphicsItem *parent = 0);
+    UB3HandlesBuilder::buildHandles(mHandles);
 
-    virtual ~UBAbstractEditableGraphicsShapeItem(){ }
-protected:
-    virtual QPainterPath shape() const override;
+    for (int i = 0; i < mHandles.size(); i++)
+    {
+        mHandles.at(i)->setEditableObject(this);
+        mHandles.at(i)->setParentItem(this);
+    }
+}
 
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-    virtual void focusOutEvent(QFocusEvent *event) override;
-    virtual void paintCenterMark(QPainter *painter);
+QRectF UB3HEditablesGraphicsBasicShapeItem::adjustBoundingRect(QRectF rect) const
+{
+    rect = UBAbstractEditableGraphicsShapeItem::adjustBoundingRect(rect);
 
-    virtual void onActivateEditionMode();
+    if (isInEditMode())
+    {
+        qreal r = getHandle(HandleId::Horizontal)->radius();
 
-    virtual void deactivateEditionMode() override;
+        rect.adjust(-r, -r, r, r);
+    }
 
-    bool mHasMoved;
-};
-
-#endif // UBSHAPEEDITABLE_H
+    return rect;
+}

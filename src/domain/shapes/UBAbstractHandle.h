@@ -21,17 +21,14 @@
  */
 
 
-#ifndef UBABSTRACTHANDLE_H
-#define UBABSTRACTHANDLE_H
+#pragma once
 
 #include <QGraphicsItem>
-#include <QObject>
-
-#include <QPainter>
 
 #include "domain/UBItem.h"
 
 class UBAbstractEditable;
+class QPainter;
 
 enum HandleId
 {
@@ -46,10 +43,8 @@ enum HandleId
 class UBAbstractHandle : public QGraphicsItem, public UBItem
 {
 public:
-
-    virtual ~UBAbstractHandle(){ }
-
     UBAbstractHandle(UBAbstractHandle* const src);
+    virtual ~UBAbstractHandle() = default;
 
     void setId(int id)
     {
@@ -75,9 +70,6 @@ public:
         return mEditableObject;
     }
 
-    // enum { Type = UBGraphicsItemType::GraphicsHandle };
-    virtual int type() const  override { return Type; }
-
     int radius() const
     {
         return this->mRadius;
@@ -99,5 +91,3 @@ protected:
 
     UBAbstractEditable *mEditableObject;
 };
-
-#endif // UBABSTRACTHANDLE_H

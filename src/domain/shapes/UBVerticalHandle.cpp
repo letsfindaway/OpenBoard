@@ -21,10 +21,11 @@
  */
 
 
-#include "UBEditable.h"
-#include "domain/UBGraphicsScene.h"
+#include "UBAbstractEditable.h"
 
 #include "UBVerticalHandle.h"
+
+#include "domain/UBGraphicsScene.h"
 
 UBVerticalHandle::UBVerticalHandle(bool paintIndicators)
     : mPaintIndicators{paintIndicators}
@@ -32,20 +33,20 @@ UBVerticalHandle::UBVerticalHandle(bool paintIndicators)
     mId = paintIndicators ? Other : Vertical;
 }
 
-UBVerticalHandle::UBVerticalHandle(UBVerticalHandle* const src):
-    UBAbstractHandle(src)
-  , mPaintIndicators{src->mPaintIndicators}
+UBVerticalHandle::UBVerticalHandle(UBVerticalHandle* const src)
+    : UBAbstractHandle(src)
+    , mPaintIndicators{src->mPaintIndicators}
 {
-
 }
 
-void UBVerticalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void UBVerticalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     auto scenePos = event->scenePos();
+    std::shared_ptr<UBGraphicsScene> scenePtr = scene();
 
-    if (scene()->isSnapping())
+    if (scenePtr->isSnapping())
     {
-        scenePos += scene()->snap(scenePos);
+        scenePos += scenePtr->snap(scenePos);
     }
 
     QPointF p = parentItem()->mapFromScene(scenePos);
@@ -56,12 +57,12 @@ void UBVerticalHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     mEditableObject->setModified();
 }
 
-void UBVerticalHandle::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void UBVerticalHandle::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     UBAbstractHandle::mousePressEvent(event);
 }
 
-void UBVerticalHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void UBVerticalHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     UBAbstractHandle::mouseReleaseEvent(event);
 }
@@ -92,18 +93,19 @@ void UBVerticalHandle::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
     }
 }
 
-UBItem *UBVerticalHandle::deepCopy() const
+UBItem* UBVerticalHandle::deepCopy() const
 {
-    UBVerticalHandle * copy = new UBVerticalHandle();
+    UBVerticalHandle* copy = new UBVerticalHandle();
 
     copyItemParameters(copy);
 
     return copy;
 }
 
-void UBVerticalHandle::copyItemParameters(UBItem *copy) const
+void UBVerticalHandle::copyItemParameters(UBItem* copy) const
 {
-    UBVerticalHandle *cp = dynamic_cast<UBVerticalHandle*>(copy);
+    UBVerticalHandle* cp = dynamic_cast<UBVerticalHandle*>(copy);
+
     if (cp)
     {
         cp->setTransform(this->transform());

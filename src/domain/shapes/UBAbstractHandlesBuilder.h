@@ -21,27 +21,21 @@
  */
 
 
-#ifndef UBABSTRACTHANDLESBUILDER_H
-#define UBABSTRACTHANDLESBUILDER_H
+#pragma once
 
-#include "UBAbstractHandle.h"
+#include <QVector>
 
-class UBAbstractHandlesBuilder
-{
-public:
-    static void buildHandles(QVector<UBAbstractHandle*>& handles){ Q_UNUSED(handles) }
-};
+// forward
+class UBAbstractHandle;
 
-class UB1HandleBuilder : public UBAbstractHandlesBuilder
+class UB1HandleBuilder
 {
 public:
     static void buildHandles(QVector<UBAbstractHandle*>& handles);
 };
 
-class UB3HandlesBuilder : public UBAbstractHandlesBuilder
+class UB3HandlesBuilder
 {
 public:
     static void buildHandles(QVector<UBAbstractHandle*>& handles);
 };
-
-#endif // UBABSTRACTHANDLESBUILDER_H

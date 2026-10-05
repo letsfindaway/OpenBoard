@@ -22,30 +22,33 @@
 
 
 #include "UBFreeHandle.h"
-#include "UBEditable.h"
+
+#include "UBAbstractEditable.h"
+
 #include "domain/UBGraphicsScene.h"
+
 
 UBFreeHandle::UBFreeHandle()
 {
     mId = Free;
 }
 
-UBFreeHandle::UBFreeHandle(UBFreeHandle* const src):
-    UBAbstractHandle(src)
+UBFreeHandle::UBFreeHandle(UBFreeHandle* const src)
+    : UBAbstractHandle(src)
 {
 }
 
-void UBFreeHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void UBFreeHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     auto scenePos = event->scenePos();
+    std::shared_ptr<UBGraphicsScene> scenePtr = scene();
 
-    if (scene()->isSnapping())
+    if (scenePtr->isSnapping())
     {
-        scenePos += scene()->snap(scenePos);
+        scenePos += scenePtr->snap(scenePos);
     }
 
     QPointF p = parentItem()->mapFromScene(scenePos);
-
     QPointF diff = p - pos();
 
     moveBy(diff.x(), diff.y());
@@ -54,28 +57,29 @@ void UBFreeHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     mEditableObject->setModified();
 }
 
-void UBFreeHandle::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void UBFreeHandle::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     UBAbstractHandle::mousePressEvent(event);
 }
 
-void UBFreeHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void UBFreeHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     UBAbstractHandle::mouseReleaseEvent(event);
 }
 
-UBItem *UBFreeHandle::deepCopy() const
+UBItem* UBFreeHandle::deepCopy() const
 {
-    UBFreeHandle * copy = new UBFreeHandle();
+    UBFreeHandle* copy = new UBFreeHandle();
 
     copyItemParameters(copy);
 
     return copy;
 }
 
-void UBFreeHandle::copyItemParameters(UBItem *copy) const
+void UBFreeHandle::copyItemParameters(UBItem* copy) const
 {
-    UBFreeHandle *cp = dynamic_cast<UBFreeHandle*>(copy);
+    UBFreeHandle* cp = dynamic_cast<UBFreeHandle*>(copy);
+
     if (cp)
     {
         cp->setTransform(this->transform());

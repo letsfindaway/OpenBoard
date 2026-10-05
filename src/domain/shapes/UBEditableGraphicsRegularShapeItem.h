@@ -21,97 +21,99 @@
  */
 
 
-#ifndef UBGRAPHICSREGULARSHAPES_H
-#define UBGRAPHICSREGULARSHAPES_H
+#pragma once
 
-#include "UBShapeEditable.h"
+#include "UBAbstractEditableGraphicsShapeItem.h"
 
 class UBEditableGraphicsRegularShapeItem : public UBAbstractEditableGraphicsShapeItem
 {
-    public:
+public:
+    UBEditableGraphicsRegularShapeItem(int nVertices, QPointF startPoint = QPointF(0, 0),
+                                       QGraphicsItem* parent = nullptr);
+    virtual ~UBEditableGraphicsRegularShapeItem();
 
-        enum NVertices
-        {
-            Triangle = 3,
-            Carre,
-            Pentagone,
-            Hexagone,
-            Heptagone,
-            Octogone
-        };
+    void createGraphicsRegularPathItem();
+    virtual void addPoint(const QPointF& point);
 
-        UBEditableGraphicsRegularShapeItem(int nVertices = Triangle, QPointF startPoint = QPointF(0,0), QGraphicsItem* parent = 0);
-        virtual ~UBEditableGraphicsRegularShapeItem();
+    void updatePath(QPointF newPos);
+    void setStartPoint(QPointF pos);
 
-        void createGraphicsRegularPathItem();
-        virtual void addPoint(const QPointF &point);
+    // UBItem interface
+    UBItem* deepCopy() const override;
+    void copyItemParameters(UBItem* copy) const override;
 
-        void updatePath(QPointF newPos);
-        void setStartPoint(QPointF pos);        
+    enum
+    {
+        Type = UBGraphicsItemType::GraphicsRegularPathItemType
+    };
 
-        // UBItem interface
-        UBItem *deepCopy() const;
-        void copyItemParameters(UBItem *copy) const;
+    virtual int type() const override
+    {
+        return Type;
+    }
 
-        enum { Type = UBGraphicsItemType::GraphicsRegularPathItemType };
-        virtual int type() const { return Type; }        
-        virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
-        virtual QRectF boundingRect() const;
+    virtual QRectF boundingRect() const override;
 
-        virtual QPainterPath painterPath() const;
+    virtual QPainterPath painterPath() const override;
 
-        inline const int nVertices() const { return mNVertices; }
-        inline const QPointF& startPoint() const { return mStartPoint; }
+    inline const int nVertices() const
+    {
+        return mNVertices;
+    }
 
-        void updateHandle(UBAbstractHandle *handle);
-        virtual void focusHandle(UBAbstractHandle *handle);
+    inline const QPointF& startPoint() const
+    {
+        return mStartPoint;
+    }
 
-        QPointF circumscribedCenterCircle() const
-        {
-            return mCenter;
-        }
+    void updateHandle(UBAbstractHandle* handle) override;
+    virtual void focusHandle(UBAbstractHandle* handle) override;
 
-        qreal circumscribedRadiusCircle() const
-        {
-            return mRadius;
-        }
+    QPointF circumscribedCenterCircle() const
+    {
+        return mCenter;
+    }
 
-        void setCircumscribedCenterCircle(const QPointF &center)
-        {
-            mCenter = center;
-        }
+    qreal circumscribedRadiusCircle() const
+    {
+        return mRadius;
+    }
 
-        void setCircumscribedRadiusCircle(qreal radius)
-        {
-            mRadius = radius;
-        }        
+    void setCircumscribedCenterCircle(const QPointF& center)
+    {
+        mCenter = center;
+    }
 
-        QPointF correctStartPoint() const;
+    void setCircumscribedRadiusCircle(qreal radius)
+    {
+        mRadius = radius;
+    }
 
-        void setPath(QPainterPath path)
-        {
-            mPath = path;
-        }
+    QPointF correctStartPoint() const;
 
-        QPainterPath path() const
-        {
-            return mPath;
-        }
+    void setPath(QPainterPath path)
+    {
+        mPath = path;
+    }
 
-        void onActivateEditionMode();
+    QPainterPath path() const
+    {
+        return mPath;
+    }
+
+    void onActivateEditionMode() override;
 
 private:
     int mNVertices;
     int mNOriginalVertices{0};
-    QList<QPair<double, double> > mVertices;
+    QList<QPair<double, double>> mVertices;
     QPointF mStartPoint;
 
-    //for the circumscribed circle
+    // for the circumscribed circle
     QPointF mCenter;
     qreal mRadius;
 
     QPainterPath mPath;
 };
-
-#endif // UBGRAPHICSREGULARSHAPES_H

@@ -37,10 +37,9 @@ UB1HEditableGraphicsSquareItem::UB1HEditableGraphicsSquareItem(QGraphicsItem* pa
 
 UB1HEditableGraphicsSquareItem::~UB1HEditableGraphicsSquareItem()
 {
-
 }
 
-UBItem *UB1HEditableGraphicsSquareItem::deepCopy() const
+UBItem* UB1HEditableGraphicsSquareItem::deepCopy() const
 {
     UB1HEditableGraphicsSquareItem* copy = new UB1HEditableGraphicsSquareItem();
 
@@ -49,20 +48,21 @@ UBItem *UB1HEditableGraphicsSquareItem::deepCopy() const
     return copy;
 }
 
-void UB1HEditableGraphicsSquareItem::copyItemParameters(UBItem *copy) const
+void UB1HEditableGraphicsSquareItem::copyItemParameters(UBItem* copy) const
 {
     UB1HEditableGraphicsBasicShapeItem::copyItemParameters(copy);
 
-    UB1HEditableGraphicsSquareItem *cp = dynamic_cast<UB1HEditableGraphicsSquareItem*>(copy);
+    UB1HEditableGraphicsSquareItem* cp = dynamic_cast<UB1HEditableGraphicsSquareItem*>(copy);
 
-    if(!cp) return;
+    if (!cp)
+        return;
 
     cp->mSide = mSide;
     cp->hIsNeg = hIsNeg;
     cp->wIsNeg = wIsNeg;
 }
 
-void UB1HEditableGraphicsSquareItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void UB1HEditableGraphicsSquareItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget)
     Q_UNUSED(option)
@@ -90,7 +90,7 @@ void UB1HEditableGraphicsSquareItem::onActivateEditionMode()
     getHandle(HandleId::Stretch)->setPos(mSide, 0);
 }
 
-void UB1HEditableGraphicsSquareItem::updateHandle(UBAbstractHandle *handle)
+void UB1HEditableGraphicsSquareItem::updateHandle(UBAbstractHandle* handle)
 {
     prepareGeometryChange();
 
@@ -100,13 +100,14 @@ void UB1HEditableGraphicsSquareItem::updateHandle(UBAbstractHandle *handle)
     {
         qreal side = qMin(handle->pos().x(), handle->pos().y());
 
-        if(side >= maxSize){
+        if (side >= maxSize)
+        {
             mSide = side;
         }
     }
     else if (handle->getId() == HandleId::Stretch)
     {
-        //it's the stretch handle
+        // it's the stretch handle
         if (handle->pos().x() >= maxSize)
         {
             double delta = handle->pos().x() - mSide;
@@ -130,7 +131,8 @@ QRectF UB1HEditableGraphicsSquareItem::boundingRect() const
 
     rect = adjustBoundingRect(rect);
 
-    if(isInEditMode()){
+    if (isInEditMode())
+    {
         qreal r = mHandles.at(0)->radius();
         rect.adjust(-r, -r, r, r);
     }
@@ -150,8 +152,10 @@ void UB1HEditableGraphicsSquareItem::setRect(QRectF rect)
     wIsNeg = w < 0;
     hIsNeg = h < 0;
 
-    if(wIsNeg) w = -w;
-    if(hIsNeg) h = -h;
+    if (wIsNeg)
+        w = -w;
+    if (hIsNeg)
+        h = -h;
 
     mSide = qMin(w, h);
 }

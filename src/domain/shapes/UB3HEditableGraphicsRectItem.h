@@ -21,36 +21,41 @@
  */
 
 
-#ifndef UBGRAPHICSRECTITEM_H
-#define UBGRAPHICSRECTITEM_H
+#pragma once
 
 #include <QGraphicsRectItem>
 
-#include "UB3HandlesEditable.h"
+#include "UB3HEditablesGraphicsBasicShapeItem.h"
 
 class UB3HEditableGraphicsRectItem : public UB3HEditablesGraphicsBasicShapeItem
 {
 public:
-    UB3HEditableGraphicsRectItem(QGraphicsItem* parent = 0);
-
+    UB3HEditableGraphicsRectItem(QGraphicsItem* parent = nullptr);
     virtual ~UB3HEditableGraphicsRectItem();
 
-    enum { Type = UBGraphicsItemType::GraphicsShapeItemType };
-    virtual int type() const { return Type; }
+    enum
+    {
+        Type = UBGraphicsItemType::GraphicsShapeItemType
+    };
 
-    virtual UBItem* deepCopy() const;
+    virtual int type() const override
+    {
+        return Type;
+    }
 
-    virtual void copyItemParameters(UBItem *copy) const;
+    virtual UBItem* deepCopy() const override;
 
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    virtual void copyItemParameters(UBItem* copy) const override;
 
-    void updateHandle(UBAbstractHandle *handle);
+    virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
-    virtual QRectF boundingRect() const;
+    void updateHandle(UBAbstractHandle* handle) override;
 
-    virtual QPainterPath painterPath() const;
+    virtual QRectF boundingRect() const override;
 
-    virtual void onActivateEditionMode();
+    virtual QPainterPath painterPath() const override;
+
+    virtual void onActivateEditionMode() override;
 
     void setRect(QRectF rect);
 
@@ -60,5 +65,3 @@ private:
     qreal mWidth;
     qreal mHeight;
 };
-
-#endif // UBGRAPHICSRECTITEM_H

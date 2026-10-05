@@ -23,8 +23,8 @@
 
 #include "UB1HEditableGraphicsCircleItem.h"
 
-UB1HEditableGraphicsCircleItem::UB1HEditableGraphicsCircleItem(QGraphicsItem* parent):
-    UB1HEditableGraphicsBasicShapeItem(parent)
+UB1HEditableGraphicsCircleItem::UB1HEditableGraphicsCircleItem(QGraphicsItem* parent)
+    : UB1HEditableGraphicsBasicShapeItem(parent)
 {
     initializeStrokeProperty();
     initializeFillingProperty();
@@ -36,10 +36,9 @@ UB1HEditableGraphicsCircleItem::UB1HEditableGraphicsCircleItem(QGraphicsItem* pa
 
 UB1HEditableGraphicsCircleItem::~UB1HEditableGraphicsCircleItem()
 {
-
 }
 
-UBItem *UB1HEditableGraphicsCircleItem::deepCopy() const
+UBItem* UB1HEditableGraphicsCircleItem::deepCopy() const
 {
     UB1HEditableGraphicsCircleItem* copy = new UB1HEditableGraphicsCircleItem();
 
@@ -48,13 +47,14 @@ UBItem *UB1HEditableGraphicsCircleItem::deepCopy() const
     return copy;
 }
 
-void UB1HEditableGraphicsCircleItem::copyItemParameters(UBItem *copy) const
+void UB1HEditableGraphicsCircleItem::copyItemParameters(UBItem* copy) const
 {
     UB1HEditableGraphicsBasicShapeItem::copyItemParameters(copy);
 
-    UB1HEditableGraphicsCircleItem *cp = dynamic_cast<UB1HEditableGraphicsCircleItem*>(copy);
+    UB1HEditableGraphicsCircleItem* cp = dynamic_cast<UB1HEditableGraphicsCircleItem*>(copy);
 
-    if(!cp) return;
+    if (!cp)
+        return;
 
     cp->mRadius = mRadius;
     cp->wIsNeg = wIsNeg;
@@ -71,7 +71,7 @@ QPointF UB1HEditableGraphicsCircleItem::center() const
     return centre;
 }
 
-void UB1HEditableGraphicsCircleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void UB1HEditableGraphicsCircleItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(option)
     Q_UNUSED(widget)
@@ -87,13 +87,14 @@ void UB1HEditableGraphicsCircleItem::paint(QPainter *painter, const QStyleOption
     x *= 2;
     y *= 2;
 
-    //N/C - NNE - 20140312 : Litle work around for avoid crash under MacOs 10.9
+    // N/C - NNE - 20140312 : Litle work around for avoid crash under MacOs 10.9
     QPainterPath path;
-    path.addEllipse(QRect(x, y, mRadius*2, mRadius*2));
+    path.addEllipse(QRect(x, y, mRadius * 2, mRadius * 2));
 
     painter->drawPath(path);
 
-    if(isInEditMode()){
+    if (isInEditMode())
+    {
         QPen p;
         p.setColor(QColor(128, 128, 200));
         p.setStyle(Qt::DotLine);
@@ -102,7 +103,7 @@ void UB1HEditableGraphicsCircleItem::paint(QPainter *painter, const QStyleOption
         painter->setPen(p);
         painter->setBrush(QBrush());
 
-        painter->drawRect(0, 0, rx*2, ry*2);
+        painter->drawRect(0, 0, rx * 2, ry * 2);
     }
 
     paintCenterMark(painter);
@@ -116,11 +117,12 @@ QRectF UB1HEditableGraphicsCircleItem::boundingRect() const
     x *= 2;
     y *= 2;
 
-    QRectF rect(x, y, mRadius*2, mRadius*2);
+    QRectF rect(x, y, mRadius * 2, mRadius * 2);
 
     rect = adjustBoundingRect(rect);
 
-    if(isInEditMode()){
+    if (isInEditMode())
+    {
         qreal r = getHandle(HandleId::Diagonal)->radius();
 
         rect.adjust(-r, -r, r, r);
@@ -131,11 +133,11 @@ QRectF UB1HEditableGraphicsCircleItem::boundingRect() const
 
 void UB1HEditableGraphicsCircleItem::onActivateEditionMode()
 {
-    getHandle(HandleId::Diagonal)->setPos(mRadius*2, mRadius*2);
-    getHandle(HandleId::Stretch)->setPos(mRadius*2, 0);
+    getHandle(HandleId::Diagonal)->setPos(mRadius * 2, mRadius * 2);
+    getHandle(HandleId::Stretch)->setPos(mRadius * 2, 0);
 }
 
-void UB1HEditableGraphicsCircleItem::updateHandle(UBAbstractHandle *handle)
+void UB1HEditableGraphicsCircleItem::updateHandle(UBAbstractHandle* handle)
 {
     prepareGeometryChange();
 
@@ -145,16 +147,17 @@ void UB1HEditableGraphicsCircleItem::updateHandle(UBAbstractHandle *handle)
     {
         qreal r = qMin(handle->pos().x(), handle->pos().y()) / 2;
 
-        if(r >= maxSize){
+        if (r >= maxSize)
+        {
             mRadius = r;
         }
     }
     else if (handle->getId() == HandleId::Stretch)
     {
-        //it's the stretch handle
+        // it's the stretch handle
         if (handle->pos().x() >= maxSize)
         {
-            double delta = handle->pos().x()/2. - mRadius;
+            double delta = handle->pos().x() / 2. - mRadius;
 
             mRadius += delta;
 
@@ -162,9 +165,8 @@ void UB1HEditableGraphicsCircleItem::updateHandle(UBAbstractHandle *handle)
         }
     }
 
-
-    getHandle(HandleId::Diagonal)->setPos(mRadius*2, mRadius*2);
-    getHandle(HandleId::Stretch)->setPos(mRadius*2, 0);
+    getHandle(HandleId::Diagonal)->setPos(mRadius * 2, mRadius * 2);
+    getHandle(HandleId::Stretch)->setPos(mRadius * 2, 0);
 }
 
 QPainterPath UB1HEditableGraphicsCircleItem::painterPath() const
@@ -190,8 +192,10 @@ void UB1HEditableGraphicsCircleItem::setRect(QRectF rect)
     wIsNeg = (w < 0);
     hIsNeg = (h < 0);
 
-    if(wIsNeg) w = -w;
-    if(hIsNeg) h = -h;
+    if (wIsNeg)
+        w = -w;
+    if (hIsNeg)
+        h = -h;
 
     mRadius = qMin(w, h);
     mRadius /= 2;
@@ -207,8 +211,8 @@ QRectF UB1HEditableGraphicsCircleItem::rect() const
     auto rx = wIsNeg ? -mRadius : mRadius;
     auto ry = hIsNeg ? -mRadius : mRadius;
 
-    r.setWidth(rx*2);
-    r.setHeight(ry*2);
+    r.setWidth(rx * 2);
+    r.setHeight(ry * 2);
 
     return r;
 }

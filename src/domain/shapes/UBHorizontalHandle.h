@@ -21,8 +21,7 @@
  */
 
 
-#ifndef UBHORIZONTALHANDLE_H
-#define UBHORIZONTALHANDLE_H
+#pragma once
 
 #include "UBAbstractHandle.h"
 
@@ -33,13 +32,11 @@ public:
 
     UBHorizontalHandle(UBHorizontalHandle* const src);
 
-    UBItem *deepCopy() const;
-    void copyItemParameters(UBItem *copy) const;
+    UBItem* deepCopy() const;
+    void copyItemParameters(UBItem* copy) const;
 
 protected:
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+    void mousePressEvent(QGraphicsSceneMouseEvent* event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
 };
-
-#endif // UBHORIZONTALHANDLE_H

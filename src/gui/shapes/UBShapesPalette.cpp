@@ -31,10 +31,9 @@
 
 #include "core/memcheck.h"
 
-UBShapesPalette::UBShapesPalette(Qt::Orientation orient, QWidget *parent )
+UBShapesPalette::UBShapesPalette(Qt::Orientation orient, QWidget* parent)
     : UBAbstractSubPalette(parent, orient)
 {
-
     hide();
 
     auto shapeActions = UBApplication::boardController->shapeFactory().shapeActions();
@@ -66,15 +65,12 @@ UBShapesPalette::UBShapesPalette(Qt::Orientation orient, QWidget *parent )
 
     for (const auto action : actions)
     {
-        connect(action, &QAction::triggered, this, [this, action](){
-            actionActivated(action);
-        });
+        connect(action, &QAction::triggered, this, [this, action]() { actionActivated(action); });
     }
 }
 
 UBShapesPalette::~UBShapesPalette()
 {
-
 }
 
 void UBShapesPalette::actionActivated(QAction* action)
@@ -123,7 +119,7 @@ void UBShapesPalette::actionActivated(QAction* action)
             // Change the action shown in the stylus palette :
             for (const auto a : actionPaletteButtonParent()->actions())
             {
-                 // Remove all previois actions
+                // Remove all previois actions
                 actionPaletteButtonParent()->removeAction(a);
             }
         }

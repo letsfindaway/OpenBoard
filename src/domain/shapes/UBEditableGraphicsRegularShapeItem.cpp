@@ -28,7 +28,8 @@
 #include "UBAbstractHandlesBuilder.h"
 #include "domain/shapes/UBVerticalHandle.h"
 
-UBEditableGraphicsRegularShapeItem::UBEditableGraphicsRegularShapeItem(int nVertices, QPointF startPos, QGraphicsItem * parent)
+UBEditableGraphicsRegularShapeItem::UBEditableGraphicsRegularShapeItem(int nVertices, QPointF startPos,
+                                                                       QGraphicsItem* parent)
     : UBAbstractEditableGraphicsShapeItem(parent)
     , mNVertices(nVertices)
     , mStartPoint(startPos)
@@ -52,7 +53,6 @@ UBEditableGraphicsRegularShapeItem::UBEditableGraphicsRegularShapeItem(int nVert
 
 UBEditableGraphicsRegularShapeItem::~UBEditableGraphicsRegularShapeItem()
 {
-
 }
 
 void UBEditableGraphicsRegularShapeItem::createGraphicsRegularPathItem()
@@ -60,6 +60,7 @@ void UBEditableGraphicsRegularShapeItem::createGraphicsRegularPathItem()
     const qreal PI = 3.14159265359;
 
     qreal pointDepart = 0.0;
+
     if (mNVertices % 2 == 0 && mNVertices % 3 == 0)
         pointDepart = PI / 3.0;
     else
@@ -67,14 +68,14 @@ void UBEditableGraphicsRegularShapeItem::createGraphicsRegularPathItem()
         if (mNVertices % 2 == 0)
             pointDepart = PI / 4.0;
         else
-            pointDepart = PI/2.0;
+            pointDepart = PI / 2.0;
     }
 
     mVertices.clear();
 
-    for (int i=0; i < mNVertices; i++)
+    for (int i = 0; i < mNVertices; i++)
     {
-        qreal angle = pointDepart + qreal(i)*2.0*PI/qreal(mNVertices);
+        qreal angle = pointDepart + qreal(i) * 2.0 * PI / qreal(mNVertices);
         mVertices.append(QPair<qreal, qreal>(cos(angle), sin(angle)));
     }
 }
@@ -87,10 +88,12 @@ void UBEditableGraphicsRegularShapeItem::updatePath(QPointF newPos)
 
     QPointF diff = newPos - mStartPoint;
 
-    qreal minFace = 0, x = diff.x(), y = diff.y();
+    qreal minFace = 0;
+    qreal x = diff.x();
+    qreal y = diff.y();
 
-    int signX = diff.x() < 0 ? -1 : 1;
-    int signY = diff.y() < 0 ? -1 : 1;
+    int signX = x < 0 ? -1 : 1;
+    int signY = y < 0 ? -1 : 1;
 
     if (x < 0)
         x = -x;
@@ -101,7 +104,7 @@ void UBEditableGraphicsRegularShapeItem::updatePath(QPointF newPos)
 
     mCenter = QPointF(mStartPoint.x() + minFace * signX / 2.0, mStartPoint.y() + minFace * signY / 2.0);
 
-    mRadius = minFace / 2.0 ;
+    mRadius = minFace / 2.0;
     QPointF nextPoint = mCenter - QPointF(mVertices.at(0).first * mRadius, mVertices.at(0).second * mRadius);
     QPointF firstPoint = nextPoint;
 
@@ -118,7 +121,8 @@ void UBEditableGraphicsRegularShapeItem::updatePath(QPointF newPos)
     setPath(path);
 }
 
-void UBEditableGraphicsRegularShapeItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void UBEditableGraphicsRegularShapeItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
+                                               QWidget* widget)
 {
     Q_UNUSED(widget)
     Q_UNUSED(option)
@@ -127,13 +131,14 @@ void UBEditableGraphicsRegularShapeItem::paint(QPainter *painter, const QStyleOp
 
     painter->drawPath(path());
 
-    if(isInEditMode()){
+    if (isInEditMode())
+    {
         painter->setBrush(QBrush());
         QPen p;
 
         p.setStyle(Qt::DashLine);
 
-        p.setColor(QColor(128,128,128));
+        p.setColor(QColor(128, 128, 128));
         p.setWidth(3);
 
         painter->setPen(p);
@@ -161,8 +166,9 @@ QRectF UBEditableGraphicsRegularShapeItem::boundingRect() const
 {
     QRectF retour = adjustBoundingRect(path().boundingRect());
 
-    if(isInEditMode()){
-        //add the size of the circle
+    if (isInEditMode())
+    {
+        // add the size of the circle
         QPainterPath circle;
         circle.addEllipse(mCenter, mRadius, mRadius);
 
@@ -178,7 +184,7 @@ QRectF UBEditableGraphicsRegularShapeItem::boundingRect() const
     return retour;
 }
 
-void UBEditableGraphicsRegularShapeItem::addPoint(const QPointF & point)
+void UBEditableGraphicsRegularShapeItem::addPoint(const QPointF& point)
 {
     QPainterPath painterPath = path();
 
@@ -194,20 +200,20 @@ void UBEditableGraphicsRegularShapeItem::addPoint(const QPointF & point)
     setPath(painterPath);
 }
 
-UBItem *UBEditableGraphicsRegularShapeItem::deepCopy() const
+UBItem* UBEditableGraphicsRegularShapeItem::deepCopy() const
 {
-    UBEditableGraphicsRegularShapeItem * copy = new UBEditableGraphicsRegularShapeItem();
+    UBEditableGraphicsRegularShapeItem* copy = new UBEditableGraphicsRegularShapeItem(mNVertices);
 
     copyItemParameters(copy);
 
     return copy;
 }
 
-void UBEditableGraphicsRegularShapeItem::copyItemParameters(UBItem *copy) const
+void UBEditableGraphicsRegularShapeItem::copyItemParameters(UBItem* copy) const
 {
     UBAbstractEditableGraphicsShapeItem::copyItemParameters(copy);
 
-    UBEditableGraphicsRegularShapeItem *cp = dynamic_cast<UBEditableGraphicsRegularShapeItem*>(copy);
+    UBEditableGraphicsRegularShapeItem* cp = dynamic_cast<UBEditableGraphicsRegularShapeItem*>(copy);
 
     cp->mVertices = mVertices;
     cp->mNVertices = mNVertices;
@@ -217,7 +223,7 @@ void UBEditableGraphicsRegularShapeItem::copyItemParameters(UBItem *copy) const
     cp->setPath(path());
 }
 
-void UBEditableGraphicsRegularShapeItem::updateHandle(UBAbstractHandle *handle)
+void UBEditableGraphicsRegularShapeItem::updateHandle(UBAbstractHandle* handle)
 {
     prepareGeometryChange();
 
@@ -231,11 +237,13 @@ void UBEditableGraphicsRegularShapeItem::updateHandle(UBAbstractHandle *handle)
 
         qreal maxSize = handle->radius() * 4;
 
-        if(diff.x() < maxSize){
+        if (diff.x() < maxSize)
+        {
             handle->setX(handle->pos().x() + (maxSize - diff.x()));
         }
 
-        if(diff.y() < maxSize){
+        if (diff.y() < maxSize)
+        {
             handle->setY(handle->pos().y() + (maxSize - diff.y()));
         }
 
@@ -305,10 +313,10 @@ QPainterPath UBEditableGraphicsRegularShapeItem::painterPath() const
 
 QPointF UBEditableGraphicsRegularShapeItem::correctStartPoint() const
 {
-    //the start point must be always in the top left corner
-    //so we have to correct its position if it is not in the
-    //top left corner (because the shape has maybe been construct
-    //in reverse order)
+    // the start point must be always in the top left corner
+    // so we have to correct its position if it is not in the
+    // top left corner (because the shape has maybe been construct
+    // in reverse order)
 
     QPainterPath circle;
 

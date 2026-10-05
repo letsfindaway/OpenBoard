@@ -28,22 +28,16 @@
 
 UBEditableGraphicsPolygonItem::UBEditableGraphicsPolygonItem(QGraphicsItem* parent)
     : UBAbstractEditableGraphicsPathItem(parent)
-    , mClosed(false)
-    , mOpened(false)
-    , HANDLE_SIZE(20)
-    , mIsInCreationMode(true)
 {
-    // Delegate()->setCanReturnInCreationMode(true);
     initializeStrokeProperty();
     initializeFillingProperty();
 }
 
 UBEditableGraphicsPolygonItem::~UBEditableGraphicsPolygonItem()
 {
-
 }
 
-void UBEditableGraphicsPolygonItem::addPoint(const QPointF & point)
+void UBEditableGraphicsPolygonItem::addPoint(const QPointF& point)
 {
     if (!mIsInCreationMode)
     {
@@ -68,11 +62,12 @@ void UBEditableGraphicsPolygonItem::addPoint(const QPointF & point)
         // If clic on first point, close the polygon
         // TODO à terme : utiliser la surface de la première poignée.
         QPointF pointDepart(painterPath.elementAt(0).x, painterPath.elementAt(0).y);
-        QPointF pointFin(painterPath.elementAt(painterPath.elementCount()-1).x, painterPath.elementAt(painterPath.elementCount()-1).y);
+        QPointF pointFin(painterPath.elementAt(painterPath.elementCount() - 1).x,
+                         painterPath.elementAt(painterPath.elementCount() - 1).y);
 
 
-        QGraphicsEllipseItem poigneeDepart(pointDepart.x()-10, pointDepart.y()-10, 20, 20);
-        QGraphicsEllipseItem poigneeFin(pointFin.x()-10, pointFin.y()-10, 20, 20);
+        QGraphicsEllipseItem poigneeDepart(pointDepart.x() - 10, pointDepart.y() - 10, 20, 20);
+        QGraphicsEllipseItem poigneeFin(pointFin.x() - 10, pointFin.y() - 10, 20, 20);
 
         if (poigneeDepart.contains(p))
         {
@@ -80,10 +75,13 @@ void UBEditableGraphicsPolygonItem::addPoint(const QPointF & point)
         }
         else
         {
-            if(poigneeFin.contains(p)){
+            if (poigneeFin.contains(p))
+            {
                 mIsInCreationMode = false;
                 mOpened = true;
-            }else{
+            }
+            else
+            {
                 painterPath.lineTo(p);
                 setPath(painterPath);
             }
@@ -92,16 +90,17 @@ void UBEditableGraphicsPolygonItem::addPoint(const QPointF & point)
         mStartEndPoint[1] = p;
     }
 
-    if(!mClosed && !mOpened){
+    if (!mClosed && !mOpened)
+    {
 
-        UBFreeHandle *handle = new UBFreeHandle();
+        UBFreeHandle* handle = new UBFreeHandle();
 
         addHandle(handle);
 
         handle->setParentItem(this);
         handle->setEditableObject(this);
         handle->setPos(p);
-        handle->setId(path().elementCount()-1);
+        handle->setId(path().elementCount() - 1);
         handle->hide();
     }
 }
@@ -115,14 +114,15 @@ void UBEditableGraphicsPolygonItem::reopen()
         QPointF firstPoint(firstElement.x, firstElement.y);
 
         QPainterPath newPainterPath(firstPoint);
-        int nbElement = path().elementCount() -1;
-        for(int iElement=1; iElement < nbElement; iElement++)
+        int nbElement = path().elementCount() - 1;
+        for (int iElement = 1; iElement < nbElement; iElement++)
         {
             newPainterPath.lineTo(path().elementAt(iElement));
         }
 
         setPath(newPainterPath);
-        mStartEndPoint[1] = QPointF(path().elementAt(path().elementCount()-1).x, path().elementAt(path().elementCount()-1).y);
+        mStartEndPoint[1] =
+            QPointF(path().elementAt(path().elementCount() - 1).x, path().elementAt(path().elementCount() - 1).y);
         setClosed(false);
     }
 }
@@ -142,6 +142,7 @@ void UBEditableGraphicsPolygonItem::setClosed(bool closed)
     mClosed = closed;
 
     QPainterPath painterPath = path();
+
     if (closed)
     {
         painterPath.closeSubpath(); // Automatically add a last point, identic to the first point.
@@ -150,7 +151,7 @@ void UBEditableGraphicsPolygonItem::setClosed(bool closed)
     {
         // if last point and first point are the same, remove the last one, in order to open the path.
         int nbElements = painterPath.elementCount();
-        if ( nbElements > 1)
+        if (nbElements > 1)
         {
             QPainterPath::Element firstElement = painterPath.elementAt(0);
             QPainterPath::Element lastElement = painterPath.elementAt(nbElements - 1);
@@ -162,7 +163,7 @@ void UBEditableGraphicsPolygonItem::setClosed(bool closed)
             {
                 // Rebuild the path, excluding the last point.
                 QPainterPath newPainterPath(firstPoint);
-                for(int iElement=1; iElement<nbElements - 1; iElement++)
+                for (int iElement = 1; iElement < nbElements - 1; iElement++)
                 {
                     newPainterPath.lineTo(painterPath.elementAt(iElement));
                 }
@@ -176,27 +177,29 @@ void UBEditableGraphicsPolygonItem::setClosed(bool closed)
 }
 
 
-UBItem *UBEditableGraphicsPolygonItem::deepCopy() const
+UBItem* UBEditableGraphicsPolygonItem::deepCopy() const
 {
-    UBEditableGraphicsPolygonItem * copy = new UBEditableGraphicsPolygonItem();
+    UBEditableGraphicsPolygonItem* copy = new UBEditableGraphicsPolygonItem();
 
     copyItemParameters(copy);
 
     return copy;
 }
 
-void UBEditableGraphicsPolygonItem::copyItemParameters(UBItem *copy) const
+void UBEditableGraphicsPolygonItem::copyItemParameters(UBItem* copy) const
 {
     UBAbstractEditableGraphicsPathItem::copyItemParameters(copy);
 
-    UBEditableGraphicsPolygonItem *cp = dynamic_cast<UBEditableGraphicsPolygonItem*>(copy);
+    UBEditableGraphicsPolygonItem* cp = dynamic_cast<UBEditableGraphicsPolygonItem*>(copy);
 
-    if(cp){
+    if (cp)
+    {
         qDeleteAll(cp->mHandles);
         cp->mHandles.clear();
 
-        for(int i = 0; i < mHandles.size(); i++){
-            UBFreeHandle *handle = new UBFreeHandle();
+        for (int i = 0; i < mHandles.size(); i++)
+        {
+            UBFreeHandle* handle = new UBFreeHandle();
 
             handle->setParentItem(cp);
             handle->setEditableObject(cp);
@@ -220,21 +223,21 @@ QRectF UBEditableGraphicsPolygonItem::boundingRect() const
 
     int enlarge = 0;
 
-    if (mIsInCreationMode)//gérer les poignées aux extrémités
-        enlarge += HANDLE_SIZE/2;
+    if (mIsInCreationMode) // gérer les poignées aux extrémités
+        enlarge += HANDLE_SIZE / 2;
 
     rect.adjust(-enlarge, -enlarge, enlarge, enlarge);
 
     return rect;
 }
 
-void UBEditableGraphicsPolygonItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void UBEditableGraphicsPolygonItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget)
 
     setStyle(painter);
 
-    if(!this->isClosed())
+    if (!this->isClosed())
         painter->setBrush(QBrush{});
 
     painter->drawPath(path());
@@ -247,19 +250,21 @@ void UBEditableGraphicsPolygonItem::paint(QPainter *painter, const QStyleOptionG
         penHandles.setStyle(Qt::SolidLine);
         painter->setPen(penHandles);
 
-        int hsize = HANDLE_SIZE/2;
+        int hsize = HANDLE_SIZE / 2;
 
         if (mIsInCreationMode)
         {
-            painter->drawEllipse(mStartEndPoint[0].x() - hsize, mStartEndPoint[0].y() - hsize, HANDLE_SIZE, HANDLE_SIZE);
+            painter->drawEllipse(mStartEndPoint[0].x() - hsize, mStartEndPoint[0].y() - hsize, HANDLE_SIZE,
+                                 HANDLE_SIZE);
 
-            if(path().elementCount() >= 2)
-                painter->drawEllipse(mStartEndPoint[1].x() - hsize, mStartEndPoint[1].y() - hsize, HANDLE_SIZE, HANDLE_SIZE);
+            if (path().elementCount() >= 2)
+                painter->drawEllipse(mStartEndPoint[1].x() - hsize, mStartEndPoint[1].y() - hsize, HANDLE_SIZE,
+                                     HANDLE_SIZE);
         }
     }
 }
 
-void UBEditableGraphicsPolygonItem::updateHandle(UBAbstractHandle *handle)
+void UBEditableGraphicsPolygonItem::updateHandle(UBAbstractHandle* handle)
 {
     prepareGeometryChange();
 
@@ -269,24 +274,38 @@ void UBEditableGraphicsPolygonItem::updateHandle(UBAbstractHandle *handle)
 
     QPainterPath newPath;
 
-    if(mClosed && id == 0){
+    if (mClosed && id == 0)
+    {
         newPath.moveTo(handle->pos());
-        for(int i = 1; i < oldPath.elementCount()-1; i++){
+        for (int i = 1; i < oldPath.elementCount() - 1; i++)
+        {
             newPath.lineTo(oldPath.elementAt(i).x, oldPath.elementAt(i).y);
         }
         newPath.lineTo(handle->pos());
-    }else{
-        for(int i = 0; i < oldPath.elementCount(); i++){
-            if(i == 0){
-                if(i == id){
+    }
+    else
+    {
+        for (int i = 0; i < oldPath.elementCount(); i++)
+        {
+            if (i == 0)
+            {
+                if (i == id)
+                {
                     newPath.moveTo(handle->pos());
-                }else{
+                }
+                else
+                {
                     newPath.moveTo(oldPath.elementAt(i).x, oldPath.elementAt(i).y);
                 }
-            }else{
-                if(i == id){
+            }
+            else
+            {
+                if (i == id)
+                {
                     newPath.lineTo(handle->pos());
-                }else{
+                }
+                else
+                {
                     newPath.lineTo(oldPath.elementAt(i).x, oldPath.elementAt(i).y);
                 }
             }
@@ -296,7 +315,8 @@ void UBEditableGraphicsPolygonItem::updateHandle(UBAbstractHandle *handle)
     setPath(newPath);
 
     mStartEndPoint[0] = QPointF(path().elementAt(0).x, path().elementAt(0).y);
-    mStartEndPoint[1] = QPointF(path().elementAt(path().elementCount()-1).x, path().elementAt(path().elementCount()-1).y);
+    mStartEndPoint[1] =
+        QPointF(path().elementAt(path().elementCount() - 1).x, path().elementAt(path().elementCount() - 1).y);
     update();
 }
 

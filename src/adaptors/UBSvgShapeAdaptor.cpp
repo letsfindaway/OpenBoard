@@ -1,3 +1,26 @@
+/*
+ * Copyright (C) 2015-2026 Département de l'Instruction Publique (DIP-SEM)
+ * and contributors.
+ *
+ * This file is part of OpenBoard.
+ *
+ * OpenBoard is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3 of the License,
+ * with a specific linking exception for the OpenSSL project's
+ * "OpenSSL" library (or with modified versions of it that use the
+ * same license as the "OpenSSL" library).
+ *
+ * OpenBoard is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OpenBoard. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
 #include "UBSvgShapeAdaptor.h"
 
 #include "board/UBBoardController.h"
@@ -7,11 +30,11 @@
 #include "domain/UBGraphicsScene.h"
 #include "domain/shapes/UB1HEditableGraphicsCircleItem.h"
 #include "domain/shapes/UB1HEditableGraphicsSquareItem.h"
+#include "domain/shapes/UB3HEditableGraphicsEllipseItem.h"
+#include "domain/shapes/UB3HEditableGraphicsRectItem.h"
 #include "domain/shapes/UBAbstractGraphicsPathItem.h"
+#include "domain/shapes/UBEditableGraphicsLineItem.h"
 #include "domain/shapes/UBEditableGraphicsRegularShapeItem.h"
-#include "domain/shapes/UBGraphicsEllipseItem.h"
-#include "domain/shapes/UBGraphicsLineItem.h"
-#include "domain/shapes/UBGraphicsRectItem.h"
 
 #include "frameworks/UBStringUtils.h"
 
@@ -24,7 +47,6 @@ void UBSvgShapeAdaptor::registerExtension()
 
 UBSvgShapeAdaptor::UBSvgShapeAdaptor()
 {
-
 }
 
 UBSvgSubsetAdaptor::UBSvgReaderExtension* UBSvgShapeAdaptor::createSvgReaderExtension(QXmlStreamReader& xmlReader)
@@ -43,18 +65,23 @@ void UBSvgShapeAdaptor::UBSvgShapeReader::readerExtension(std::shared_ptr<UBGrap
 
     if (name == "ellipse") // EV-7 - ALTI/AOU - 20131231
     {
-        QStringView isShapeRect = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "shapeEllipse");
+        QStringView isShapeRect =
+            mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "shapeEllipse");
 
-        if(!isShapeRect.isNull() && isShapeRect.toString().toLower() == "true"){
+        if (!isShapeRect.isNull() && isShapeRect.toString().toLower() == "true")
+        {
             QStringView isCircle = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "isCircle");
 
-            UBAbstractGraphicsItem *item = 0;
+            UBAbstractGraphicsItem* item = 0;
 
             Qt::GlobalColor color = scene->isDarkBackground() ? Qt::white : Qt::black;
 
-            if(!isCircle.isNull() && isCircle.toString().toLower() == "true"){
+            if (!isCircle.isNull() && isCircle.toString().toLower() == "true")
+            {
                 item = shapeCircleFromSvg(color);
-            }else{
+            }
+            else
+            {
                 item = shapeEllipseFromSvg(color);
             }
 
@@ -65,16 +92,20 @@ void UBSvgShapeAdaptor::UBSvgShapeReader::readerExtension(std::shared_ptr<UBGrap
     {
         QStringView isShapeRect = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "shapeRect");
 
-        if(!isShapeRect.isNull() && isShapeRect.toString().toLower() == "true"){
+        if (!isShapeRect.isNull() && isShapeRect.toString().toLower() == "true")
+        {
             QStringView isSquare = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "isSquare");
 
-            UBAbstractGraphicsItem *item = 0;
+            UBAbstractGraphicsItem* item = 0;
 
             Qt::GlobalColor color = scene->isDarkBackground() ? Qt::white : Qt::black;
 
-            if(!isSquare.isNull() && isSquare.toString().toLower() == "true"){
+            if (!isSquare.isNull() && isSquare.toString().toLower() == "true")
+            {
                 item = shapeSquareFromSvg(color);
-            }else{
+            }
+            else
+            {
                 item = shapeRectFromSvg(color);
             }
 
@@ -83,15 +114,19 @@ void UBSvgShapeAdaptor::UBSvgShapeReader::readerExtension(std::shared_ptr<UBGrap
     }
     else if (mXmlReader.name() == "polyline")
     {
-        QStringView s = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "shapePath"); // EV-7 - ALTI/AOU - 20140102
+        QStringView s = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri,
+                                                      "shapePath"); // EV-7 - ALTI/AOU - 20140102
         if (!s.isNull())
         {
             Qt::GlobalColor color = scene->isDarkBackground() ? Qt::white : Qt::black;
-            UBAbstractGraphicsItem *pathItem = 0;
+            UBAbstractGraphicsItem* pathItem = 0;
 
-            if(s.toString().toInt() == UBEditableGraphicsRegularShapeItem::Type){
+            if (s.toString().toInt() == UBEditableGraphicsRegularShapeItem::Type)
+            {
                 pathItem = shapeRegularFromSvg(color);
-            }else{
+            }
+            else
+            {
                 pathItem = shapePathFromSvg(color, s.toString().toInt());
             }
 
@@ -139,10 +174,9 @@ void UBSvgShapeAdaptor::UBSvgShapeReader::baseAttributesFromSvg(QGraphicsItem* i
         else
             ubItem->setUuid(QUuid::createUuid());
     }
-
 }
 
-void UBSvgShapeAdaptor::UBSvgShapeReader::getStyleFromSvg(UBAbstractGraphicsItem *item, const QColor &pDefaultPenColor)
+void UBSvgShapeAdaptor::UBSvgShapeReader::getStyleFromSvg(UBAbstractGraphicsItem* item, const QColor& pDefaultPenColor)
 {
     QPen p = item->pen();
     // Stroke color
@@ -174,12 +208,15 @@ void UBSvgShapeAdaptor::UBSvgShapeReader::getStyleFromSvg(UBAbstractGraphicsItem
     // Stroke style
     QStringView svgStrokeLineCap = mXmlReader.attributes().value("stroke-linecap");
 
-    if(!svgStrokeLineCap.isNull() && svgStrokeLineCap.toString().toLower() == "round"){
-        //Custom dash line style
+    if (!svgStrokeLineCap.isNull() && svgStrokeLineCap.toString().toLower() == "round")
+    {
+        // Custom dash line style
         p.setCapStyle(Qt::RoundCap);
         QVector<qreal> dashPattern = UBApplication::boardController->shapeFactory().dashPattern();
         p.setDashPattern(dashPattern);
-    }else{
+    }
+    else
+    {
         QStringView svgStrokeStyle = mXmlReader.attributes().value("stroke-dasharray");
         if (!svgStrokeStyle.isNull())
         {
@@ -229,8 +266,10 @@ void UBSvgShapeAdaptor::UBSvgShapeReader::getStyleFromSvg(UBAbstractGraphicsItem
 
     // ShapeStyle
     UBItemStyle style;
-    QStringView onLight = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "line-on-light-background");
-    QStringView onDark = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "line-on-dark-background");
+    QStringView onLight =
+        mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "line-on-light-background");
+    QStringView onDark =
+        mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "line-on-dark-background");
 
     if (!onLight.isNull() && !onDark.isNull())
     {
@@ -255,43 +294,47 @@ void UBSvgShapeAdaptor::UBSvgShapeReader::getStyleFromSvg(UBAbstractGraphicsItem
     item->setItemStyle(style);
 }
 
-UB3HEditableGraphicsEllipseItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapeEllipseFromSvg(const QColor& pDefaultPenColor) // EV-7 - ALTI/AOU - 20131231
+UB3HEditableGraphicsEllipseItem*
+UBSvgShapeAdaptor::UBSvgShapeReader::shapeEllipseFromSvg(const QColor& pDefaultPenColor) // EV-7 - ALTI/AOU - 20131231
 {
-    UB3HEditableGraphicsEllipseItem * ellipse = new UB3HEditableGraphicsEllipseItem();
+    UB3HEditableGraphicsEllipseItem* ellipse = new UB3HEditableGraphicsEllipseItem();
     baseAttributesFromSvg(ellipse);
 
-    qreal rx=100, ry=100;
+    qreal rx = 100, ry = 100;
     QStringView svgRx = mXmlReader.attributes().value("rx");
     QStringView svgRy = mXmlReader.attributes().value("ry");
 
-    if ( ! svgRx.isNull()) rx = svgRx.toString().toFloat();
-    if ( ! svgRy.isNull()) ry = svgRy.toString().toFloat();
+    if (!svgRx.isNull())
+        rx = svgRx.toString().toFloat();
+    if (!svgRy.isNull())
+        ry = svgRy.toString().toFloat();
 
-    ellipse->setRect(QRectF(0, 0, 2*rx, 2*ry));
+    ellipse->setRect(QRectF(0, 0, 2 * rx, 2 * ry));
 
     getStyleFromSvg(ellipse, pDefaultPenColor);
 
     return ellipse;
 }
 
-UB1HEditableGraphicsCircleItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapeCircleFromSvg(const QColor &pDefaultPenColor)
+UB1HEditableGraphicsCircleItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapeCircleFromSvg(const QColor& pDefaultPenColor)
 {
-    UB1HEditableGraphicsCircleItem * circle = new UB1HEditableGraphicsCircleItem();
+    UB1HEditableGraphicsCircleItem* circle = new UB1HEditableGraphicsCircleItem();
     baseAttributesFromSvg(circle);
 
-    qreal rx=100;
+    qreal rx = 100;
     QStringView svgRx = mXmlReader.attributes().value("rx");
 
-    if ( ! svgRx.isNull()) rx = svgRx.toString().toFloat();
+    if (!svgRx.isNull())
+        rx = svgRx.toString().toFloat();
 
-    circle->setRect(QRectF(0, 0, 2*rx, 2*rx));
+    circle->setRect(QRectF(0, 0, 2 * rx, 2 * rx));
 
     getStyleFromSvg(circle, pDefaultPenColor);
 
     return circle;
 }
 
-UB1HEditableGraphicsSquareItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapeSquareFromSvg(const QColor &pDefaultPenColor)
+UB1HEditableGraphicsSquareItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapeSquareFromSvg(const QColor& pDefaultPenColor)
 {
     UB1HEditableGraphicsSquareItem* square = new UB1HEditableGraphicsSquareItem();
     baseAttributesFromSvg(square);
@@ -299,7 +342,8 @@ UB1HEditableGraphicsSquareItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapeSquare
     qreal side = 0;
     QStringView svgS = mXmlReader.attributes().value("width");
 
-    if ( ! svgS.isNull()) side = svgS.toString().toFloat();
+    if (!svgS.isNull())
+        side = svgS.toString().toFloat();
 
     square->setRect(QRectF(0, 0, side, side));
 
@@ -308,17 +352,20 @@ UB1HEditableGraphicsSquareItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapeSquare
     return square;
 }
 
-UB3HEditableGraphicsRectItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapeRectFromSvg(const QColor& pDefaultPenColor) // EV-7 - ALTI/AOU - 20131231
+UB3HEditableGraphicsRectItem*
+UBSvgShapeAdaptor::UBSvgShapeReader::shapeRectFromSvg(const QColor& pDefaultPenColor) // EV-7 - ALTI/AOU - 20131231
 {
     UB3HEditableGraphicsRectItem* rect = new UB3HEditableGraphicsRectItem();
     baseAttributesFromSvg(rect);
 
-    qreal w=100, h=100;
+    qreal w = 100, h = 100;
     QStringView svgW = mXmlReader.attributes().value("width");
     QStringView svgH = mXmlReader.attributes().value("height");
 
-    if ( ! svgW.isNull()) w = svgW.toString().toFloat();
-    if ( ! svgH.isNull()) h = svgH.toString().toFloat();
+    if (!svgW.isNull())
+        w = svgW.toString().toFloat();
+    if (!svgH.isNull())
+        h = svgH.toString().toFloat();
 
     rect->setRect(QRectF(0, 0, w, h));
 
@@ -327,11 +374,14 @@ UB3HEditableGraphicsRectItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapeRectFrom
     return rect;
 }
 
-UBAbstractGraphicsPathItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapePathFromSvg(const QColor& pDefaultPenColor, int type) // EV-7 - ALTI/AOU - 20140102
+UBAbstractGraphicsPathItem*
+UBSvgShapeAdaptor::UBSvgShapeReader::shapePathFromSvg(const QColor& pDefaultPenColor,
+                                                      int type) // EV-7 - ALTI/AOU - 20140102
 {
-    UBAbstractGraphicsPathItem *pathItem = 0;
+    UBAbstractGraphicsPathItem* pathItem = 0;
 
-    switch(type){
+    switch (type)
+    {
     case UBEditableGraphicsPolygonItem::Type:
         pathItem = new UBEditableGraphicsPolygonItem();
         break;
@@ -351,10 +401,9 @@ UBAbstractGraphicsPathItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapePathFromSv
 
     if (pathItem && !svgPoints.isNull())
     {
-        QStringList ts = svgPoints.toString().split(QLatin1Char(' '),
-                         Qt::SkipEmptyParts);
+        QStringList ts = svgPoints.toString().split(QLatin1Char(' '), Qt::SkipEmptyParts);
 
-        foreach(const QString sPoint, ts)
+        foreach (const QString sPoint, ts)
         {
             QStringList sCoord = sPoint.split(QLatin1Char(','), Qt::SkipEmptyParts);
 
@@ -365,8 +414,9 @@ UBAbstractGraphicsPathItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapePathFromSv
                 point.setY(sCoord.at(1).toFloat());
                 pathItem->addPoint(point);
             }
-            else if (sCoord.size() == 4){
-                //This is the case on system were the "," is used to seperate decimal
+            else if (sCoord.size() == 4)
+            {
+                // This is the case on system were the "," is used to seperate decimal
                 QPointF point;
                 QString x = sCoord.at(0) + "." + sCoord.at(1);
                 QString y = sCoord.at(2) + "." + sCoord.at(3);
@@ -397,7 +447,8 @@ UBAbstractGraphicsPathItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapePathFromSv
     return pathItem;
 }
 
-UBEditableGraphicsRegularShapeItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapeRegularFromSvg(const QColor& pDefaultPenColor)
+UBEditableGraphicsRegularShapeItem*
+UBSvgShapeAdaptor::UBSvgShapeReader::shapeRegularFromSvg(const QColor& pDefaultPenColor)
 {
     QStringView svgPoints = mXmlReader.attributes().value("points");
 
@@ -409,7 +460,8 @@ UBEditableGraphicsRegularShapeItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapeRe
     QStringView cCenterY = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "cCenterY");
     QStringView cRadius = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "cRadius");
 
-    UBEditableGraphicsRegularShapeItem *pathItem = new UBEditableGraphicsRegularShapeItem(nVertices.toString().toInt(), QPointF(startPointX.toString().toFloat(), startPointY.toString().toFloat()));
+    UBEditableGraphicsRegularShapeItem* pathItem = new UBEditableGraphicsRegularShapeItem(
+        nVertices.toString().toInt(), QPointF(startPointX.toString().toFloat(), startPointY.toString().toFloat()));
     baseAttributesFromSvg(pathItem);
 
     pathItem->setCircumscribedCenterCircle(QPointF(cCenterX.toString().toFloat(), cCenterY.toString().toFloat()));
@@ -417,10 +469,9 @@ UBEditableGraphicsRegularShapeItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapeRe
 
     if (!svgPoints.isNull())
     {
-        QStringList ts = svgPoints.toString().split(QLatin1Char(' '),
-                         Qt::SkipEmptyParts);
+        QStringList ts = svgPoints.toString().split(QLatin1Char(' '), Qt::SkipEmptyParts);
 
-        foreach(const QString sPoint, ts)
+        foreach (const QString sPoint, ts)
         {
             QStringList sCoord = sPoint.split(QLatin1Char(','), Qt::SkipEmptyParts);
 
@@ -431,8 +482,9 @@ UBEditableGraphicsRegularShapeItem* UBSvgShapeAdaptor::UBSvgShapeReader::shapeRe
                 point.setY(sCoord.at(1).toFloat());
                 pathItem->addPoint(point);
             }
-            else if (sCoord.size() == 4){
-                //This is the case on system were the "," is used to seperate decimal
+            else if (sCoord.size() == 4)
+            {
+                // This is the case on system were the "," is used to seperate decimal
                 QPointF point;
                 QString x = sCoord.at(0) + "." + sCoord.at(1);
                 QString y = sCoord.at(2) + "." + sCoord.at(3);
@@ -465,28 +517,32 @@ UBSvgShapeAdaptor::UBSvgShapeWriter::UBSvgShapeWriter(QXmlStreamWriter& xmlWrite
 void UBSvgShapeAdaptor::UBSvgShapeWriter::writerExtension(QGraphicsItem* item)
 {
     // Is the item a shape Ellipse ?
-    UB3HEditableGraphicsEllipseItem* shapeEllipseItem = dynamic_cast<UB3HEditableGraphicsEllipseItem*>(item);// EV-7 - ALTI/AOU - 20131231
+    UB3HEditableGraphicsEllipseItem* shapeEllipseItem =
+        dynamic_cast<UB3HEditableGraphicsEllipseItem*>(item); // EV-7 - ALTI/AOU - 20131231
     if (shapeEllipseItem && shapeEllipseItem->isVisible())
     {
         shapeEllipseToSvg(shapeEllipseItem);
     }
 
     // Is the item a shape Rect ?
-    UB3HEditableGraphicsRectItem* shapeRectItem = dynamic_cast<UB3HEditableGraphicsRectItem*>(item);// EV-7 - ALTI/AOU - 20131231
+    UB3HEditableGraphicsRectItem* shapeRectItem =
+        dynamic_cast<UB3HEditableGraphicsRectItem*>(item); // EV-7 - ALTI/AOU - 20131231
     if (shapeRectItem && shapeRectItem->isVisible())
     {
         shapeRectToSvg(shapeRectItem);
     }
 
     // Is the item a shape Square ?
-    UB1HEditableGraphicsSquareItem* shapeSquareItem = dynamic_cast<UB1HEditableGraphicsSquareItem*>(item);// EV-7 - ALTI/AOU - 20131231
+    UB1HEditableGraphicsSquareItem* shapeSquareItem =
+        dynamic_cast<UB1HEditableGraphicsSquareItem*>(item); // EV-7 - ALTI/AOU - 20131231
     if (shapeSquareItem && shapeSquareItem->isVisible())
     {
         shapeSquareToSvg(shapeSquareItem);
     }
 
     // Is the item a shape Circle ?
-    UB1HEditableGraphicsCircleItem* shapeCircleItem = dynamic_cast<UB1HEditableGraphicsCircleItem*>(item);// EV-7 - ALTI/AOU - 20131231
+    UB1HEditableGraphicsCircleItem* shapeCircleItem =
+        dynamic_cast<UB1HEditableGraphicsCircleItem*>(item); // EV-7 - ALTI/AOU - 20131231
     if (shapeCircleItem && shapeCircleItem->isVisible())
     {
         shapeCircleToSvg(shapeCircleItem);
@@ -494,27 +550,32 @@ void UBSvgShapeAdaptor::UBSvgShapeWriter::writerExtension(QGraphicsItem* item)
 
 
     // Is the item a shape Path ? (closed polygon, opened polygon, freehand drawing)
-    UBAbstractGraphicsPathItem * shapepathItem = dynamic_cast<UBAbstractGraphicsPathItem *>(item); // EV-7 - ALTI/AOU - 20140102
+    UBAbstractGraphicsPathItem* shapepathItem =
+        dynamic_cast<UBAbstractGraphicsPathItem*>(item); // EV-7 - ALTI/AOU - 20140102
     if (shapepathItem && shapepathItem->isVisible())
     {
         shapePathToSvg(shapepathItem);
     }
 
     // Is the item a shape Path ? (closed polygon, opened polygon, freehand drawing)
-    UBEditableGraphicsRegularShapeItem * shapeRegularItem = dynamic_cast<UBEditableGraphicsRegularShapeItem *>(item); // EV-7 - ALTI/AOU - 20140102
+    UBEditableGraphicsRegularShapeItem* shapeRegularItem =
+        dynamic_cast<UBEditableGraphicsRegularShapeItem*>(item); // EV-7 - ALTI/AOU - 20140102
     if (shapeRegularItem && shapeRegularItem->isVisible())
     {
         shapeRegularToSvg(shapeRegularItem);
     }
 }
 
-void UBSvgShapeAdaptor::UBSvgShapeWriter::shapeEllipseToSvg(UB3HEditableGraphicsEllipseItem *item) // EV-7 - ALTI/AOU - 20131231
+void UBSvgShapeAdaptor::UBSvgShapeWriter::shapeEllipseToSvg(
+    UB3HEditableGraphicsEllipseItem* item) // EV-7 - ALTI/AOU - 20131231
 {
     mXmlWriter.writeStartElement("ellipse");
     mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "shapeEllipse", "true");
 
     // SVG <ellipse> tag :
-    mXmlWriter.writeAttribute("cx", QString("%1").arg(item->center().x())); // The <ellipse> SVG tag need center coordinates. Compute them from boundaries of item.
+    mXmlWriter.writeAttribute("cx",
+                              QString("%1").arg(item->center().x())); // The <ellipse> SVG tag need center coordinates.
+                                                                      // Compute them from boundaries of item.
     mXmlWriter.writeAttribute("cy", QString("%1").arg(item->center().y()));
     mXmlWriter.writeAttribute("rx", QString("%1").arg(item->radiusX()));
     mXmlWriter.writeAttribute("ry", QString("%1").arg(item->radiusY()));
@@ -524,7 +585,8 @@ void UBSvgShapeAdaptor::UBSvgShapeWriter::shapeEllipseToSvg(UB3HEditableGraphics
     mXmlWriter.writeEndElement();
 }
 
-void UBSvgShapeAdaptor::UBSvgShapeWriter::shapeRectToSvg(UB3HEditableGraphicsRectItem *item) // EV-7 - ALTI/AOU - 20131231
+void UBSvgShapeAdaptor::UBSvgShapeWriter::shapeRectToSvg(
+    UB3HEditableGraphicsRectItem* item) // EV-7 - ALTI/AOU - 20131231
 {
     mXmlWriter.writeStartElement("rect");
     mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "shapeRect", "true");
@@ -540,21 +602,28 @@ void UBSvgShapeAdaptor::UBSvgShapeWriter::shapeRectToSvg(UB3HEditableGraphicsRec
     mXmlWriter.writeEndElement();
 }
 
-void UBSvgShapeAdaptor::UBSvgShapeWriter::shapeRegularToSvg(UBEditableGraphicsRegularShapeItem *item)
+void UBSvgShapeAdaptor::UBSvgShapeWriter::shapeRegularToSvg(UBEditableGraphicsRegularShapeItem* item)
 {
     mXmlWriter.writeStartElement("polyline");
 
-    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "shapePath", QString::number(item->type())); // just to know it's a path drawn with the drawingPalette
+    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "shapePath",
+                              QString::number(item->type())); // just to know it's a path drawn with the drawingPalette
 
-    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "nVertices", QString::number(item->nVertices()));
-    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "startPointX", QString::number(item->startPoint().x()));
-    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "startPointY", QString::number(item->startPoint().y()));
-    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "cCenterX", QString::number(item->circumscribedCenterCircle().x()));
-    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "cCenterY", QString::number(item->circumscribedCenterCircle().y()));
-    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "cRadius", QString::number(item->circumscribedRadiusCircle()));
+    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "nVertices",
+                              QString::number(item->nVertices()));
+    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "startPointX",
+                              QString::number(item->startPoint().x()));
+    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "startPointY",
+                              QString::number(item->startPoint().y()));
+    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "cCenterX",
+                              QString::number(item->circumscribedCenterCircle().x()));
+    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "cCenterY",
+                              QString::number(item->circumscribedCenterCircle().y()));
+    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "cRadius",
+                              QString::number(item->circumscribedRadiusCircle()));
 
     QString sPoints;
-    for(int i=0; i<item->path().elementCount(); ++i)
+    for (int i = 0; i < item->path().elementCount(); ++i)
     {
         QPainterPath::Element element = item->path().elementAt(i);
         sPoints += QString("%1,%2 ").arg(element.x).arg(element.y);
@@ -567,17 +636,18 @@ void UBSvgShapeAdaptor::UBSvgShapeWriter::shapeRegularToSvg(UBEditableGraphicsRe
     mXmlWriter.writeEndElement();
 }
 
-void UBSvgShapeAdaptor::UBSvgShapeWriter::shapePathToSvg(UBAbstractGraphicsPathItem *item) // EV-7 - ALTI/AOU - 20140102
+void UBSvgShapeAdaptor::UBSvgShapeWriter::shapePathToSvg(UBAbstractGraphicsPathItem* item) // EV-7 - ALTI/AOU - 20140102
 {
     mXmlWriter.writeStartElement("polyline");
 
-    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "shapePath", QString::number(item->type())); // just to know it's a path drawn with the drawingPalette
+    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "shapePath",
+                              QString::number(item->type())); // just to know it's a path drawn with the drawingPalette
 
-    if(dynamic_cast<UBEditableGraphicsLineItem*>(item))
+    if (dynamic_cast<UBEditableGraphicsLineItem*>(item))
         mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "isLine", "true");
 
     QString sPoints;
-    for(int i=0; i<item->path().elementCount(); ++i)
+    for (int i = 0; i < item->path().elementCount(); ++i)
     {
         QPainterPath::Element element = item->path().elementAt(i);
         sPoints += QString("%1,%2 ").arg(element.x).arg(element.y);
@@ -588,10 +658,9 @@ void UBSvgShapeAdaptor::UBSvgShapeWriter::shapePathToSvg(UBAbstractGraphicsPathI
     writeAbstractGraphicsItemStyle(item);
 
     mXmlWriter.writeEndElement();
-
 }
 
-void UBSvgShapeAdaptor::UBSvgShapeWriter::shapeSquareToSvg(UB1HEditableGraphicsSquareItem *item)
+void UBSvgShapeAdaptor::UBSvgShapeWriter::shapeSquareToSvg(UB1HEditableGraphicsSquareItem* item)
 {
     mXmlWriter.writeStartElement("rect");
     mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "shapeRect", "true");
@@ -608,7 +677,7 @@ void UBSvgShapeAdaptor::UBSvgShapeWriter::shapeSquareToSvg(UB1HEditableGraphicsS
     mXmlWriter.writeEndElement();
 }
 
-void UBSvgShapeAdaptor::UBSvgShapeWriter::shapeCircleToSvg(UB1HEditableGraphicsCircleItem *item)
+void UBSvgShapeAdaptor::UBSvgShapeWriter::shapeCircleToSvg(UB1HEditableGraphicsCircleItem* item)
 {
     mXmlWriter.writeStartElement("ellipse");
     mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "shapeEllipse", "true");
@@ -625,23 +694,26 @@ void UBSvgShapeAdaptor::UBSvgShapeWriter::shapeCircleToSvg(UB1HEditableGraphicsC
     mXmlWriter.writeEndElement();
 }
 
-void UBSvgShapeAdaptor::UBSvgShapeWriter::writeAbstractGraphicsItemStyle(UBAbstractGraphicsItem *item)
+void UBSvgShapeAdaptor::UBSvgShapeWriter::writeAbstractGraphicsItemStyle(UBAbstractGraphicsItem* item)
 {
     // Stroke :
-    if(item->hasStrokeProperty()){
+    if (item->hasStrokeProperty())
+    {
         mXmlWriter.writeAttribute("stroke", QString("%1").arg(item->pen().color().name()));
         mXmlWriter.writeAttribute("stroke-width", QString("%1").arg(item->pen().widthF()));
 
-        mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri
-                                  , "line-on-light-background", item->itemStyle().lineColor(false).name(QColor::HexArgb));
-        mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri
-                                  , "line-on-dark-background", item->itemStyle().lineColor(true).name(QColor::HexArgb));
+        mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "line-on-light-background",
+                                  item->itemStyle().lineColor(false).name(QColor::HexArgb));
+        mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "line-on-dark-background",
+                                  item->itemStyle().lineColor(true).name(QColor::HexArgb));
 
-        if (item->pen().style() == Qt::DotLine){
+        if (item->pen().style() == Qt::DotLine)
+        {
             mXmlWriter.writeAttribute("stroke-dasharray", SVG_STROKE_DOTLINE);
         }
 
-        if(item->pen().style() == Qt::CustomDashLine || item->pen().style() == Qt::DashLine){
+        if (item->pen().style() == Qt::CustomDashLine || item->pen().style() == Qt::DashLine)
+        {
             mXmlWriter.writeAttribute("stroke-dasharray", "1, 3");
             mXmlWriter.writeAttribute("stroke-linecap", "round");
         }
@@ -654,23 +726,25 @@ void UBSvgShapeAdaptor::UBSvgShapeWriter::writeAbstractGraphicsItemStyle(UBAbstr
     {
         mXmlWriter.writeAttribute("fill", QString("%1").arg(item->brush().color().name()));
         mXmlWriter.writeAttribute("fill-opacity", QString("%1").arg(item->brush().color().alphaF()));
-        mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "fill-style", QString("%1").arg(item->brush().style()));
+        mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "fill-style",
+                                  QString("%1").arg(item->brush().style()));
 
-        mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri
-                                  , "fill-on-light-background", item->itemStyle().fillColor(false).name(QColor::HexArgb));
-        mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri
-                                  , "fill-on-dark-background", item->itemStyle().fillColor(true).name(QColor::HexArgb));
+        mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "fill-on-light-background",
+                                  item->itemStyle().fillColor(false).name(QColor::HexArgb));
+        mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "fill-on-dark-background",
+                                  item->itemStyle().fillColor(true).name(QColor::HexArgb));
     }
     else
         mXmlWriter.writeAttribute("fill", "none");
 
-    //z-value
+    // z-value
     mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "z-value", QString("%1").arg(item->zValue()));
 
-    //uuid
-    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "uuid", UBStringUtils::toCanonicalUuid(item->uuid()));
+    // uuid
+    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "uuid",
+                              UBStringUtils::toCanonicalUuid(item->uuid()));
 
-    //transform matrix
+    // transform matrix
     mXmlWriter.writeAttribute("transform", UBSvgSubsetAdaptor::toSvgTransform(item->sceneTransform()));
 }
 

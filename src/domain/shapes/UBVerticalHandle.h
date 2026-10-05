@@ -21,8 +21,7 @@
  */
 
 
-#ifndef UBVERTICALHANDLE_H
-#define UBVERTICALHANDLE_H
+#pragma once
 
 #include "UBAbstractHandle.h"
 
@@ -33,17 +32,15 @@ public:
 
     UBVerticalHandle(UBVerticalHandle* const src);
 
-    UBItem *deepCopy() const;
-    void copyItemParameters(UBItem *copy) const;
+    UBItem *deepCopy() const override;
+    void copyItemParameters(UBItem *copy) const override;
 
 protected:
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 private:
     bool mPaintIndicators{false};
 };
-
-#endif // UBVERTICALHANDLE_H

@@ -23,7 +23,7 @@
 
 #include "UBLineHandle.h"
 #include "domain/UBGraphicsScene.h"
-#include "domain/shapes/UBEditable.h"
+#include "domain/shapes/UBAbstractEditable.h"
 
 
 UBLineHandle::UBLineHandle()
@@ -101,7 +101,9 @@ void UBLineHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     }
     else
     {
-        if (scene()->isSnapping())
+        std::shared_ptr<UBGraphicsScene> scenePtr = scene();
+
+        if (scenePtr->isSnapping())
         {
             const auto step = UBSettings::settings()->rotationAngleStep->get().toDouble();
             const auto lineStartPoint = parentItem()->mapToScene(mOppositeHandle->pos());
@@ -112,7 +114,7 @@ void UBLineHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
             auto altPosition = radius.p2();
 
             QPointF gridSnapPoint;
-            scenePos += scene()->snap(scenePos, nullptr, altPosition, &gridSnapPoint);
+            scenePos += scenePtr->snap(scenePos, nullptr, altPosition, &gridSnapPoint);
 
             if (scenePos != gridSnapPoint)
             {

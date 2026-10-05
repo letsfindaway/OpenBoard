@@ -25,14 +25,15 @@
 
 #include "UBAbstractHandlesBuilder.h"
 
-UB1HEditableGraphicsBasicShapeItem::UB1HEditableGraphicsBasicShapeItem(QGraphicsItem *parent):
-    UBAbstractEditableGraphicsShapeItem(parent)
+UB1HEditableGraphicsBasicShapeItem::UB1HEditableGraphicsBasicShapeItem(QGraphicsItem* parent)
+    : UBAbstractEditableGraphicsShapeItem(parent)
 {
     UB1HandleBuilder::buildHandles(mHandles);
 
-    for(int i = 0; i < mHandles.size(); i++){
-        mHandles.at(i)->setEditableObject(this);
-        mHandles.at(i)->setParentItem(this);
+    for (auto handle : mHandles)
+    {
+        handle->setEditableObject(this);
+        handle->setParentItem(this);
     }
 }
 
@@ -40,7 +41,8 @@ QRectF UB1HEditableGraphicsBasicShapeItem::adjustBoundingRect(QRectF rect) const
 {
     rect = UBAbstractEditableGraphicsShapeItem::adjustBoundingRect(rect);
 
-    if(isInEditMode()){
+    if (isInEditMode())
+    {
         qreal r = getHandle(HandleId::Diagonal)->radius();
 
         rect.adjust(-r, -r, r, r);

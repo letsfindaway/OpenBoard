@@ -23,25 +23,23 @@
 
 #include "UBAbstractGraphicsItem.h"
 
-#include "domain/UBGraphicsItemDelegate.h"
 #include "domain/UBGraphicsDelegateFrame.h"
+#include "domain/UBGraphicsItemDelegate.h"
 #include "domain/UBGraphicsScene.h"
 
 
-UBAbstractGraphicsItem::UBAbstractGraphicsItem(QGraphicsItem *parent):
-    QAbstractGraphicsShapeItem(parent)
+UBAbstractGraphicsItem::UBAbstractGraphicsItem(QGraphicsItem* parent)
+    : QAbstractGraphicsShapeItem(parent)
 {
-    setDelegate(new UBGraphicsItemDelegate(this, nullptr, {
-                                               GF_REVOLVABLE,
-                                               GF_DUPLICATION_ENABLED,
-                                               GF_ZORDER_MANIPULATIONS_ALLOWED
-                                           }));
+    setDelegate(new UBGraphicsItemDelegate(this, nullptr,
+                                           {GF_REVOLVABLE, GF_DUPLICATION_ENABLED, GF_ZORDER_MANIPULATIONS_ALLOWED}));
     Delegate()->createControls();
 
-    //used for the podcast
+    // used for the podcast
     setData(UBGraphicsItemData::ItemLayerType, UBItemLayerType::Object);
 
-    setData(UBGraphicsItemData::itemLayerType, QVariant(itemLayerType::ObjectItem)); //Necessary to set if we want z value to be assigned correctly
+    setData(UBGraphicsItemData::itemLayerType,
+            QVariant(itemLayerType::ObjectItem)); // Necessary to set if we want z value to be assigned correctly
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemIsMovable, true);
@@ -50,7 +48,6 @@ UBAbstractGraphicsItem::UBAbstractGraphicsItem(QGraphicsItem *parent):
 
 UBAbstractGraphicsItem::~UBAbstractGraphicsItem()
 {
-
 }
 
 void UBAbstractGraphicsItem::applyItemStyle(const UBItemStyle& style, bool isDark)
@@ -63,7 +60,7 @@ void UBAbstractGraphicsItem::applyItemStyle(const UBItemStyle& style, bool isDar
 
     if (style.lineWidth() > 0)
     {
-        setStrokeSize(style.lineWidth());
+        setStrokeWidth(style.lineWidth());
         mItemStyle.setLineWidth(style.lineWidth());
     }
 
@@ -97,24 +94,17 @@ void UBAbstractGraphicsItem::setStyle(Qt::PenStyle penStyle)
     setStyle(brushStyle, penStyle);
 }
 
-void UBAbstractGraphicsItem::setStyle(Qt::BrushStyle brushStyle)
-{
-    Qt::PenStyle penStyle = Qt::NoPen;
-    if(hasStrokeProperty())
-        penStyle = pen().style();
-
-    setStyle(brushStyle, penStyle);
-}
-
 void UBAbstractGraphicsItem::setStyle(Qt::BrushStyle brushStyle, Qt::PenStyle penStyle)
 {
-    if(hasFillingProperty()){
+    if (hasFillingProperty())
+    {
         QBrush b = brush();
         b.setStyle(brushStyle);
         setBrush(b);
     }
 
-    if(hasStrokeProperty()){
+    if (hasStrokeProperty())
+    {
         QPen p = pen();
         p.setStyle(penStyle);
         setPen(p);
@@ -136,27 +126,29 @@ void UBAbstractGraphicsItem::setFillColor(const QColor& color)
 
 void UBAbstractGraphicsItem::setStrokeColor(const QColor& color)
 {
-    if(hasStrokeProperty()){
+    if (hasStrokeProperty())
+    {
         QPen p = pen();
         p.setColor(color);
         setPen(p);
     }
 }
 
-void UBAbstractGraphicsItem::setStrokeSize(int size)
+void UBAbstractGraphicsItem::setStrokeWidth(double width)
 {
-    if(hasStrokeProperty()){
+    if (hasStrokeProperty())
+    {
         QPen p = pen();
-        p.setWidth(size);
+        p.setWidthF(width);
         setPen(p);
     }
 }
 
-QVariant UBAbstractGraphicsItem::itemChange(GraphicsItemChange change, const QVariant &value)
+QVariant UBAbstractGraphicsItem::itemChange(GraphicsItemChange change, const QVariant& value)
 {
     QVariant newValue = value;
 
-    if(Delegate())
+    if (Delegate())
         newValue = Delegate()->itemChange(change, value);
 
     if (change == GraphicsItemChange::ItemSelectedHasChanged)
@@ -167,16 +159,18 @@ QVariant UBAbstractGraphicsItem::itemChange(GraphicsItemChange change, const QVa
     return QAbstractGraphicsShapeItem::itemChange(change, newValue);
 }
 
-void UBAbstractGraphicsItem::setStyle(QPainter *painter)
+void UBAbstractGraphicsItem::setStyle(QPainter* painter)
 {
-    if(hasStrokeProperty()){
+    if (hasStrokeProperty())
+    {
         auto currentPen = pen();
         currentPen.setCapStyle(Qt::RoundCap);
         currentPen.setJoinStyle(Qt::RoundJoin);
         painter->setPen(currentPen);
     }
 
-    if(hasFillingProperty()){
+    if (hasFillingProperty())
+    {
         painter->setBrush(brush());
     }
     else
@@ -202,7 +196,8 @@ void UBAbstractGraphicsItem::initializeFillingProperty()
 
 QRectF UBAbstractGraphicsItem::adjustBoundingRect(QRectF rect) const
 {
-    if(hasStrokeProperty()){
+    if (hasStrokeProperty())
+    {
         int r = pen().width() / 2;
 
         rect.adjust(-r, -r, r, r);
@@ -218,14 +213,15 @@ bool UBAbstractGraphicsItem::hasFillingProperty() const
 
 bool UBAbstractGraphicsItem::hasStrokeProperty() const
 {
-    return true || pen() != QPen();
+    return true;
 }
 
-void UBAbstractGraphicsItem::copyItemParameters(UBItem *copy) const
+void UBAbstractGraphicsItem::copyItemParameters(UBItem* copy) const
 {
-    UBAbstractGraphicsItem *cp = dynamic_cast<UBAbstractGraphicsItem*>(copy);
+    UBAbstractGraphicsItem* cp = dynamic_cast<UBAbstractGraphicsItem*>(copy);
 
-    if(!cp) return;
+    if (!cp)
+        return;
 
     cp->prepareGeometryChange();
     cp->setPos(this->pos());

@@ -21,17 +21,14 @@
  */
 
 
-#ifndef UB3HANDLESEDITABLE_H
-#define UB3HANDLESEDITABLE_H
+#pragma once
 
-#include "UBShapeEditable.h"
+#include "UBAbstractEditableGraphicsShapeItem.h"
 
 class UB3HEditablesGraphicsBasicShapeItem : public UBAbstractEditableGraphicsShapeItem
 {
 public:
-    UB3HEditablesGraphicsBasicShapeItem(QGraphicsItem *parent = 0);
+    UB3HEditablesGraphicsBasicShapeItem(QGraphicsItem* parent = nullptr);
 
     QRectF adjustBoundingRect(QRectF rect) const;
 };
-
-#endif // UB3HANDLESEDITABLE_H

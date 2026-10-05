@@ -28,9 +28,9 @@
 class UBAbstractGraphicsPathItem : public UBAbstractGraphicsItem
 {
 public:
-    UBAbstractGraphicsPathItem(QGraphicsItem *parent = 0);
+    UBAbstractGraphicsPathItem(QGraphicsItem* parent = nullptr);
 
-    virtual void addPoint(const QPointF &point) = 0;
+    virtual void addPoint(const QPointF& point) = 0;
 
     QPainterPath path() const
     {
@@ -42,11 +42,9 @@ public:
         mPath = path;
     }
 
-    virtual QRectF boundingRect() const;
-
-    virtual QPainterPath shape() const;
-
-    virtual void copyItemParameters(UBItem *copy) const;
+    virtual QRectF boundingRect() const override;
+    virtual QPainterPath shape() const override;
+    virtual void copyItemParameters(UBItem* copy) const override;
 
 protected:
     QPainterPath mPath;

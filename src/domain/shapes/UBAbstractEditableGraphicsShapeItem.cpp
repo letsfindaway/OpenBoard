@@ -21,13 +21,13 @@
  */
 
 
-#include "UBShapeEditable.h"
+#include "UBAbstractEditableGraphicsShapeItem.h"
 
 #include "domain/UBGraphicsDelegateFrame.h"
 #include "domain/UBGraphicsScene.h"
 
-UBAbstractEditableGraphicsShapeItem::UBAbstractEditableGraphicsShapeItem(QGraphicsItem *parent):
-    UBAbstractGraphicsItem(parent)
+UBAbstractEditableGraphicsShapeItem::UBAbstractEditableGraphicsShapeItem(QGraphicsItem* parent)
+    : UBAbstractGraphicsItem(parent)
 {
     mHasMoved = false;
 }
@@ -64,19 +64,19 @@ QPainterPath UBAbstractEditableGraphicsShapeItem::shape() const
 
 void UBAbstractEditableGraphicsShapeItem::onActivateEditionMode()
 {
-    //NOOP
+    // NOOP
 }
 
-void UBAbstractEditableGraphicsShapeItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void UBAbstractEditableGraphicsShapeItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     mHasMoved = false;
 }
 
-void UBAbstractEditableGraphicsShapeItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void UBAbstractEditableGraphicsShapeItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     prepareGeometryChange();
 
-    if(!mHasMoved)
+    if (!mHasMoved)
     {
         if (!Delegate()->isLocked())
         {
@@ -100,19 +100,20 @@ void UBAbstractEditableGraphicsShapeItem::mouseReleaseEvent(QGraphicsSceneMouseE
     mHasMoved = false;
 }
 
-void UBAbstractEditableGraphicsShapeItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void UBAbstractEditableGraphicsShapeItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if (!Delegate()->isLocked())
     {
         mHasMoved = true;
 
-        if(!isInEditMode()){
+        if (!isInEditMode())
+        {
             Delegate()->mouseMoveEvent(event);
         }
     }
 }
 
-void UBAbstractEditableGraphicsShapeItem::focusOutEvent(QFocusEvent *event)
+void UBAbstractEditableGraphicsShapeItem::focusOutEvent(QFocusEvent* event)
 {
     Q_UNUSED(event)
 

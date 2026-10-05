@@ -21,24 +21,19 @@
  */
 
 
-#ifndef UBSHAPESPALETTE_H
-#define UBSHAPESPALETTE_H
-
-#include <QButtonGroup>
+#pragma once
 
 #include "UBAbstractSubPalette.h"
 
 
 class UBShapesPalette : public UBAbstractSubPalette
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-    UBShapesPalette(Qt::Orientation orient, QWidget *parent = 0 );
+    UBShapesPalette(Qt::Orientation orient, QWidget* parent = nullptr);
     virtual ~UBShapesPalette();
 
 private slots:
     void actionActivated(QAction* action);
 };
-
-#endif // UBSHAPESPALETTE_H

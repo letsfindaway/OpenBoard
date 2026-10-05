@@ -24,7 +24,6 @@
 #include "UBEditShapeUndoCommand.h"
 
 #include "domain/shapes/UBAbstractGraphicsItem.h"
-#include "domain/shapes/UBShapeFactory.h"
 
 UBEditShapeUndoCommand::UBEditShapeUndoCommand(UBAbstractGraphicsItem* item)
     : mItem{item}

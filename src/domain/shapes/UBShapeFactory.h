@@ -23,9 +23,9 @@
 
 #pragma once
 
-#include <QObject>
 #include <QColor>
 #include <QGraphicsItem>
+#include <QObject>
 
 #include "domain/UBItemStyle.h"
 
@@ -47,9 +47,9 @@ public:
 
     Ui::ShapeActions* shapeActions() const;
 
-    static bool isShape(QGraphicsItem *item);
-    static void desactivateEditionMode(QGraphicsItem *item);
-    static bool isInEditMode(QGraphicsItem *item);
+    static bool isShape(QGraphicsItem* item);
+    static void desactivateEditionMode(QGraphicsItem* item);
+    static bool isInEditMode(QGraphicsItem* item);
 
     enum ShapeType
     {
@@ -63,7 +63,7 @@ public:
         None
     };
 
-    QRectF reverseRect(const QRectF &rect);
+    QRectF reverseRect(const QRectF& rect);
 
     QVector<qreal> dashPattern() const;
 
@@ -76,9 +76,9 @@ public slots:
     void createSquare(bool create);
     void createLine(bool create);
 
-    void onMouseMove(QMouseEvent *event);
-    void onMousePress(QMouseEvent *event);
-    void onMouseRelease(QMouseEvent *event);
+    void onMouseMove(QMouseEvent* event);
+    void onMousePress(QMouseEvent* event);
+    void onMouseRelease(QMouseEvent* event);
 
     void desactivate();
     void terminateShape();
@@ -96,7 +96,7 @@ private:
 
     ShapeType mShapeType{None};
 
-    UBDrawingController *mDrawingController{nullptr};
+    UBDrawingController* mDrawingController{nullptr};
 
     int mNVertices{0};
 
@@ -111,6 +111,5 @@ private:
     QSet<UBAbstractGraphicsItem*> mSelectedShapes{};
 
 protected:
-    UBAbstractGraphicsItem *instanciateCurrentShape();
-
+    UBAbstractGraphicsItem* instanciateCurrentShape();
 };

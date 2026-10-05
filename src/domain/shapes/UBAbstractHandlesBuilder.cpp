@@ -24,22 +24,20 @@
 #include "UBAbstractHandlesBuilder.h"
 
 #include "UBDiagonalHandle.h"
-#include "UBVerticalHandle.h"
 #include "UBHorizontalHandle.h"
+#include "UBVerticalHandle.h"
 
-void UB1HandleBuilder::buildHandles(QVector<UBAbstractHandle *> &handles)
+void UB1HandleBuilder::buildHandles(QVector<UBAbstractHandle*>& handles)
 {
-    //before clean the vector
-    if(handles.size() > 0){
-        for(int i = 0; i < handles.size(); i++){
-            delete handles.at(i);
-        }
-
+    // before clean the vector
+    if (handles.size() > 0)
+    {
+        qDeleteAll(handles);
         handles.clear();
     }
 
-    UBDiagonalHandle *dh = new UBDiagonalHandle();
-    UBDiagonalHandle *sh = new UBDiagonalHandle();
+    UBDiagonalHandle* dh = new UBDiagonalHandle();
+    UBDiagonalHandle* sh = new UBDiagonalHandle();
 
     sh->setId(Stretch);
 
@@ -50,21 +48,19 @@ void UB1HandleBuilder::buildHandles(QVector<UBAbstractHandle *> &handles)
     handles.push_back(sh);
 }
 
-void UB3HandlesBuilder::buildHandles(QVector<UBAbstractHandle *> &handles)
+void UB3HandlesBuilder::buildHandles(QVector<UBAbstractHandle*>& handles)
 {
-    //before clean the vector
-    if(handles.size() > 0){
-        for(int i = 0; i < handles.size(); i++){
-            delete handles.at(i);
-        }
-
+    // before clean the vector
+    if (handles.size() > 0)
+    {
+        qDeleteAll(handles);
         handles.clear();
     }
 
-    UBHorizontalHandle *hh = new UBHorizontalHandle();
-    UBVerticalHandle *vh = new UBVerticalHandle();
-    UBDiagonalHandle *dh = new UBDiagonalHandle();
-    UBDiagonalHandle *sh = new UBDiagonalHandle();
+    UBHorizontalHandle* hh = new UBHorizontalHandle();
+    UBVerticalHandle* vh = new UBVerticalHandle();
+    UBDiagonalHandle* dh = new UBDiagonalHandle();
+    UBDiagonalHandle* sh = new UBDiagonalHandle();
 
     sh->setId(Stretch);
 
