@@ -46,7 +46,7 @@ UBShapesPalette::UBShapesPalette(Qt::Orientation orient, QWidget* parent)
     actions << shapeActions->actionCircle;
     actions << shapeActions->actionRectangle;
     actions << shapeActions->actionSquare;
-    actions << shapeActions->actionRegularPentagone;
+    actions << shapeActions->actionRegularPolygon;
 
     // assign shape types
     shapeActions->actionSmartLine->setProperty("ShapeType", UBShapeFactory::ShapeType::Line);
@@ -55,7 +55,7 @@ UBShapesPalette::UBShapesPalette(Qt::Orientation orient, QWidget* parent)
     shapeActions->actionCircle->setProperty("ShapeType", UBShapeFactory::ShapeType::Circle);
     shapeActions->actionRectangle->setProperty("ShapeType", UBShapeFactory::ShapeType::Rectangle);
     shapeActions->actionSquare->setProperty("ShapeType", UBShapeFactory::ShapeType::Square);
-    shapeActions->actionRegularPentagone->setProperty("ShapeType", UBShapeFactory::ShapeType::RegularPolygon);
+    shapeActions->actionRegularPolygon->setProperty("ShapeType", UBShapeFactory::ShapeType::RegularPolygon);
 
     setActions(actions);
 

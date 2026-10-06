@@ -39,9 +39,12 @@
 #include "board/UBDrawingController.h"
 
 #include "core/UBApplication.h"
+#include "core/UBShortcutManager.h"
 
 #include "domain/UBGraphicsItemUndoCommand.h"
 #include "domain/UBGraphicsScene.h"
+
+#include "gui/UBMainWindow.h"
 
 UBShapeFactory::UBShapeFactory()
 {
@@ -50,6 +53,18 @@ UBShapeFactory::UBShapeFactory()
     mShapeActions->setupUi(actionWidget);
 
     UBSvgShapeAdaptor::registerExtension();
+
+    // shortcuts
+    UBShortcutManager::shortcutManager()->addActions(
+                UBShortcutManager::tr("Stylus Palette"), {
+                    mShapeActions->actionSmartLine,
+                    mShapeActions->actionPolygon,
+                    mShapeActions->actionCircle,
+                    mShapeActions->actionEllipse,
+                    mShapeActions->actionSquare,
+                    mShapeActions->actionRectangle,
+                    mShapeActions->actionRegularPolygon
+                }, UBApplication::mainWindow);
 }
 
 void UBShapeFactory::init()
