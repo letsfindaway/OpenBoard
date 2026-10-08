@@ -38,7 +38,6 @@
 
 #include "frameworks/UBStringUtils.h"
 
-const QString SVG_STROKE_DOTLINE = "20 10"; // 1 big dot, 1 little space
 
 void UBSvgShapeAdaptor::registerExtension()
 {
@@ -204,30 +203,32 @@ void UBSvgShapeAdaptor::UBSvgShapeReader::getStyleFromSvg(UBAbstractGraphicsItem
     }
 
     p.setWidthF(strokeWidth);
+    p.setCapStyle(Qt::RoundCap);
 
     // Stroke style
-    QStringView svgStrokeLineCap = mXmlReader.attributes().value("stroke-linecap");
+    UBItemStyle style;
+    QStringView svgStrokeStyle = mXmlReader.attributes().value("stroke-dasharray");
 
-    if (!svgStrokeLineCap.isNull() && svgStrokeLineCap.toString().toLower() == "round")
+    if (!svgStrokeStyle.isNull())
     {
-        // Custom dash line style
-        p.setCapStyle(Qt::RoundCap);
-        QVector<qreal> dashPattern = UBApplication::boardController->shapeFactory().dashPattern();
-        p.setDashPattern(dashPattern);
+        QStringList strokeValues = svgStrokeStyle.toString().split(" ");
+        QList<qreal> pattern;
+
+        for (const auto strokeValue : strokeValues)
+        {
+            pattern << strokeValue.toDouble() / strokeWidth;
+        }
+
+        const auto strokeStyle = UBShapeFactory::styleForPattern(pattern);
+        p.setStyle(Qt::CustomDashLine);
+        p.setDashPattern(pattern);
+        style.setLineStyle(strokeStyle);
     }
     else
     {
-        QStringView svgStrokeStyle = mXmlReader.attributes().value("stroke-dasharray");
-        if (!svgStrokeStyle.isNull())
-        {
-            QString strokeStyle = svgStrokeStyle.toString();
-            if (strokeStyle == SVG_STROKE_DOTLINE)
-            {
-                p.setStyle(Qt::DotLine);
-            }
-        }
+        p.setStyle(Qt::SolidLine);
+        style.setLineStyle(Qt::SolidLine);
     }
-
 
     item->setPen(p);
 
@@ -264,8 +265,6 @@ void UBSvgShapeAdaptor::UBSvgShapeReader::getStyleFromSvg(UBAbstractGraphicsItem
         item->setTransform(itemMatrix);
     }
 
-    // ShapeStyle
-    UBItemStyle style;
     QStringView onLight =
         mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "line-on-light-background");
     QStringView onDark =
@@ -277,7 +276,6 @@ void UBSvgShapeAdaptor::UBSvgShapeReader::getStyleFromSvg(UBAbstractGraphicsItem
     }
 
     style.setLineWidth(strokeWidth);
-    style.setLineStyle(p.style() == Qt::CustomDashLine ? Qt::DashLine : p.style());
 
     onLight = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "fill-on-light-background");
     onDark = mXmlReader.attributes().value(UBSettings::uniboardDocumentNamespaceUri, "fill-on-dark-background");
@@ -701,21 +699,25 @@ void UBSvgShapeAdaptor::UBSvgShapeWriter::writeAbstractGraphicsItemStyle(UBAbstr
     {
         mXmlWriter.writeAttribute("stroke", QString("%1").arg(item->pen().color().name()));
         mXmlWriter.writeAttribute("stroke-width", QString("%1").arg(item->pen().widthF()));
+        mXmlWriter.writeAttribute("stroke-linecap", "round");
 
         mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "line-on-light-background",
                                   item->itemStyle().lineColor(false).name(QColor::HexArgb));
         mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "line-on-dark-background",
                                   item->itemStyle().lineColor(true).name(QColor::HexArgb));
 
-        if (item->pen().style() == Qt::DotLine)
-        {
-            mXmlWriter.writeAttribute("stroke-dasharray", SVG_STROKE_DOTLINE);
-        }
+        const auto pattern = UBShapeFactory::dashPattern(item->itemStyle().lineStyle());
 
-        if (item->pen().style() == Qt::CustomDashLine || item->pen().style() == Qt::DashLine)
+        if (!pattern.isEmpty())
         {
-            mXmlWriter.writeAttribute("stroke-dasharray", "1, 3");
-            mXmlWriter.writeAttribute("stroke-linecap", "round");
+            QStringList dashValues;
+
+            for (const auto value : pattern)
+            {
+                dashValues << QString::number(value * item->pen().widthF());
+            }
+
+            mXmlWriter.writeAttribute("stroke-dasharray", dashValues.join(" "));
         }
 
         mXmlWriter.writeAttribute("stroke-opacity", QString("%1").arg(item->pen().color().alphaF()));

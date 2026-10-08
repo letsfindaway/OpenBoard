@@ -65,7 +65,8 @@ public:
 
     QRectF reverseRect(const QRectF& rect);
 
-    QVector<qreal> dashPattern() const;
+    static QList<qreal> dashPattern(Qt::PenStyle style);
+    static Qt::PenStyle styleForPattern(QList<qreal> pattern);
 
 public slots:
     void createRegularPolygon(int nVertices);
@@ -104,8 +105,6 @@ private:
     QRectF mBoundingRect{};
 
     bool mCursorMoved{false};
-
-    QVector<qreal> mDotDashes{};
 
     Ui::ShapeActions* mShapeActions{nullptr};
 

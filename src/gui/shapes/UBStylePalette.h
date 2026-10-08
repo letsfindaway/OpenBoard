@@ -95,6 +95,7 @@ private:
 
     UBItemStyle mStyle;
     UBItemStyle mSavedStyle;
+    UBItemStyle mCommonStyle;
 
     bool mUpdateTriggered{false};
 };

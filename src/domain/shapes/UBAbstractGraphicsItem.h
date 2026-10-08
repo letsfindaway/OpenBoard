@@ -50,8 +50,6 @@ public:
 
     void setStyle(Qt::PenStyle penStyle);
 
-    void setStyle(Qt::BrushStyle brushStyle, Qt::PenStyle penStyle);
-
     void setFillColor(const QColor& color);
 
     void setStrokeColor(const QColor& color);

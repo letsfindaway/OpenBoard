@@ -46,6 +46,10 @@
 
 #include "gui/UBMainWindow.h"
 
+namespace {
+static QMap<Qt::PenStyle, QList<qreal>> sPatterns{};
+}
+
 UBShapeFactory::UBShapeFactory()
 {
     mShapeActions = new Ui::ShapeActions;
@@ -72,8 +76,9 @@ void UBShapeFactory::init()
     mBoardView = UBApplication::boardController->controlView();
     mDrawingController = UBDrawingController::drawingController();
 
-    // Our custom dash is a point follow by a space
-    mDotDashes << 0.1 << 3;
+    sPatterns[Qt::SolidLine] = {};
+    sPatterns[Qt::DashLine] = {4, 3};
+    sPatterns[Qt::DotLine] = {0.1, 2.5};
 
     connect(mBoardView, &UBBoardView::mouseMove, this, &UBShapeFactory::onMouseMove);
     connect(mBoardView, &UBBoardView::mouseRelease, this, &UBShapeFactory::onMouseRelease);
@@ -576,7 +581,35 @@ bool UBShapeFactory::isInEditMode(QGraphicsItem* item)
     return edit->isInEditMode();
 }
 
-QVector<qreal> UBShapeFactory::dashPattern() const
+QList<qreal> UBShapeFactory::dashPattern(Qt::PenStyle style)
 {
-    return mDotDashes;
+    return sPatterns.value(style, {});
+}
+
+Qt::PenStyle UBShapeFactory::styleForPattern(QList<qreal> pattern)
+{
+    for (auto entry = sPatterns.begin(); entry != sPatterns.end(); ++entry)
+    {
+        if (pattern.size() == entry.value().size())
+        {
+            bool match{true};
+
+            for (int i = 0; i < pattern.size(); ++i)
+            {
+                if (!qFuzzyCompare(pattern.at(i), entry.value().at(i)))
+                {
+                    match = false;
+                    break;
+                }
+            }
+
+            if (match)
+            {
+                return entry.key();
+            }
+        }
+    }
+
+    // default to solid line
+    return Qt::SolidLine;
 }

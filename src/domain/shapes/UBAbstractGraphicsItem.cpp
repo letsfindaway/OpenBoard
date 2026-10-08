@@ -26,6 +26,7 @@
 #include "domain/UBGraphicsDelegateFrame.h"
 #include "domain/UBGraphicsItemDelegate.h"
 #include "domain/UBGraphicsScene.h"
+#include "domain/shapes/UBShapeFactory.h"
 
 
 UBAbstractGraphicsItem::UBAbstractGraphicsItem(QGraphicsItem* parent)
@@ -89,24 +90,21 @@ bool UBAbstractGraphicsItem::isMarker() const
 
 void UBAbstractGraphicsItem::setStyle(Qt::PenStyle penStyle)
 {
-    Qt::BrushStyle brushStyle = brush().style();
-
-    setStyle(brushStyle, penStyle);
-}
-
-void UBAbstractGraphicsItem::setStyle(Qt::BrushStyle brushStyle, Qt::PenStyle penStyle)
-{
-    if (hasFillingProperty())
-    {
-        QBrush b = brush();
-        b.setStyle(brushStyle);
-        setBrush(b);
-    }
-
     if (hasStrokeProperty())
     {
+        const auto pattern = UBShapeFactory::dashPattern(penStyle);
         QPen p = pen();
-        p.setStyle(penStyle);
+
+        if (pattern.isEmpty())
+        {
+            p.setStyle(penStyle);
+        }
+        else
+        {
+            p.setStyle(Qt::CustomDashLine);
+            p.setDashPattern(pattern);
+        }
+
         setPen(p);
     }
 }
