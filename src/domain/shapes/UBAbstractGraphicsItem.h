@@ -57,8 +57,10 @@ public:
     void setStrokeWidth(double width);
 
     // get the path of the shape in local coordinates
-    // Note: shape() in contrast, returns the path of the outline of the shape, including pen width
     virtual QPainterPath painterPath() const = 0;
+
+    // get the path of the outline of the shape, including pen width and optional filling
+    virtual QPainterPath shape() const override;
 
     void initializeStrokeProperty();
     void initializeFillingProperty();
@@ -82,4 +84,6 @@ protected:
     QRectF adjustBoundingRect(QRectF rect) const;
 
     QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
+
+    virtual void addExtraShapes(QPainterPath& path) const = 0;
 };

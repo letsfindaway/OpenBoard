@@ -59,7 +59,6 @@ public:
     void onActivateEditionMode() override;
 
     QRectF boundingRect() const override;
-    QPainterPath shape() const override;
 
     void copyItemParameters(UBItem* copy) const override;
 

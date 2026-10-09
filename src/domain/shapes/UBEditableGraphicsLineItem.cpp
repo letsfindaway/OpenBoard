@@ -198,31 +198,6 @@ QRectF UBEditableGraphicsLineItem::boundingRect() const
     return UBEditableGraphicsPolygonItem::boundingRect();
 }
 
-QPainterPath UBEditableGraphicsLineItem::shape() const
-{
-    QPainterPath p;
-
-    if (isInEditMode())
-    {
-        QPainterPathStroker stroker{pen()};
-        p = stroker.createStroke(path());
-
-        p.addPath(mapFromItem(mHandles.at(0), mHandles.at(0)->shape()));
-        p.addPath(mapFromItem(mHandles.at(1), mHandles.at(1)->shape()));
-    }
-    else if (isSelected())
-    {
-        p.addRect(boundingRect());
-    }
-    else
-    {
-        QPainterPathStroker stroker{pen()};
-        p = stroker.createStroke(path());
-    }
-
-    return p;
-}
-
 void UBEditableGraphicsLineItem::addPoint(const QPointF& point)
 {
     prepareGeometryChange();

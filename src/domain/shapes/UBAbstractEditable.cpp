@@ -112,3 +112,11 @@ void UBAbstractEditable::setModified()
 {
     mModified = true;
 }
+
+void UBAbstractEditable::addHandleShapes(const QGraphicsItem* item, QPainterPath& path) const
+{
+    for (const auto handle: mHandles)
+    {
+        path = path.united(item->mapFromItem(handle, handle->shape()));
+    }
+}

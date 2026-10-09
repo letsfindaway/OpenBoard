@@ -32,36 +32,6 @@ UBAbstractEditableGraphicsShapeItem::UBAbstractEditableGraphicsShapeItem(QGraphi
     mHasMoved = false;
 }
 
-QPainterPath UBAbstractEditableGraphicsShapeItem::shape() const
-{
-    QPainterPath outline;
-
-    if (isInEditMode())
-    {
-        outline.addRect(boundingRect());
-    }
-    else
-    {
-        QPainterPathStroker stroker{pen()};
-        stroker.setDashPattern(Qt::SolidLine);
-
-        if (pen().width() < 3)
-        {
-            stroker.setWidth(3);
-        }
-
-        const auto path = painterPath();
-        outline = stroker.createStroke(path);
-
-        if (hasFillingProperty())
-        {
-            outline = outline.united(path);
-        }
-    }
-
-    return outline;
-}
-
 void UBAbstractEditableGraphicsShapeItem::onActivateEditionMode()
 {
     // NOOP
@@ -80,7 +50,7 @@ void UBAbstractEditableGraphicsShapeItem::mouseReleaseEvent(QGraphicsSceneMouseE
     {
         if (!Delegate()->isLocked())
         {
-            if (!isInEditMode())
+            if (!isInEditMode() && isSelected())
             {
                 onActivateEditionMode();
 
@@ -177,4 +147,9 @@ void UBAbstractEditableGraphicsShapeItem::deactivateEditionMode()
     prepareGeometryChange();
 
     showEditMode(false);
+}
+
+void UBAbstractEditableGraphicsShapeItem::addExtraShapes(QPainterPath& path) const
+{
+    addHandleShapes(this, path);
 }

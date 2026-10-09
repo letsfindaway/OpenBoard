@@ -35,8 +35,6 @@ public:
     virtual ~UBAbstractEditableGraphicsShapeItem() = default;
 
 protected:
-    virtual QPainterPath shape() const override;
-
     virtual void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
@@ -46,6 +44,8 @@ protected:
     virtual void onActivateEditionMode();
 
     virtual void deactivateEditionMode() override;
+
+    virtual void addExtraShapes(QPainterPath& path) const override;
 
     bool mHasMoved;
 };

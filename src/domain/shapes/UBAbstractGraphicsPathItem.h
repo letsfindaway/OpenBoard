@@ -43,7 +43,6 @@ public:
     }
 
     virtual QRectF boundingRect() const override;
-    virtual QPainterPath shape() const override;
     virtual void copyItemParameters(UBItem* copy) const override;
 
 protected:

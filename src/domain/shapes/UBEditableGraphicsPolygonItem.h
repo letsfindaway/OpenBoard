@@ -69,7 +69,6 @@ public:
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
     virtual QRectF boundingRect() const override;
-    virtual QPainterPath shape() const override;
     virtual QPainterPath painterPath() const override;
 
     virtual void updateHandle(UBAbstractHandle* handle) override;

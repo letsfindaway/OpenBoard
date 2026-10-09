@@ -34,6 +34,11 @@ void UBAbstractEditableGraphicsPathItem::onActivateEditionMode()
     // NOOP
 }
 
+void UBAbstractEditableGraphicsPathItem::addExtraShapes(QPainterPath& path) const
+{
+    addHandleShapes(this, path);
+}
+
 void UBAbstractEditableGraphicsPathItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     mHasMoved = false;
@@ -47,7 +52,7 @@ void UBAbstractEditableGraphicsPathItem::mouseReleaseEvent(QGraphicsSceneMouseEv
     {
         if (!Delegate()->isLocked())
         {
-            if (!isInEditMode())
+            if (!isInEditMode() && isSelected())
             {
                 onActivateEditionMode();
 
@@ -119,19 +124,4 @@ void UBAbstractEditableGraphicsPathItem::deactivateEditionMode()
     prepareGeometryChange();
 
     showEditMode(false);
-}
-
-QPainterPath UBAbstractEditableGraphicsPathItem::shape() const
-{
-    QPainterPath path;
-
-    if (isInEditMode())
-    {
-        path.addRect(boundingRect());
-        return path;
-    }
-    else
-    {
-        return this->path();
-    }
 }

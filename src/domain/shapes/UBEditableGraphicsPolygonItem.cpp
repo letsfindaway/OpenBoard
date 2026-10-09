@@ -325,35 +325,6 @@ bool UBEditableGraphicsPolygonItem::hasFillingProperty() const
     return isClosed() && UBAbstractGraphicsItem::hasFillingProperty();
 }
 
-QPainterPath UBEditableGraphicsPolygonItem::shape() const
-{
-    QPainterPath path;
-
-    if (isInEditMode())
-    {
-        path.addRect(boundingRect());
-    }
-    else
-    {
-        QPainterPathStroker stroker{pen()};
-        stroker.setDashPattern(Qt::SolidLine);
-
-        if (pen().width() < 3)
-        {
-            stroker.setWidth(3);
-        }
-
-        path = stroker.createStroke(painterPath());
-
-        if (hasFillingProperty())
-        {
-            path = path.united(painterPath());
-        }
-    }
-
-    return path;
-}
-
 QPainterPath UBEditableGraphicsPolygonItem::painterPath() const
 {
     return path();

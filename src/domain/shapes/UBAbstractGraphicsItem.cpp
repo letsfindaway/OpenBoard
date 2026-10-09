@@ -142,6 +142,25 @@ void UBAbstractGraphicsItem::setStrokeWidth(double width)
     }
 }
 
+QPainterPath UBAbstractGraphicsItem::shape() const
+{
+    QPainterPathStroker stroker{pen()};
+    stroker.setDashPattern(Qt::SolidLine);
+    stroker.setWidth(std::max(stroker.width(), 6.));
+    const auto outline = painterPath();
+
+    QPainterPath path = stroker.createStroke(outline);
+
+    if (hasFillingProperty())
+    {
+        path = path.united(outline);
+    }
+
+    addExtraShapes(path);
+
+    return path;
+}
+
 QVariant UBAbstractGraphicsItem::itemChange(GraphicsItemChange change, const QVariant& value)
 {
     QVariant newValue = value;

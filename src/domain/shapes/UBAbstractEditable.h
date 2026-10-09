@@ -57,6 +57,9 @@ public:
     void setModified();
 
 protected:
+    void addHandleShapes(const QGraphicsItem* item, QPainterPath& path) const;
+
+protected:
     QVector<UBAbstractHandle*> mHandles;
 
 private:
