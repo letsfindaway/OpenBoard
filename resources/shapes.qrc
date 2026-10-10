@@ -1,16 +1,16 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/drawingPalette/circle.png</file>
-        <file>images/drawingPalette/circleON.png</file>
-        <file>images/drawingPalette/ellipse.png</file>
-        <file>images/drawingPalette/ellipseON.png</file>
-        <file>images/drawingPalette/free-shape.png</file>
-        <file>images/drawingPalette/free-shapeOn.png</file>
-        <file>images/drawingPalette/Penta.png</file>
-        <file>images/drawingPalette/PentaON.png</file>
-        <file>images/drawingPalette/rectangle.png</file>
-        <file>images/drawingPalette/rectangleON.png</file>
-        <file>images/drawingPalette/square.png</file>
-        <file>images/drawingPalette/squareON.png</file>
+        <file>images/drawingPalette/circle.svg</file>
+        <file>images/drawingPalette/circleOn.svg</file>
+        <file>images/drawingPalette/ellipse.svg</file>
+        <file>images/drawingPalette/ellipseOn.svg</file>
+        <file>images/drawingPalette/pentagon.svg</file>
+        <file>images/drawingPalette/pentagonOn.svg</file>
+        <file>images/drawingPalette/polygon.svg</file>
+        <file>images/drawingPalette/polygonOn.svg</file>
+        <file>images/drawingPalette/rectangle.svg</file>
+        <file>images/drawingPalette/rectangleOn.svg</file>
+        <file>images/drawingPalette/square.svg</file>
+        <file>images/drawingPalette/squareOn.svg</file>
     </qresource>
 </RCC>
