@@ -38,6 +38,11 @@ UB3HEditableGraphicsRectItem::~UB3HEditableGraphicsRectItem()
 {
 }
 
+ShapeType UB3HEditableGraphicsRectItem::shapeType()
+{
+    return ShapeType::Rectangle;
+}
+
 UBItem* UB3HEditableGraphicsRectItem::deepCopy() const
 {
     UB3HEditableGraphicsRectItem* copy = new UB3HEditableGraphicsRectItem();

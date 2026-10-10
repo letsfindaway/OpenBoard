@@ -38,6 +38,11 @@ UB3HEditableGraphicsEllipseItem::~UB3HEditableGraphicsEllipseItem()
 {
 }
 
+ShapeType UB3HEditableGraphicsEllipseItem::shapeType()
+{
+    return ShapeType::Ellipse;
+}
+
 UBItem* UB3HEditableGraphicsEllipseItem::deepCopy() const
 {
     UB3HEditableGraphicsEllipseItem* copy = new UB3HEditableGraphicsEllipseItem();

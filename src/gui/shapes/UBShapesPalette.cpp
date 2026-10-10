@@ -49,13 +49,13 @@ UBShapesPalette::UBShapesPalette(Qt::Orientation orient, QWidget* parent)
     actions << shapeActions->actionRegularPolygon;
 
     // assign shape types
-    shapeActions->actionSmartLine->setProperty("ShapeType", UBShapeFactory::ShapeType::Line);
-    shapeActions->actionPolygon->setProperty("ShapeType", UBShapeFactory::ShapeType::Polygon);
-    shapeActions->actionEllipse->setProperty("ShapeType", UBShapeFactory::ShapeType::Ellipse);
-    shapeActions->actionCircle->setProperty("ShapeType", UBShapeFactory::ShapeType::Circle);
-    shapeActions->actionRectangle->setProperty("ShapeType", UBShapeFactory::ShapeType::Rectangle);
-    shapeActions->actionSquare->setProperty("ShapeType", UBShapeFactory::ShapeType::Square);
-    shapeActions->actionRegularPolygon->setProperty("ShapeType", UBShapeFactory::ShapeType::RegularPolygon);
+    shapeActions->actionSmartLine->setProperty("ShapeType", QVariant::fromValue(ShapeType::Line));
+    shapeActions->actionPolygon->setProperty("ShapeType", QVariant::fromValue(ShapeType::Polygon));
+    shapeActions->actionEllipse->setProperty("ShapeType", QVariant::fromValue(ShapeType::Ellipse));
+    shapeActions->actionCircle->setProperty("ShapeType", QVariant::fromValue(ShapeType::Circle));
+    shapeActions->actionRectangle->setProperty("ShapeType", QVariant::fromValue(ShapeType::Rectangle));
+    shapeActions->actionSquare->setProperty("ShapeType", QVariant::fromValue(ShapeType::Square));
+    shapeActions->actionRegularPolygon->setProperty("ShapeType", QVariant::fromValue(ShapeType::RegularPolygon));
 
     setActions(actions);
 
@@ -85,35 +85,35 @@ UBShapesPalette::~UBShapesPalette()
 void UBShapesPalette::actionActivated(QAction* action)
 {
     auto& shapeFactory = UBApplication::boardController->shapeFactory();
-    const auto shapeType = action->property("ShapeType").value<UBShapeFactory::ShapeType>();
+    const auto shapeType = action->property("ShapeType").value<ShapeType>();
 
     switch (shapeType)
     {
-    case UBShapeFactory::Ellipse:
+    case ShapeType::Ellipse:
         shapeFactory.createEllipse(true);
         break;
 
-    case UBShapeFactory::Circle:
+    case ShapeType::Circle:
         shapeFactory.createCircle(true);
         break;
 
-    case UBShapeFactory::Rectangle:
+    case ShapeType::Rectangle:
         shapeFactory.createRectangle(true);
         break;
 
-    case UBShapeFactory::Square:
+    case ShapeType::Square:
         shapeFactory.createSquare(true);
         break;
 
-    case UBShapeFactory::Line:
+    case ShapeType::Line:
         shapeFactory.createLine(true);
         break;
 
-    case UBShapeFactory::RegularPolygon:
+    case ShapeType::RegularPolygon:
         shapeFactory.createRegularPolygon(5);
         break;
 
-    case UBShapeFactory::Polygon:
+    case ShapeType::Polygon:
         shapeFactory.createPolygon(true);
         break;
 

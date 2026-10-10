@@ -25,6 +25,8 @@
 
 #include "UBSvgSubsetAdaptor.h"
 
+#include "core/UB.h"
+
 // forward
 class UB1HEditableGraphicsCircleItem;
 class UB1HEditableGraphicsSquareItem;
@@ -58,7 +60,7 @@ public:
         UB1HEditableGraphicsCircleItem* shapeCircleFromSvg(const QColor& pDefaultPenColor);
         UB1HEditableGraphicsSquareItem* shapeSquareFromSvg(const QColor& pDefaultPenColor);
         UB3HEditableGraphicsRectItem* shapeRectFromSvg(const QColor& pDefaultPenColor);
-        UBAbstractGraphicsPathItem* shapePathFromSvg(const QColor& pDefaultPenColor, int type);
+        UBAbstractGraphicsPathItem* shapePathFromSvg(const QColor& pDefaultPenColor, ShapeType type);
         UBEditableGraphicsRegularShapeItem* shapeRegularFromSvg(const QColor& pDefaultPenColor);
 
     private:

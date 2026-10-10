@@ -41,6 +41,8 @@ public:
         return Type;
     }
 
+    virtual ShapeType shapeType() override;
+
     virtual UBItem* deepCopy() const override;
 
     QPointF startPoint() const;

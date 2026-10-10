@@ -223,6 +223,11 @@ void UBEditableGraphicsRegularShapeItem::copyItemParameters(UBItem* copy) const
     cp->setPath(path());
 }
 
+ShapeType UBEditableGraphicsRegularShapeItem::shapeType()
+{
+    return ShapeType::RegularPolygon;
+}
+
 void UBEditableGraphicsRegularShapeItem::updateHandle(UBAbstractHandle* handle)
 {
     prepareGeometryChange();

@@ -198,6 +198,11 @@ void UBEditableGraphicsPolygonItem::copyItemParameters(UBItem* copy) const
     }
 }
 
+ShapeType UBEditableGraphicsPolygonItem::shapeType()
+{
+    return ShapeType::Polygon;
+}
+
 QRectF UBEditableGraphicsPolygonItem::boundingRect() const
 {
     QRectF rect = UBAbstractEditableGraphicsPathItem::boundingRect();

@@ -94,25 +94,25 @@ UBAbstractGraphicsItem* UBShapeFactory::instanciateCurrentShape()
 {
     switch (mShapeType)
     {
-    case Ellipse:
+    case ShapeType::Ellipse:
         mCurrentShape = new UB3HEditableGraphicsEllipseItem();
         break;
-    case Circle:
+    case ShapeType::Circle:
         mCurrentShape = new UB1HEditableGraphicsCircleItem();
         break;
-    case Rectangle:
+    case ShapeType::Rectangle:
         mCurrentShape = new UB3HEditableGraphicsRectItem();
         break;
-    case Square:
+    case ShapeType::Square:
         mCurrentShape = new UB1HEditableGraphicsSquareItem();
         break;
-    case Line:
+    case ShapeType::Line:
         mCurrentShape = new UBEditableGraphicsLineItem();
         break;
-    case Polygon:
+    case ShapeType::Polygon:
         mCurrentShape = new UBEditableGraphicsPolygonItem();
         break;
-    case RegularPolygon:
+    case ShapeType::RegularPolygon:
         mCurrentShape = new UBEditableGraphicsRegularShapeItem(mNVertices);
         break;
     default:
@@ -131,7 +131,7 @@ void UBShapeFactory::createEllipse(bool create)
         mDrawingController->setStylusTool(UBStylusTool::Drawing);
         mIsRegularShape = true;
         mIsCreating = true;
-        mShapeType = Ellipse;
+        mShapeType = ShapeType::Ellipse;
     }
 }
 
@@ -142,7 +142,7 @@ void UBShapeFactory::createCircle(bool create)
         mDrawingController->setStylusTool(UBStylusTool::Drawing);
         mIsRegularShape = true;
         mIsCreating = true;
-        mShapeType = Circle;
+        mShapeType = ShapeType::Circle;
     }
 }
 
@@ -153,7 +153,7 @@ void UBShapeFactory::createRectangle(bool create)
         mDrawingController->setStylusTool(UBStylusTool::Drawing);
         mIsRegularShape = true;
         mIsCreating = true;
-        mShapeType = Rectangle;
+        mShapeType = ShapeType::Rectangle;
     }
 }
 
@@ -164,7 +164,7 @@ void UBShapeFactory::createSquare(bool create)
         mDrawingController->setStylusTool(UBStylusTool::Drawing);
         mIsRegularShape = true;
         mIsCreating = true;
-        mShapeType = Square;
+        mShapeType = ShapeType::Square;
     }
 }
 
@@ -175,7 +175,7 @@ void UBShapeFactory::createLine(bool create)
         mDrawingController->setStylusTool(UBStylusTool::Drawing);
         mIsRegularShape = true;
         mIsCreating = true;
-        mShapeType = Line;
+        mShapeType = ShapeType::Line;
     }
 }
 
@@ -184,7 +184,7 @@ void UBShapeFactory::createRegularPolygon(int nVertices)
     mDrawingController->setStylusTool(UBStylusTool::Drawing);
     mIsRegularShape = false;
     mIsCreating = true;
-    mShapeType = RegularPolygon;
+    mShapeType = ShapeType::RegularPolygon;
     mNVertices = nVertices;
 }
 
@@ -195,7 +195,7 @@ void UBShapeFactory::createPolygon(bool create)
         mDrawingController->setStylusTool(UBStylusTool::Drawing);
         mIsRegularShape = false;
         mIsCreating = true;
-        mShapeType = Polygon;
+        mShapeType = ShapeType::Polygon;
     }
 }
 
@@ -211,7 +211,7 @@ void UBShapeFactory::onMouseMove(QMouseEvent* event)
             std::optional<QPointF> altPosition;
             QPointF lineStartPoint;
 
-            if (mShapeType == Line)
+            if (mShapeType == ShapeType::Line)
             {
                 const auto step = UBSettings::settings()->rotationAngleStep->get().toDouble();
                 UBEditableGraphicsLineItem* line = dynamic_cast<UBEditableGraphicsLineItem*>(mCurrentShape);
@@ -226,7 +226,7 @@ void UBShapeFactory::onMouseMove(QMouseEvent* event)
             QPointF gridSnapPoint;
             cursorPosition += mBoardView->scene()->snap(cursorPosition, nullptr, altPosition, &gridSnapPoint);
 
-            if (mShapeType == Line)
+            if (mShapeType == ShapeType::Line)
             {
                 if (cursorPosition != gridSnapPoint)
                 {
@@ -243,7 +243,7 @@ void UBShapeFactory::onMouseMove(QMouseEvent* event)
 
         if (mIsRegularShape)
         {
-            if (mShapeType == Ellipse)
+            if (mShapeType == ShapeType::Ellipse)
             {
                 UB3HEditableGraphicsEllipseItem* shape = dynamic_cast<UB3HEditableGraphicsEllipseItem*>(mCurrentShape);
                 QRectF rect = QRectF(shape->pos(), cursorPosition);
@@ -251,25 +251,25 @@ void UBShapeFactory::onMouseMove(QMouseEvent* event)
                 shape->setRadiusX(rect.width() / 2);
                 shape->setRadiusY(rect.height() / 2);
             }
-            else if (mShapeType == Circle)
+            else if (mShapeType == ShapeType::Circle)
             {
                 UB1HEditableGraphicsCircleItem* shape = dynamic_cast<UB1HEditableGraphicsCircleItem*>(mCurrentShape);
 
                 shape->setRect(QRectF(shape->pos(), cursorPosition));
             }
-            else if (mShapeType == Rectangle)
+            else if (mShapeType == ShapeType::Rectangle)
             {
                 UB3HEditableGraphicsRectItem* shape = dynamic_cast<UB3HEditableGraphicsRectItem*>(mCurrentShape);
 
                 shape->setRect(QRectF(shape->pos(), cursorPosition));
             }
-            else if (mShapeType == Square)
+            else if (mShapeType == ShapeType::Square)
             {
                 UB1HEditableGraphicsSquareItem* shape = dynamic_cast<UB1HEditableGraphicsSquareItem*>(mCurrentShape);
 
                 shape->setRect(QRectF(shape->pos(), cursorPosition));
             }
-            else if (mShapeType == Line)
+            else if (mShapeType == ShapeType::Line)
             {
                 UBEditableGraphicsLineItem* line = dynamic_cast<UBEditableGraphicsLineItem*>(mCurrentShape);
 
@@ -287,7 +287,7 @@ void UBShapeFactory::onMouseMove(QMouseEvent* event)
         }
         else
         {
-            if (mShapeType == RegularPolygon)
+            if (mShapeType == ShapeType::RegularPolygon)
             {
                 UBEditableGraphicsRegularShapeItem* regularPathItem =
                     dynamic_cast<UBEditableGraphicsRegularShapeItem*>(mCurrentShape);
@@ -314,7 +314,7 @@ void UBShapeFactory::onMousePress(QMouseEvent* event)
 
         if (mIsRegularShape)
         {
-            if (mShapeType == Ellipse)
+            if (mShapeType == ShapeType::Ellipse)
             {
                 UB3HEditableGraphicsEllipseItem* ellipse =
                     dynamic_cast<UB3HEditableGraphicsEllipseItem*>(instanciateCurrentShape());
@@ -322,7 +322,7 @@ void UBShapeFactory::onMousePress(QMouseEvent* event)
 
                 mBoardView->scene()->addItem(ellipse);
             }
-            else if (mShapeType == Circle)
+            else if (mShapeType == ShapeType::Circle)
             {
                 UB1HEditableGraphicsCircleItem* ellipse =
                     dynamic_cast<UB1HEditableGraphicsCircleItem*>(instanciateCurrentShape());
@@ -330,7 +330,7 @@ void UBShapeFactory::onMousePress(QMouseEvent* event)
 
                 mBoardView->scene()->addItem(ellipse);
             }
-            else if (mShapeType == Rectangle)
+            else if (mShapeType == ShapeType::Rectangle)
             {
                 UB3HEditableGraphicsRectItem* rect =
                     dynamic_cast<UB3HEditableGraphicsRectItem*>(instanciateCurrentShape());
@@ -339,7 +339,7 @@ void UBShapeFactory::onMousePress(QMouseEvent* event)
 
                 mBoardView->scene()->addItem(rect);
             }
-            else if (mShapeType == Square)
+            else if (mShapeType == ShapeType::Square)
             {
                 UB1HEditableGraphicsSquareItem* rect =
                     dynamic_cast<UB1HEditableGraphicsSquareItem*>(instanciateCurrentShape());
@@ -348,7 +348,7 @@ void UBShapeFactory::onMousePress(QMouseEvent* event)
 
                 mBoardView->scene()->addItem(rect);
             }
-            else if (mShapeType == Line)
+            else if (mShapeType == ShapeType::Line)
             {
                 UBEditableGraphicsLineItem* line = dynamic_cast<UBEditableGraphicsLineItem*>(instanciateCurrentShape());
 
@@ -359,7 +359,7 @@ void UBShapeFactory::onMousePress(QMouseEvent* event)
         }
         else
         {
-            if (mShapeType == RegularPolygon)
+            if (mShapeType == ShapeType::RegularPolygon)
             {
                 UBEditableGraphicsRegularShapeItem* regularPathItem =
                     dynamic_cast<UBEditableGraphicsRegularShapeItem*>(instanciateCurrentShape());
@@ -410,7 +410,7 @@ void UBShapeFactory::onMouseRelease(QMouseEvent* event)
             discardCurrentShape();
         }
     }
-    else if (mShapeType == Rectangle)
+    else if (mShapeType == ShapeType::Rectangle)
     {
         UB3HEditableGraphicsRectItem* shape = dynamic_cast<UB3HEditableGraphicsRectItem*>(mCurrentShape);
 
@@ -418,7 +418,7 @@ void UBShapeFactory::onMouseRelease(QMouseEvent* event)
 
         shape->setRect(reverseRect(rect));
     }
-    else if (mShapeType == Square)
+    else if (mShapeType == ShapeType::Square)
     {
         UB1HEditableGraphicsSquareItem* shape = dynamic_cast<UB1HEditableGraphicsSquareItem*>(mCurrentShape);
 
@@ -426,7 +426,7 @@ void UBShapeFactory::onMouseRelease(QMouseEvent* event)
 
         shape->setRect(reverseRect(rect));
     }
-    else if (mShapeType == Ellipse)
+    else if (mShapeType == ShapeType::Ellipse)
     {
         UB3HEditableGraphicsEllipseItem* shape = dynamic_cast<UB3HEditableGraphicsEllipseItem*>(mCurrentShape);
 
@@ -434,7 +434,7 @@ void UBShapeFactory::onMouseRelease(QMouseEvent* event)
 
         shape->setRect(reverseRect(rect));
     }
-    else if (mShapeType == Circle)
+    else if (mShapeType == ShapeType::Circle)
     {
         UB1HEditableGraphicsCircleItem* shape = dynamic_cast<UB1HEditableGraphicsCircleItem*>(mCurrentShape);
 
@@ -442,7 +442,7 @@ void UBShapeFactory::onMouseRelease(QMouseEvent* event)
 
         shape->setRect(reverseRect(rect));
     }
-    else if (mShapeType == RegularPolygon)
+    else if (mShapeType == ShapeType::RegularPolygon)
     {
         UBEditableGraphicsRegularShapeItem* shape = dynamic_cast<UBEditableGraphicsRegularShapeItem*>(mCurrentShape);
 
@@ -455,12 +455,12 @@ void UBShapeFactory::onMouseRelease(QMouseEvent* event)
         mCurrentShape->applyItemStyle(mShapeStyle, mBoardView->scene()->isDarkBackground());
     }
 
-    if (!mCursorMoved && mCurrentShape && mShapeType != Polygon)
+    if (!mCursorMoved && mCurrentShape && mShapeType != ShapeType::Polygon)
     {
         discardCurrentShape();
     }
 
-    if (mShapeType != Polygon)
+    if (mShapeType != ShapeType::Polygon)
         terminateShape();
 }
 
@@ -505,7 +505,7 @@ void UBShapeFactory::desactivate()
     mIsPress = false;
     mIsCreating = false;
     mCurrentShape = NULL;
-    mShapeType = None;
+    mShapeType = ShapeType::None;
 }
 
 void UBShapeFactory::discardCurrentShape()
@@ -524,7 +524,7 @@ void UBShapeFactory::terminateShape()
         return;
     }
 
-    if (mShapeType == Polygon)
+    if (mShapeType == ShapeType::Polygon)
     {
         UBEditableGraphicsPolygonItem* p = dynamic_cast<UBEditableGraphicsPolygonItem*>(mCurrentShape);
         if (p)
@@ -614,4 +614,70 @@ Qt::PenStyle UBShapeFactory::styleForPattern(QList<qreal> pattern)
 
     // default to solid line
     return Qt::SolidLine;
+}
+
+QString UBShapeFactory::shapeTypeToString(ShapeType shapeType)
+{
+    switch (shapeType)
+    {
+    case ShapeType::None:
+        return "none";
+
+    case ShapeType::Ellipse:
+        return "ellipse";
+
+    case ShapeType::Circle:
+        return "circle";
+
+    case ShapeType::Rectangle:
+        return "rectangle";
+
+    case ShapeType::Square:
+        return "square";
+
+    case ShapeType::Line:
+        return "line";
+
+    case ShapeType::RegularPolygon:
+        return "regularPolygon";
+
+    case ShapeType::Polygon:
+        return "polygon";
+    }
+
+    return "";
+}
+
+ShapeType UBShapeFactory::shapeTypeFromString(const QString& shapeTypeString)
+{
+    if (shapeTypeString == "ellipse")
+    {
+        return ShapeType::Ellipse;
+    }
+    else if (shapeTypeString == "circle")
+    {
+        return ShapeType::Circle;
+    }
+    else if (shapeTypeString == "rectangle")
+    {
+        return ShapeType::Rectangle;
+    }
+    else if (shapeTypeString == "square")
+    {
+        return ShapeType::Square;
+    }
+    else if (shapeTypeString == "line")
+    {
+        return ShapeType::Line;
+    }
+    else if (shapeTypeString == "regularPolygon")
+    {
+        return ShapeType::RegularPolygon;
+    }
+    else if (shapeTypeString == "polygon")
+    {
+        return ShapeType::Polygon;
+    }
+
+    return ShapeType::None;
 }

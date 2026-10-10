@@ -26,6 +26,7 @@
 #include "domain/UBItem.h"
 #include "domain/UBItemStyle.h"
 #include "domain/UBStyledItem.h"
+#include "domain/shapes/UBShapeFactory.h"
 
 
 #include <QAbstractGraphicsShapeItem>
@@ -39,6 +40,8 @@ class UBAbstractGraphicsItem
 public:
     UBAbstractGraphicsItem(QGraphicsItem* parent = nullptr);
     virtual ~UBAbstractGraphicsItem();
+
+    virtual ShapeType shapeType() = 0;
 
     virtual void applyItemStyle(const UBItemStyle& style, bool isDark) override;
     virtual bool isShape() const override;

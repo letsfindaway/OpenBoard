@@ -38,6 +38,11 @@ UB1HEditableGraphicsCircleItem::~UB1HEditableGraphicsCircleItem()
 {
 }
 
+ShapeType UB1HEditableGraphicsCircleItem::shapeType()
+{
+    return ShapeType::Circle;
+}
+
 UBItem* UB1HEditableGraphicsCircleItem::deepCopy() const
 {
     UB1HEditableGraphicsCircleItem* copy = new UB1HEditableGraphicsCircleItem();

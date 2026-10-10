@@ -41,6 +41,8 @@ public:
         return Type;
     }
 
+    virtual ShapeType shapeType() override;
+
     virtual UBItem* deepCopy() const override;
     virtual void copyItemParameters(UBItem* copy) const override;
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;

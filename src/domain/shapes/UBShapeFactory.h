@@ -27,6 +27,7 @@
 #include <QGraphicsItem>
 #include <QObject>
 
+#include "core/UB.h"
 #include "domain/UBItemStyle.h"
 
 #include "ui_shapeActions.h"
@@ -51,22 +52,13 @@ public:
     static void desactivateEditionMode(QGraphicsItem* item);
     static bool isInEditMode(QGraphicsItem* item);
 
-    enum ShapeType
-    {
-        Ellipse,
-        Circle,
-        Rectangle,
-        Square,
-        Line,
-        RegularPolygon,
-        Polygon,
-        None
-    };
-
     QRectF reverseRect(const QRectF& rect);
 
     static QList<qreal> dashPattern(Qt::PenStyle style);
     static Qt::PenStyle styleForPattern(QList<qreal> pattern);
+
+    static QString shapeTypeToString(ShapeType shapeType);
+    static ShapeType shapeTypeFromString(const QString& shapeTypeString);
 
 public slots:
     void createRegularPolygon(int nVertices);
@@ -96,7 +88,7 @@ private:
     bool mIsPress{false};
     bool mIsRegularShape{true};
 
-    ShapeType mShapeType{None};
+    ShapeType mShapeType{ShapeType::None};
 
     UBDrawingController* mDrawingController{nullptr};
 

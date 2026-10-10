@@ -52,6 +52,8 @@ public:
         return Type;
     }
 
+    virtual ShapeType shapeType() override;
+
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
     virtual QRectF boundingRect() const override;

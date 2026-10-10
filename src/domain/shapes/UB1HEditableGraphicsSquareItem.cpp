@@ -39,6 +39,11 @@ UB1HEditableGraphicsSquareItem::~UB1HEditableGraphicsSquareItem()
 {
 }
 
+ShapeType UB1HEditableGraphicsSquareItem::shapeType()
+{
+    return ShapeType::Square;
+}
+
 UBItem* UB1HEditableGraphicsSquareItem::deepCopy() const
 {
     UB1HEditableGraphicsSquareItem* copy = new UB1HEditableGraphicsSquareItem();

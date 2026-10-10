@@ -77,6 +77,18 @@ struct UBStylusTool
     };
 };
 
+enum class ShapeType
+{
+    None,
+    Ellipse,
+    Circle,
+    Rectangle,
+    Square,
+    Line,
+    RegularPolygon,
+    Polygon
+};
+
 struct UBWidth
 {
     enum Enum
