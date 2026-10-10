@@ -67,6 +67,15 @@ UBShapesPalette::UBShapesPalette(Qt::Orientation orient, QWidget* parent)
     {
         connect(action, &QAction::triggered, this, [this, action]() { actionActivated(action); });
     }
+
+    // detect deactivation of polygon action to terminate shape
+    const auto polygonButton = getButtonFromAction(shapeActions->actionPolygon);
+    connect(polygonButton, &QAbstractButton::toggled, this, [this](bool checked){
+        if (!checked)
+        {
+            UBApplication::boardController->shapeFactory().terminateShape();
+        }
+    });
 }
 
 UBShapesPalette::~UBShapesPalette()

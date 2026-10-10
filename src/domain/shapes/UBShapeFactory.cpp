@@ -524,12 +524,14 @@ void UBShapeFactory::terminateShape()
         return;
     }
 
-    // when clicking on stroke and fill subpalettes, creation mode could stay even though the current shape had changed
     if (mShapeType == Polygon)
     {
         UBEditableGraphicsPolygonItem* p = dynamic_cast<UBEditableGraphicsPolygonItem*>(mCurrentShape);
         if (p)
+        {
             p->setIsInCreationMode(false);
+            p->setOpened(true);
+        }
     }
 
     // If shape is not part of the scene, then delete it

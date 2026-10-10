@@ -47,8 +47,6 @@ public:
 
     void setOpened(bool opened);
 
-    void reopen();
-
     void setIsInCreationMode(bool mode);
 
     // UBItem interface

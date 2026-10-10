@@ -59,15 +59,17 @@ void UBEditableGraphicsPolygonItem::addPoint(const QPointF& point)
     }
     else
     {
-        // If clic on first point, close the polygon
-        // TODO à terme : utiliser la surface de la première poignée.
+        // If click on first point, close the polygon
         QPointF pointDepart(painterPath.elementAt(0).x, painterPath.elementAt(0).y);
         QPointF pointFin(painterPath.elementAt(painterPath.elementCount() - 1).x,
                          painterPath.elementAt(painterPath.elementCount() - 1).y);
 
+        QRectF handle(0, 0, HANDLE_SIZE, HANDLE_SIZE);
+        handle.moveCenter(pointDepart);
+        QGraphicsEllipseItem poigneeDepart(handle);
 
-        QGraphicsEllipseItem poigneeDepart(pointDepart.x() - 10, pointDepart.y() - 10, 20, 20);
-        QGraphicsEllipseItem poigneeFin(pointFin.x() - 10, pointFin.y() - 10, 20, 20);
+        handle.moveCenter(pointFin);
+        QGraphicsEllipseItem poigneeFin(handle);
 
         if (poigneeDepart.contains(p))
         {
@@ -105,31 +107,10 @@ void UBEditableGraphicsPolygonItem::addPoint(const QPointF& point)
     }
 }
 
-void UBEditableGraphicsPolygonItem::reopen()
-{
-    if (mClosed)
-    {
-        QPainterPath::Element firstElement = path().elementAt(0);
-
-        QPointF firstPoint(firstElement.x, firstElement.y);
-
-        QPainterPath newPainterPath(firstPoint);
-        int nbElement = path().elementCount() - 1;
-        for (int iElement = 1; iElement < nbElement; iElement++)
-        {
-            newPainterPath.lineTo(path().elementAt(iElement));
-        }
-
-        setPath(newPainterPath);
-        mStartEndPoint[1] =
-            QPointF(path().elementAt(path().elementCount() - 1).x, path().elementAt(path().elementCount() - 1).y);
-        setClosed(false);
-    }
-}
-
 void UBEditableGraphicsPolygonItem::setIsInCreationMode(bool mode)
 {
     mIsInCreationMode = mode;
+    update();
 }
 
 void UBEditableGraphicsPolygonItem::setOpened(bool opened)
@@ -221,10 +202,7 @@ QRectF UBEditableGraphicsPolygonItem::boundingRect() const
 {
     QRectF rect = UBAbstractEditableGraphicsPathItem::boundingRect();
 
-    int enlarge = 0;
-
-    if (mIsInCreationMode) // gérer les poignées aux extrémités
-        enlarge += HANDLE_SIZE / 2;
+    const int enlarge = HANDLE_SIZE / 2;
 
     rect.adjust(-enlarge, -enlarge, enlarge, enlarge);
 
