@@ -75,7 +75,6 @@
 #include "core/UBSetting.h"
 #include "core/UBPersistenceManager.h"
 #include "core/UBApplication.h"
-#include "core/UBDisplayManager.h"
 #include "core/UBTextTools.h"
 
 #include "pdf/PDFRenderer.h"
@@ -498,16 +497,6 @@ void UBSvgSubsetAdaptor::UBSvgSubsetReader::processElement()
                 }
             }
 
-            auto pageDpi = mXmlReader.attributes().value("pageDpi");
-
-            if (!pageDpi.isNull())
-                mProxy->setPageDpi(pageDpi.toInt());
-
-            else if (mProxy->pageDpi() == 0) {
-                mProxy->setPageDpi(UBApplication::displayManager->logicalDpi(ScreenRole::Control));
-                //pageDpiSpecified = false;
-            }
-
             bool darkBackground = false;
             bool crossedBackground = false;
             bool ruledBackground = false;
@@ -894,10 +883,7 @@ void UBSvgSubsetAdaptor::UBSvgSubsetReader::processElement()
                 UBGraphicsPDFItem* pdfItem = pdfItemFromPDF();
                 if (pdfItem)
                 {
-                    qreal currentDpi = UBApplication::displayManager->logicalDpi(ScreenRole::Control);
-                    // qDebug() << "currentDpi = " << currentDpi;
-                    qreal pdfScale = qreal(mProxy->pageDpi())/currentDpi;
-                    // qDebug() << "pdfScale " << pdfScale;
+                    qreal pdfScale = 1.;
 
                     // If the PDF is in the background, it occupies the whole page; so we can simply
                     // use that information to calculate its scale.
@@ -1245,12 +1231,6 @@ void UBSvgSubsetAdaptor::UBSvgSubsetWriter::writeSvgElement(std::shared_ptr<UBDo
     if (crossedBackground || ruledBackground) {
         mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "intermediate-lines", QString::number(intermediateLines));
     }
-
-    if (proxy->pageDpi() == 0)
-        proxy->setPageDpi(UBApplication::displayManager->logicalDpi(ScreenRole::Control));
-
-    mXmlWriter.writeAttribute("pageDpi", QString::number(proxy->pageDpi()));
-
 
     mXmlWriter.writeStartElement("rect");
     mXmlWriter.writeAttribute("fill", mScene->isDarkBackground() ? "black" : "white");

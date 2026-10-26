@@ -222,9 +222,6 @@ bool UBExportFullPDF::persistsDocument(std::shared_ptr<UBDocumentProxy> pDocumen
 
             MergeDescription mergeInfo;
 
-            // factor between scene coordinates and PDF coordinates
-            double dpiScale = 72. / pDocumentProxy->pageDpi();
-
             auto document = UBDocument::getDocument(pDocumentProxy);
             int existingPageCount = document->pageCount();
 
@@ -264,20 +261,18 @@ bool UBExportFullPDF::persistsDocument(std::shared_ptr<UBDocumentProxy> pDocumen
                     double hPdfTransformed = hPdf * scaleFactor;
 
                     // Compute scaling of PDF on the scene
-                    // If the PDF was scaled when added to the scene (e.g if it was loaded from a document with a different DPI
-                    // than the current one), it should also be scaled here.
                     QSizeF pageSize = pdfItem->pageSize();
-                    double pdfScale = pdfSceneRect.width() / pageSize.width() * dpiScale;
+                    double pdfScale = pdfSceneRect.width() / pageSize.width();
 
                     // Offsets are calculated in the PDF coordinate system.
                     // It has its origin at the lower left corner and is measured in points of 1/72 inch.
                     // Here, we force the PDF page to be on the topleft corner of the page
                     double xPdfOffset = 0;
-                    double yPdfOffset = (hPdf - hPdfTransformed) * dpiScale / pdfScale;
+                    double yPdfOffset = (hPdf - hPdfTransformed) / pdfScale;
 
                     // Now we align the items
-                    xPdfOffset += (xPdf - xAnnotation) * scaleFactor * dpiScale / pdfScale;
-                    yPdfOffset -= (yPdf - yAnnotation) * scaleFactor * dpiScale / pdfScale;
+                    xPdfOffset += (xPdf - xAnnotation) * scaleFactor / pdfScale;
+                    yPdfOffset -= (yPdf - yAnnotation) * scaleFactor / pdfScale;
 
                     TransformationDescription pdfTransform(xPdfOffset, yPdfOffset, scaleFactor, 0);
                     TransformationDescription annotationTransform(xAnnotationsOffset, yAnnotationsOffset, 1, 0);
