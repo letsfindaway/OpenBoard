@@ -46,10 +46,10 @@
 QPointer<UBSettings> UBSettings::sSingleton = 0;
 
 int UBSettings::pointerDiameter = 40;
-int UBSettings::crossSize = 24;
-int UBSettings::defaultCrossSize = 24;
-int UBSettings::minCrossSize = 12;
-int UBSettings::maxCrossSize = 96; //TODO: user-settable?
+double UBSettings::crossSize = 10. * UB_DOTS_PER_MM;
+double UBSettings::defaultCrossSize = 10. * UB_DOTS_PER_MM;
+double UBSettings::minCrossSize = 12;
+double UBSettings::maxCrossSize = 96; //TODO: user-settable?
 const int UBSettings::minColorPaletteSize = 5;
 const int UBSettings::maxColorPaletteSize = 10;
 const int UBSettings::defaultColorPaletteSize = 8;

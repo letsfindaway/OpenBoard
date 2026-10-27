@@ -442,7 +442,6 @@ bool UBGraphicsScene::inputDevicePress(const QPointF& scenePos, const qreal& pre
                 width = UBDrawingController::drawingController()->currentToolWidth();
             }
 
-            width /= UBApplication::boardController->systemScaleFactor();
             width /= UBApplication::boardController->currentZoom();
 
             mAddedItems.clear();
@@ -472,7 +471,6 @@ bool UBGraphicsScene::inputDevicePress(const QPointF& scenePos, const qreal& pre
             moveTo(scenePos);
 
             qreal eraserWidth = UBSettings::settings()->currentEraserWidth();
-            eraserWidth /= UBApplication::boardController->systemScaleFactor();
             eraserWidth /= UBApplication::boardController->currentZoom();
 
             eraseLineTo(scenePos, eraserWidth);
@@ -542,7 +540,6 @@ bool UBGraphicsScene::inputDeviceMove(const QPointF& scenePos, const qreal& pres
                 width = dc->currentToolWidth();
             }
 
-            width /= UBApplication::boardController->systemScaleFactor();
             width /= UBApplication::boardController->currentZoom();
 
             std::optional<QPointF> altPosition;
@@ -629,7 +626,7 @@ bool UBGraphicsScene::inputDeviceMove(const QPointF& scenePos, const qreal& pres
                 // Don't draw segments smaller than a certain length. This can help with performance
                 // (less polygons to draw) but mostly with making the curve look smooth.
 
-                qreal antiScaleRatio = 1./(UBApplication::boardController->systemScaleFactor() * UBApplication::boardController->currentZoom());
+                qreal antiScaleRatio = 1. / UBApplication::boardController->currentZoom();
                 qreal MIN_DISTANCE = 10*antiScaleRatio; // arbitrary. Move to settings if relevant.
                 qreal distance = QLineF(mPreviousPoint, scenePos).length();
 
@@ -667,7 +664,6 @@ bool UBGraphicsScene::inputDeviceMove(const QPointF& scenePos, const qreal& pres
         else if (currentTool == UBStylusTool::Eraser)
         {
             qreal eraserWidth = UBSettings::settings()->currentEraserWidth();
-            eraserWidth /= UBApplication::boardController->systemScaleFactor();
             eraserWidth /= UBApplication::boardController->currentZoom();
 
             eraseLineTo(position, eraserWidth);
@@ -803,7 +799,6 @@ void UBGraphicsScene::drawEraser(const QPointF &pPoint, bool pressed)
 {
     if (mEraser) {
         qreal eraserWidth = UBSettings::settings()->currentEraserWidth();
-        eraserWidth /= UBApplication::boardController->systemScaleFactor();
         eraserWidth /= UBApplication::boardController->currentZoom();
 
         qreal eraserRadius = eraserWidth / 2;
@@ -838,7 +833,6 @@ void UBGraphicsScene::hideEraser()
 void UBGraphicsScene::drawPointer(const QPointF &pPoint, bool isFirstDraw)
 {
     qreal pointerDiameter = UBSettings::pointerDiameter / UBApplication::boardController->currentZoom();
-    pointerDiameter /= UBApplication::boardController->systemScaleFactor();
     qreal pointerRadius = pointerDiameter / 2;
 
     // TODO UB 4.x optimize - no need to do that every time we move it
@@ -857,7 +851,6 @@ void UBGraphicsScene::drawMarkerCircle(const QPointF &pPoint)
 {
     if (mMarkerCircle) {
         qreal markerDiameter = UBSettings::settings()->currentMarkerWidth();
-        markerDiameter /= UBApplication::boardController->systemScaleFactor();
         markerDiameter /= UBApplication::boardController->currentZoom();
         qreal markerRadius = markerDiameter/2;
 
@@ -875,7 +868,6 @@ void UBGraphicsScene::drawPenCircle(const QPointF &pPoint)
     if (mPenCircle && UBSettings::settings()->showPenPreviewCircle->get().toBool() &&
         UBSettings::settings()->currentPenWidth() >= UBSettings::settings()->penPreviewFromSize->get().toInt()) {
         qreal penDiameter = UBSettings::settings()->currentPenWidth();
-        penDiameter /= UBApplication::boardController->systemScaleFactor();
         penDiameter /= UBApplication::boardController->currentZoom();
         qreal penRadius = penDiameter/2;
 
@@ -1133,7 +1125,6 @@ void UBGraphicsScene::drawArcTo(const QPointF& pCenterPoint, qreal pSpanAngle)
         mArcPolygonItem = 0;
     }
     qreal penWidth = UBSettings::settings()->currentPenWidth();
-    penWidth /= UBApplication::boardController->systemScaleFactor();
     penWidth /= UBApplication::boardController->currentZoom();
 
     mArcPolygonItem = arcToPolygonItem(QLineF(pCenterPoint, mPreviousPoint), pSpanAngle, penWidth);
@@ -1179,7 +1170,7 @@ void UBGraphicsScene::setBackgroundZoomFactor(qreal zoom)
 }
 
 
-void UBGraphicsScene::setBackgroundGridSize(int pSize)
+void UBGraphicsScene::setBackgroundGridSize(double pSize)
 {
     if (pSize > 0) {
         mBackgroundGridSize = pSize;
@@ -1733,10 +1724,6 @@ void UBGraphicsScene::addGraphicsWidget(UBGraphicsWidgetItem* graphicsWidget, co
 
     addItem(graphicsWidget);
 
-    qreal ssf = 1 / UBApplication::boardController->systemScaleFactor();
-
-    graphicsWidget->setTransform(QTransform::fromScale(ssf, ssf), true);
-
     graphicsWidget->setPos(QPointF(pPos.x() - graphicsWidget->boundingRect().width() / 2,
         pPos.y() - graphicsWidget->boundingRect().height() / 2));
 
@@ -1825,9 +1812,6 @@ UBGraphicsSvgItem* UBGraphicsScene::addSvg(const QUrl& pSvgFileUrl, const QPoint
 
     svgItem->setFlag(QGraphicsItem::ItemIsMovable, true);
     svgItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
-
-    qreal sscale = 1 / UBApplication::boardController->systemScaleFactor();
-    svgItem->setTransform(QTransform::fromScale(sscale, sscale), true);
 
     QPointF half(svgItem->boundingRect().width() / 2, svgItem->boundingRect().height() / 2);
     svgItem->setPos(pPos - half);

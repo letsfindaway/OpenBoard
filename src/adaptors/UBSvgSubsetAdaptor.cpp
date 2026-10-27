@@ -513,10 +513,16 @@ void UBSvgSubsetAdaptor::UBSvgSubsetReader::processElement()
                 crossedBackground = (ubCrossedBackground.toString() == xmlTrue);
 
             auto ubGridSize = mXmlReader.attributes().value(mNamespaceUri, "grid-size");
+            auto ubGridSizeF = mXmlReader.attributes().value(mNamespaceUri, "grid-sizeF");
 
-            if (!ubGridSize.isNull()) {
-                int gridSize = ubGridSize.toInt();
-
+            if (!ubGridSizeF.isNull())
+            {
+                auto gridSizeF = ubGridSizeF.toDouble();
+                mScene->setBackgroundGridSize(gridSizeF);
+            }
+            else if (!ubGridSize.isNull())
+            {
+                auto gridSize = ubGridSize.toInt();
                 mScene->setBackgroundGridSize(gridSize);
             }
 
@@ -1225,8 +1231,9 @@ void UBSvgSubsetAdaptor::UBSvgSubsetWriter::writeSvgElement(std::shared_ptr<UBDo
     mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "crossed-background", crossedBackground ? xmlTrue : xmlFalse);
     mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "ruled-background", ruledBackground ? xmlTrue : xmlFalse);
 
-    int gridSize = mScene->backgroundGridSize();
-    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "grid-size", QString::number(gridSize));
+    auto gridSize = mScene->backgroundGridSize();
+    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "grid-size", QString::number(qRound(gridSize)));
+    mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "grid-sizeF", QString::number(gridSize));
 
     if (crossedBackground || ruledBackground) {
         mXmlWriter.writeAttribute(UBSettings::uniboardDocumentNamespaceUri, "intermediate-lines", QString::number(intermediateLines));

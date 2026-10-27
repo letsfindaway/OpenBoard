@@ -33,7 +33,9 @@
 #include <QtWidgets>
 
 
-#define UB_MAX_ZOOM 9
+constexpr int UB_MAX_ZOOM = 9;
+constexpr double UB_DOTS_PER_INCH = 96.;
+constexpr double UB_DOTS_PER_MM = UB_DOTS_PER_INCH / 25.4;
 
 #if defined(Q_OS_LINUX) || (defined(Q_OS_OSX) && (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)))
 #define UB_REQUIRES_MASK_UPDATE 1
